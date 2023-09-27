@@ -1,4 +1,6 @@
-import 'package:example/pages/calendar_page.dart';
+import 'package:example/pages/calendar_builder_page.dart';
+import 'package:example/pages/paged_vertical_calendar_page.dart';
+import 'package:example/pages/table_calendar_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(),
-      home: const CalendarPage(),
+      home: const PagedVerticalCalenderPage(),
     );
   }
 }
