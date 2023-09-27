@@ -64,7 +64,11 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: ScheduledCalendar(),
+        child: ScheduledCalendar(
+          minDate: DateTime(2023, 9, 10),
+          initialDate: DateTime(2023, 9, 15),
+          maxDate: DateTime(2023, 9, 24),
+        ),
       ),
     );
   }
