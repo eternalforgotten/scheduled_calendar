@@ -189,6 +189,25 @@ abstract class DateUtils {
         ? sundayWeekDayList.indexOf(weekdayValueForFirstValidDay)
         : mondayWeekDayList.indexOf(weekdayValueForFirstValidDay);
   }
+
+   static List<List<DateTime>> weeksList({
+    required Month month,
+    bool startWeekWithSunday = false,
+  }) {
+    final firstDate = DateTime(month.year, month.month, 1);
+    final weeksList = <List<DateTime>>[];
+    weeksList.add([firstDate]);
+    var nextDay = firstDate.nextDay;
+    while (nextDay.month == month.month) {
+      if (nextDay.weekday != 1) {
+        weeksList.last.add(nextDay);
+      } else {
+        weeksList.add([nextDay]);
+      }
+      nextDay = nextDay.nextDay;
+    }
+    return weeksList;
+  }
 }
 
 extension DateUtilsExtensions on DateTime {
@@ -219,24 +238,5 @@ extension DateUtilsExtensions on DateTime {
       this.millisecond,
       this.microsecond,
     );
-  }
-
-  static List<List<DateTime>> weeksList({
-    required DateTime month,
-    bool startWeekWithSunday = false,
-  }) {
-    final firstDate = DateTime(month.year, month.month, 1);
-    final weeksList = <List<DateTime>>[];
-    weeksList.add([firstDate]);
-    var nextDay = firstDate.nextDay;
-    while (nextDay.month == month.month) {
-      if (nextDay.weekday != 1) {
-        weeksList.last.add(nextDay);
-      } else {
-        weeksList.add([nextDay]);
-      }
-      nextDay = nextDay.nextDay;
-    }
-    return weeksList;
   }
 }
