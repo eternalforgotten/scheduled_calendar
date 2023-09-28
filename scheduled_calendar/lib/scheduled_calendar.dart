@@ -342,98 +342,128 @@ class _MonthView extends StatelessWidget {
               month: month.month,
               year: month.year,
             ),
-        Column(
-          children: [
-            ...weeksList
-                .map(
-                  (week) => Row(
-                    children: [
-                      if (week.first.weekday > 1)
-                        Spacer(
-                          flex: week.first.weekday - 1,
-                        ),
-                      ...week
-                          .map(
-                            (date) => Flexible(
-                              child: ScheduledCalendarDay(
-                                day: date,
-                                onPressed: (DateTime day) {},
-                                isCalendarMode: false,
-                                isHoliday: date.weekday == DateTime.saturday ||
-                                    date.weekday == DateTime.sunday,
-                                isPerformerWorkDay: date.month == 3 &&
-                                    (date.day == 1 ||
-                                        date.day == 1 ||
-                                        date.day == 2 ||
-                                        date.day == 3 ||
-                                        date.day == 4 ||
-                                        date.day == 5 ||
-                                        date.day == 6 ||
-                                        date.day == 7 ||
-                                        date.day == 8),
-                                style: ScheduledCalendarDayStyle(
-                                  width: null,
-                                  height: null,
-                                  padding: const EdgeInsets.all(8),
-                                  inscriptionTextStyle: const TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFF5C5B5F),
-                                  ),
-                                  currentDayTextStyle: const TextStyle(),
-                                  workDayTextStyle: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  ),
-                                  workDayInscription: 'Раб.',
-                                  holidayTextStyle: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF5C5B5F),
-                                  ),
-                                  holidayInscription: 'Вых.',
-                                  focusedDayTextStyle: const TextStyle(),
-                                  focusedDayDecoration: const BoxDecoration(),
-                                  performerWorkDayDecoration:
-                                      const BoxDecoration(
-                                    border: Border.fromBorderSide(
-                                      BorderSide(
-                                        width: 1,
-                                        color: Color(0xFF5C5B5F),
-                                      ),
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  performerWorkDayInscription:
-                                      'performerWorkDayInscription',
-                                  selectionModeTextStyle: const TextStyle(),
-                                  selectionModeDecoration:
-                                      const BoxDecoration(),
-                                  selectedDayTextStyle: const TextStyle(),
-                                  selectedDayDecoration: const BoxDecoration(),
-                                  appointmentNumberBadge:
-                                      const AppointmentNumberBadge(
-                                    width: 10,
-                                    height: 10,
-                                    appointmentNumber: 3,
-                                    badgeDecoration: BoxDecoration(),
-                                    numberTextStyle: TextStyle(),
-                                  ),
-                                ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              ...weeksList
+                  .map(
+                    (week) => Column(
+                      children: [
+                        Row(
+                          children: [
+                            if (week.first.weekday > 1)
+                              Spacer(
+                                flex: week.first.weekday - 1,
+                              ),
+                            Flexible(
+                              flex: week.length,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 20),
+                                height: 1,
+                                color: const Color(0xFF5C5B5F),
                               ),
                             ),
-                          )
-                          .toList(),
-                      if (week.last.weekday < 7)
-                        Spacer(
-                          flex: 7 - week.last.weekday,
+                            if (week.last.weekday < 7)
+                              Spacer(
+                                flex: 7 - week.last.weekday,
+                              ),
+                          ],
                         ),
-                    ],
-                  ),
-                )
-                .toList(),
-          ],
+                        Row(
+                          children: [
+                            if (week.first.weekday > 1)
+                              Spacer(
+                                flex: week.first.weekday - 1,
+                              ),
+                            ...week
+                                .map(
+                                  (date) => Flexible(
+                                    child: ScheduledCalendarDay(
+                                      day: date,
+                                      onPressed: (DateTime day) {},
+                                      isCalendarMode: false,
+                                      isHoliday:
+                                          date.weekday == DateTime.saturday ||
+                                              date.weekday == DateTime.sunday,
+                                      isPerformerWorkDay: date.month == 3 &&
+                                          (date.day == 1 ||
+                                              date.day == 1 ||
+                                              date.day == 2 ||
+                                              date.day == 3 ||
+                                              date.day == 4 ||
+                                              date.day == 5 ||
+                                              date.day == 6 ||
+                                              date.day == 7 ||
+                                              date.day == 8),
+                                      style: ScheduledCalendarDayStyle(
+                                        width: null,
+                                        height: null,
+                                        padding: const EdgeInsets.all(8),
+                                        inscriptionTextStyle: const TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFF5C5B5F),
+                                        ),
+                                        currentDayTextStyle: const TextStyle(),
+                                        workDayTextStyle: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                        workDayInscription: 'Раб.',
+                                        holidayTextStyle: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF5C5B5F),
+                                        ),
+                                        holidayInscription: 'Вых.',
+                                        focusedDayTextStyle: const TextStyle(),
+                                        focusedDayDecoration:
+                                            const BoxDecoration(),
+                                        performerWorkDayDecoration:
+                                            const BoxDecoration(
+                                          border: Border.fromBorderSide(
+                                            BorderSide(
+                                              width: 1,
+                                              color: Color(0xFF5C5B5F),
+                                            ),
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        performerWorkDayInscription:
+                                            'performerWorkDayInscription',
+                                        selectionModeTextStyle: const TextStyle(),
+                                        selectionModeDecoration:
+                                            const BoxDecoration(),
+                                        selectedDayTextStyle: const TextStyle(),
+                                        selectedDayDecoration:
+                                            const BoxDecoration(),
+                                        appointmentNumberBadge:
+                                            const AppointmentNumberBadge(
+                                          width: 10,
+                                          height: 10,
+                                          appointmentNumber: 3,
+                                          badgeDecoration: BoxDecoration(),
+                                          numberTextStyle: TextStyle(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            if (week.last.weekday < 7)
+                              Spacer(
+                                flex: 7 - week.last.weekday,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList(),
+            ],
+          ),
         ),
         // GridView.builder(
         //   addRepaintBoundaries: false,
