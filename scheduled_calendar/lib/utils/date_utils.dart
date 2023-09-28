@@ -190,15 +190,18 @@ abstract class DateUtils {
         : mondayWeekDayList.indexOf(weekdayValueForFirstValidDay);
   }
 
-   static List<List<DateTime>> weeksList({
+  static List<List<DateTime>> weeksList({
     required Month month,
+    DateTime? minDate,
+    DateTime? maxDate,
     bool startWeekWithSunday = false,
   }) {
-    final firstDate = DateTime(month.year, month.month, 1);
+    final firstDate = minDate ?? DateTime(month.year, month.month, 1);
     final weeksList = <List<DateTime>>[];
     weeksList.add([firstDate]);
     var nextDay = firstDate.nextDay;
-    while (nextDay.month == month.month) {
+    maxDate ??= DateTime(month.year, month.month + 1, -1);
+    while (!nextDay.isAfter(maxDate)) {
       if (nextDay.weekday != 1) {
         weeksList.last.add(nextDay);
       } else {

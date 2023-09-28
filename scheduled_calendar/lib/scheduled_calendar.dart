@@ -282,12 +282,21 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                 builderDelegate: PagedChildBuilderDelegate<Month>(
                   itemBuilder: (BuildContext context, Month month, int index) {
                     return _MonthView(
-                        month: month,
-                        monthNameBuilder: widget.monthBuilder,
-                        dayBuilder: widget.dayBuilder,
-                        onDayPressed: widget.onDayPressed,
-                        startWeekWithSunday: widget.startWeekWithSunday,
-                        weekDaysToHide: widget.weekdaysToHide);
+                      month: month,
+                      monthNameBuilder: widget.monthBuilder,
+                      dayBuilder: widget.dayBuilder,
+                      onDayPressed: widget.onDayPressed,
+                      startWeekWithSunday: widget.startWeekWithSunday,
+                      weekDaysToHide: widget.weekdaysToHide,
+                      minDate: widget.minDate != null &&
+                              widget.minDate!.month == month.month
+                          ? widget.minDate
+                          : DateTime(month.year, month.month, 1),
+                      maxDate: widget.maxDate != null &&
+                              widget.maxDate!.month == month.month
+                          ? widget.maxDate
+                          : DateTime(month.year, month.month + 1, -1),
+                    );
                   },
                 ),
               ),
@@ -314,6 +323,8 @@ class _MonthView extends StatelessWidget {
     this.onDayPressed,
     required this.weekDaysToHide,
     required this.startWeekWithSunday,
+    this.minDate,
+    this.maxDate,
   });
 
   final Month month;
@@ -322,17 +333,23 @@ class _MonthView extends StatelessWidget {
   final ValueChanged<DateTime>? onDayPressed;
   final bool startWeekWithSunday;
   final List<int> weekDaysToHide;
+  final DateTime? minDate;
+  final DateTime? maxDate;
 
   @override
   Widget build(BuildContext context) {
     /// if we have weekDaysToHide we need to replace those dates with blank spaces
-    final validDates = DateUtils.listOfValidDatesInMonth(month, weekDaysToHide);
-    final blankSpaces = DateUtils.getNoOfSpaceRequiredBeforeFirstValidDate(
-      weekDaysToHide,
-      validDates.isNotEmpty ? validDates.first.weekday : 0,
-      startWeekWithSunday,
+    // final validDates = DateUtils.listOfValidDatesInMonth(month, weekDaysToHide);
+    // final blankSpaces = DateUtils.getNoOfSpaceRequiredBeforeFirstValidDate(
+    //   weekDaysToHide,
+    //   validDates.isNotEmpty ? validDates.first.weekday : 0,
+    //   startWeekWithSunday,
+    // );
+    final weeksList = DateUtils.weeksList(
+      month: month,
+      minDate: minDate,
+      maxDate: maxDate,
     );
-    final weeksList = DateUtils.weeksList(month: month);
 
     return Column(
       children: <Widget>[
@@ -359,7 +376,8 @@ class _MonthView extends StatelessWidget {
                             Flexible(
                               flex: week.length,
                               child: Container(
-                                margin: const EdgeInsets.symmetric(vertical: 20),
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 20),
                                 height: 1,
                                 color: const Color(0xFF5C5B5F),
                               ),
@@ -433,7 +451,8 @@ class _MonthView extends StatelessWidget {
                                         ),
                                         performerWorkDayInscription:
                                             'performerWorkDayInscription',
-                                        selectionModeTextStyle: const TextStyle(),
+                                        selectionModeTextStyle:
+                                            const TextStyle(),
                                         selectionModeDecoration:
                                             const BoxDecoration(),
                                         selectedDayTextStyle: const TextStyle(),
