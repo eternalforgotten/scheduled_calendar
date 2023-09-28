@@ -59,15 +59,22 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Colors.black.withOpacity(0.3),
+        centerTitle: true,
+        title: const Text(
+          'Расписание',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
       body: Center(
         child: ScheduledCalendar(
-          minDate: DateTime(2023, 9, 10),
-          initialDate: DateTime(2023, 9, 15),
-          maxDate: DateTime(2023, 9, 24),
+          minDate: DateTime(2023, 3, 1),
+          initialDate: DateTime(2023, 3, 3),
+          maxDate: DateTime(2023, 4, 16),
         ),
       ),
     );

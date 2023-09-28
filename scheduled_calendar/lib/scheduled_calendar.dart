@@ -348,6 +348,7 @@ class _MonthView extends StatelessWidget {
           padding: EdgeInsets.zero,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: DateTime.daysPerWeek - weekDaysToHide.length,
+            childAspectRatio: 2 / 3,
           ),
           itemCount: validDates.length + blankSpaces,
           itemBuilder: (BuildContext context, int index) {
@@ -355,16 +356,79 @@ class _MonthView extends StatelessWidget {
 
             final date = validDates[index - blankSpaces];
             return AspectRatio(
-              aspectRatio: 1.0,
+              aspectRatio: 2 / 3,
               child: InkWell(
                 onTap: onDayPressed == null ? null : () => onDayPressed!(date),
                 child: dayBuilder?.call(context, date) ??
-                    _DefaultDayView(date: date),
+                    ScheduledCalendarDay(
+                      day: date,
+                      onPressed: (DateTime day) {},
+                      isCalendarMode: false,
+                      isHoliday: date.weekday == DateTime.saturday ||
+                          date.weekday == DateTime.sunday,
+                      isPerformerWorkDay: date.month == 3 &&
+                          (date.day == 1 ||
+                              date.day == 1 ||
+                              date.day == 2 ||
+                              date.day == 3 ||
+                              date.day == 4 ||
+                              date.day == 5 ||
+                              date.day == 6 ||
+                              date.day == 7 ||
+                              date.day == 8),
+                      style: ScheduledCalendarDayStyle(
+                        width: null,
+                        height: null,
+                        padding: const EdgeInsets.all(8),
+                        inscriptionTextStyle: const TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF5C5B5F),
+                        ),
+                        currentDayTextStyle: const TextStyle(),
+                        workDayTextStyle: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                        workDayInscription: 'Раб.',
+                        holidayTextStyle: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF5C5B5F),
+                        ),
+                        holidayInscription: 'Вых.',
+                        focusedDayTextStyle: const TextStyle(),
+                        focusedDayDecoration: const BoxDecoration(),
+                        performerWorkDayDecoration: const BoxDecoration(
+                          border: Border.fromBorderSide(
+                            BorderSide(
+                              width: 1,
+                              color: Color(0xFF5C5B5F),
+                            ),
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        performerWorkDayInscription:
+                            'performerWorkDayInscription',
+                        selectionModeTextStyle: const TextStyle(),
+                        selectionModeDecoration: const BoxDecoration(),
+                        selectedDayTextStyle: const TextStyle(),
+                        selectedDayDecoration: const BoxDecoration(),
+                        appointmentNumberBadge: const AppointmentNumberBadge(
+                          width: 10,
+                          height: 10,
+                          appointmentNumber: 3,
+                          badgeDecoration: BoxDecoration(),
+                          numberTextStyle: TextStyle(),
+                        ),
+                      ),
+                    ),
               ),
             );
           },
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -397,7 +461,11 @@ class _DefaultMonthView extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Text(
         '${months[month - 1]} $year',
-        style: Theme.of(context).textTheme.titleLarge,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFFEFD23C),
+        ),
       ),
     );
   }
@@ -415,6 +483,124 @@ class _DefaultDayView extends StatelessWidget {
         date.day.toString(),
       ),
     );
+  }
+}
+
+class ScheduledCalendarDay extends StatelessWidget {
+  final DateTime day;
+  final Function(DateTime day) onPressed;
+  final bool
+      isCalendarMode; // Если режим календаря, а не расписания, будет виджет с числом записей
+  final bool isHoliday;
+  final bool isPerformerWorkDay;
+  final ScheduledCalendarDayStyle style;
+  const ScheduledCalendarDay({
+    super.key,
+    required this.day,
+    required this.onPressed,
+    required this.isCalendarMode,
+    required this.isHoliday,
+    required this.isPerformerWorkDay,
+    required this.style,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: style.selectedDayDecoration,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8.5),
+            decoration:
+                isPerformerWorkDay ? style.performerWorkDayDecoration : null,
+            child: Center(
+              child: Text(
+                day.day.toString(),
+                style:
+                    isHoliday ? style.holidayTextStyle : style.workDayTextStyle,
+              ),
+            ),
+          ),
+          const SizedBox(height: 5),
+          isCalendarMode
+              ? style.appointmentNumberBadge
+              : Text(
+                  isPerformerWorkDay
+                      ? style.workDayInscription ?? ''
+                      : style.holidayInscription ?? '',
+                  style: style.inscriptionTextStyle,
+                ),
+        ],
+      ),
+    );
+  }
+}
+
+class ScheduledCalendarDayStyle {
+  final double? width;
+  final double? height;
+  final EdgeInsets padding; // отступ от числа до краёв кружочка
+  final TextStyle? inscriptionTextStyle; // стиль текста под числом
+  final TextStyle? currentDayTextStyle; // стиль текста текущего числа
+  final TextStyle? workDayTextStyle; // стиль числа буднего дня
+  final String? workDayInscription; // подпись под будним днём
+  final TextStyle holidayTextStyle; // стиль числа выходного дня
+  final String? holidayInscription; // подпись под выходным
+  final TextStyle focusedDayTextStyle; // стиль сфокусированного, нажатого числа
+  final Decoration focusedDayDecoration; // стиль фона нажатого числа
+  final Decoration
+      performerWorkDayDecoration; // стиль фона рабочего дня исполнителя
+  final String
+      performerWorkDayInscription; // подпись под числом рабочего дня исполнителя
+  final TextStyle selectionModeTextStyle; // стиль дней в режиме выделения
+  final Decoration
+      selectionModeDecoration; // стиль фона чисел дней в режиме выделения
+  final TextStyle selectedDayTextStyle; // стиль текста выбранного дня
+  final Decoration selectedDayDecoration; // стиль фона выбранного дня
+  final AppointmentNumberBadge
+      appointmentNumberBadge; // виджет для количества записей
+
+  ScheduledCalendarDayStyle({
+    required this.width,
+    required this.height,
+    required this.padding,
+    required this.inscriptionTextStyle,
+    required this.currentDayTextStyle,
+    required this.workDayTextStyle,
+    required this.workDayInscription,
+    required this.holidayTextStyle,
+    required this.holidayInscription,
+    required this.focusedDayTextStyle,
+    required this.focusedDayDecoration,
+    required this.performerWorkDayDecoration,
+    required this.performerWorkDayInscription,
+    required this.selectionModeTextStyle,
+    required this.selectionModeDecoration,
+    required this.selectedDayTextStyle,
+    required this.selectedDayDecoration,
+    required this.appointmentNumberBadge,
+  });
+}
+
+class AppointmentNumberBadge extends StatelessWidget {
+  final double width;
+  final double height;
+  final int appointmentNumber; // количество записей в день
+  final Decoration badgeDecoration; // стиль фона
+  final TextStyle numberTextStyle; // стиль текста
+  const AppointmentNumberBadge({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.appointmentNumber,
+    required this.badgeDecoration,
+    required this.numberTextStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
 
