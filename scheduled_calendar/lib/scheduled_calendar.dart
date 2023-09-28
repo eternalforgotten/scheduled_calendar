@@ -264,7 +264,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                         (BuildContext context, Month month, int index) {
                       return _MonthView(
                         month: month,
-                        monthBuilder: widget.monthBuilder,
+                        monthNameBuilder: widget.monthBuilder,
                         dayBuilder: widget.dayBuilder,
                         onDayPressed: widget.onDayPressed,
                         startWeekWithSunday: widget.startWeekWithSunday,
@@ -283,7 +283,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                   itemBuilder: (BuildContext context, Month month, int index) {
                     return _MonthView(
                         month: month,
-                        monthBuilder: widget.monthBuilder,
+                        monthNameBuilder: widget.monthBuilder,
                         dayBuilder: widget.dayBuilder,
                         onDayPressed: widget.onDayPressed,
                         startWeekWithSunday: widget.startWeekWithSunday,
@@ -309,7 +309,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
 class _MonthView extends StatelessWidget {
   _MonthView({
     required this.month,
-    this.monthBuilder,
+    this.monthNameBuilder,
     this.dayBuilder,
     this.onDayPressed,
     required this.weekDaysToHide,
@@ -317,7 +317,7 @@ class _MonthView extends StatelessWidget {
   });
 
   final Month month;
-  final MonthBuilder? monthBuilder;
+  final MonthBuilder? monthNameBuilder;
   final DayBuilder? dayBuilder;
   final ValueChanged<DateTime>? onDayPressed;
   final bool startWeekWithSunday;
@@ -336,11 +336,14 @@ class _MonthView extends StatelessWidget {
     return Column(
       children: <Widget>[
         /// display the default month header if none is provided
-        monthBuilder?.call(context, month.month, month.year) ??
+        monthNameBuilder?.call(context, month.month, month.year) ??
             _DefaultMonthView(
               month: month.month,
               year: month.year,
             ),
+        Column(
+          children: [],
+        ),
         GridView.builder(
           addRepaintBoundaries: false,
           physics: NeverScrollableScrollPhysics(),
