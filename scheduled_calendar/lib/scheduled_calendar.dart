@@ -265,10 +265,16 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                       return _MonthView(
                         month: month,
                         monthNameBuilder: widget.monthBuilder,
+                        centerMonthName: false,
                         dayBuilder: widget.dayBuilder,
                         onDayPressed: widget.onDayPressed,
                         startWeekWithSunday: widget.startWeekWithSunday,
                         weekDaysToHide: widget.weekdaysToHide,
+                        weeksSeparator: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 20),
+                          height: 1,
+                          color: const Color(0xFF5C5B5F),
+                        ),
                       );
                     },
                   ),
@@ -284,10 +290,16 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                     return _MonthView(
                       month: month,
                       monthNameBuilder: widget.monthBuilder,
+                      centerMonthName: false,
                       dayBuilder: widget.dayBuilder,
                       onDayPressed: widget.onDayPressed,
                       startWeekWithSunday: widget.startWeekWithSunday,
                       weekDaysToHide: widget.weekdaysToHide,
+                      weeksSeparator: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 20),
+                        height: 1,
+                        color: const Color(0xFF5C5B5F),
+                      ),
                       minDate: widget.minDate != null &&
                               widget.minDate!.month == month.month
                           ? widget.minDate
@@ -319,6 +331,8 @@ class _MonthView extends StatelessWidget {
   _MonthView({
     required this.month,
     this.monthNameBuilder,
+    required this.centerMonthName,
+    required this.weeksSeparator,
     this.dayBuilder,
     this.onDayPressed,
     required this.weekDaysToHide,
@@ -329,6 +343,9 @@ class _MonthView extends StatelessWidget {
 
   final Month month;
   final MonthBuilder? monthNameBuilder;
+  final bool centerMonthName;
+
+  final Widget weeksSeparator;
   final DayBuilder? dayBuilder;
   final ValueChanged<DateTime>? onDayPressed;
   final bool startWeekWithSunday;
@@ -338,30 +355,45 @@ class _MonthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// if we have weekDaysToHide we need to replace those dates with blank spaces
-    // final validDates = DateUtils.listOfValidDatesInMonth(month, weekDaysToHide);
-    // final blankSpaces = DateUtils.getNoOfSpaceRequiredBeforeFirstValidDate(
-    //   weekDaysToHide,
-    //   validDates.isNotEmpty ? validDates.first.weekday : 0,
-    //   startWeekWithSunday,
-    // );
     final weeksList = DateUtils.weeksList(
       month: month,
       minDate: minDate,
       maxDate: maxDate,
     );
 
-    return Column(
-      children: <Widget>[
-        /// display the default month header if none is provided
-        monthNameBuilder?.call(context, month.month, month.year) ??
-            _DefaultMonthView(
-              month: month.month,
-              year: month.year,
-            ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: <Widget>[
+          /// display the default month header if none is provided
+          Row(
+            mainAxisAlignment: centerMonthName
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
+            children: [
+              centerMonthName
+                  ? const SizedBox()
+                  : Spacer(
+                      flex: weeksList.first.first.weekday - 1,
+                    ),
+              Flexible(
+                flex: centerMonthName ? 1 : weeksList.first.length,
+                child:
+                    monthNameBuilder?.call(context, month.month, month.year) ??
+                        _DefaultMonthNameView(
+                          month: month.month,
+                          year: month.year,
+                          monthNameTextStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFEFD23C),
+                          ),
+                          monthNameDisplay: MonthDisplay.short,
+                        ),
+              ),
+            ],
+          ),
+          Column(
             children: [
               ...weeksList
                   .map(
@@ -375,12 +407,7 @@ class _MonthView extends StatelessWidget {
                               ),
                             Flexible(
                               flex: week.length,
-                              child: Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                height: 1,
-                                color: const Color(0xFF5C5B5F),
-                              ),
+                              child: weeksSeparator,
                             ),
                             if (week.last.weekday < 7)
                               Spacer(
@@ -397,7 +424,7 @@ class _MonthView extends StatelessWidget {
                             ...week
                                 .map(
                                   (date) => Flexible(
-                                    child: ScheduledCalendarDay(
+                                    child: _DefaultDayView(
                                       day: date,
                                       onPressed: (DateTime day) {},
                                       isCalendarMode: false,
@@ -483,105 +510,25 @@ class _MonthView extends StatelessWidget {
                   .toList(),
             ],
           ),
-        ),
-        // GridView.builder(
-        //   addRepaintBoundaries: false,
-        //   physics: NeverScrollableScrollPhysics(),
-        //   shrinkWrap: true,
-        //   padding: EdgeInsets.zero,
-        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        //     crossAxisCount: DateTime.daysPerWeek - weekDaysToHide.length,
-        //     childAspectRatio: 2 / 3,
-        //   ),
-        //   itemCount: validDates.length + blankSpaces,
-        //   itemBuilder: (BuildContext context, int index) {
-        //     if (index < blankSpaces) return SizedBox();
-
-        //     final date = validDates[index - blankSpaces];
-        //     return AspectRatio(
-        //       aspectRatio: 2 / 3,
-        //       child: InkWell(
-        //         onTap: onDayPressed == null ? null : () => onDayPressed!(date),
-        //         child: dayBuilder?.call(context, date) ??
-        // ScheduledCalendarDay(
-        //   day: date,
-        //   onPressed: (DateTime day) {},
-        //   isCalendarMode: false,
-        //   isHoliday: date.weekday == DateTime.saturday ||
-        //       date.weekday == DateTime.sunday,
-        //   isPerformerWorkDay: date.month == 3 &&
-        //       (date.day == 1 ||
-        //           date.day == 1 ||
-        //           date.day == 2 ||
-        //           date.day == 3 ||
-        //           date.day == 4 ||
-        //           date.day == 5 ||
-        //           date.day == 6 ||
-        //           date.day == 7 ||
-        //           date.day == 8),
-        //   style: ScheduledCalendarDayStyle(
-        //     width: null,
-        //     height: null,
-        //     padding: const EdgeInsets.all(8),
-        //     inscriptionTextStyle: const TextStyle(
-        //       fontSize: 9,
-        //       fontWeight: FontWeight.w400,
-        //       color: Color(0xFF5C5B5F),
-        //     ),
-        //     currentDayTextStyle: const TextStyle(),
-        //     workDayTextStyle: const TextStyle(
-        //       fontSize: 13,
-        //       fontWeight: FontWeight.w700,
-        //       color: Colors.white,
-        //     ),
-        //     workDayInscription: 'Раб.',
-        //     holidayTextStyle: const TextStyle(
-        //       fontSize: 13,
-        //       fontWeight: FontWeight.w700,
-        //       color: Color(0xFF5C5B5F),
-        //     ),
-        //     holidayInscription: 'Вых.',
-        //     focusedDayTextStyle: const TextStyle(),
-        //     focusedDayDecoration: const BoxDecoration(),
-        //     performerWorkDayDecoration: const BoxDecoration(
-        //       border: Border.fromBorderSide(
-        //         BorderSide(
-        //           width: 1,
-        //           color: Color(0xFF5C5B5F),
-        //         ),
-        //       ),
-        //       shape: BoxShape.circle,
-        //     ),
-        //     performerWorkDayInscription:
-        //         'performerWorkDayInscription',
-        //     selectionModeTextStyle: const TextStyle(),
-        //     selectionModeDecoration: const BoxDecoration(),
-        //     selectedDayTextStyle: const TextStyle(),
-        //     selectedDayDecoration: const BoxDecoration(),
-        //     appointmentNumberBadge: const AppointmentNumberBadge(
-        //       width: 10,
-        //       height: 10,
-        //       appointmentNumber: 3,
-        //       badgeDecoration: BoxDecoration(),
-        //       numberTextStyle: TextStyle(),
-        //     ),
-        //   ),
-        // ),
-        //       ),
-        //     );
-        //   },
-        // ),
-        const SizedBox(height: 20),
-      ],
+          const SizedBox(height: 20),
+        ],
+      ),
     );
   }
 }
 
-class _DefaultMonthView extends StatelessWidget {
+class _DefaultMonthNameView extends StatelessWidget {
   final int month;
   final int year;
+  final TextStyle monthNameTextStyle;
+  final MonthDisplay monthNameDisplay;
 
-  _DefaultMonthView({required this.month, required this.year});
+  _DefaultMonthNameView({
+    required this.month,
+    required this.year,
+    required this.monthNameTextStyle,
+    required this.monthNameDisplay,
+  });
 
   final months = [
     'January',
@@ -600,36 +547,14 @@ class _DefaultMonthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        '${months[month - 1]} $year',
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFFEFD23C),
-        ),
-      ),
+    return Text(
+      months[month - 1],
+      style: monthNameTextStyle,
     );
   }
 }
 
 class _DefaultDayView extends StatelessWidget {
-  final DateTime date;
-
-  _DefaultDayView({required this.date});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        date.day.toString(),
-      ),
-    );
-  }
-}
-
-class ScheduledCalendarDay extends StatelessWidget {
   final DateTime day;
   final Function(DateTime day) onPressed;
   final bool
@@ -637,7 +562,7 @@ class ScheduledCalendarDay extends StatelessWidget {
   final bool isHoliday;
   final bool isPerformerWorkDay;
   final ScheduledCalendarDayStyle style;
-  const ScheduledCalendarDay({
+  const _DefaultDayView({
     super.key,
     required this.day,
     required this.onPressed,
@@ -745,6 +670,11 @@ class AppointmentNumberBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Placeholder();
   }
+}
+
+enum MonthDisplay {
+  full,
+  short,
 }
 
 typedef MonthBuilder = Widget Function(
