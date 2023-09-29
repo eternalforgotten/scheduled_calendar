@@ -18,7 +18,6 @@ class ScheduledCalendar extends StatefulWidget {
     this.monthBuilder,
     this.dayBuilder,
     this.addAutomaticKeepAlives = false,
-    this.onDayPressed,
     this.onMonthLoaded,
     this.onPaginationCompleted,
     this.invisibleMonthsThreshold = 1,
@@ -58,10 +57,6 @@ class ScheduledCalendar extends StatefulWidget {
   /// this can be used for maintaining the last state. defaults to `false`
   final bool addAutomaticKeepAlives;
 
-  /// callback that provides the [DateTime] of the day that's been interacted
-  /// with
-  final ValueChanged<DateTime>? onDayPressed;
-
   /// callback when a new paginated month is loaded.
   final OnMonthLoaded? onMonthLoaded;
 
@@ -98,6 +93,13 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
 
   final Key downListKey = UniqueKey();
   late bool hideUp;
+  DateTime? _selectedDate;
+  
+  void _onDayTapped(DateTime? date) {
+    setState(() {
+      _selectedDate = date;
+    });
+  }
 
   @override
   void initState() {
@@ -246,10 +248,11 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                         (BuildContext context, Month month, int index) {
                       return MonthView(
                         month: month,
+                        selectedDate: _selectedDate,
                         monthNameBuilder: widget.monthBuilder,
                         centerMonthName: false,
                         dayBuilder: widget.dayBuilder,
-                        onDayPressed: widget.onDayPressed,
+                        onDayPressed: _onDayTapped,
                         startWeekWithSunday: widget.startWeekWithSunday,
                         weekDaysToHide: widget.weekdaysToHide,
                         weeksSeparator: Container(
@@ -270,11 +273,12 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                 builderDelegate: PagedChildBuilderDelegate<Month>(
                   itemBuilder: (BuildContext context, Month month, int index) {
                     return MonthView(
+                      selectedDate: _selectedDate,
                       month: month,
                       monthNameBuilder: widget.monthBuilder,
                       centerMonthName: false,
                       dayBuilder: widget.dayBuilder,
-                      onDayPressed: widget.onDayPressed,
+                      onDayPressed: _onDayTapped,
                       startWeekWithSunday: widget.startWeekWithSunday,
                       weekDaysToHide: widget.weekdaysToHide,
                       weeksSeparator: Container(

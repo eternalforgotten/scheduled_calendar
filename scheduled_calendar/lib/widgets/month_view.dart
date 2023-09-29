@@ -3,7 +3,7 @@ import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
-import 'package:scheduled_calendar/widgets/default_month_view.dart';
+import 'package:scheduled_calendar/widgets/default_month_name_view.dart';
 import 'package:scheduled_calendar/widgets/week_view.dart';
 
 class MonthView extends StatelessWidget {
@@ -19,6 +19,7 @@ class MonthView extends StatelessWidget {
     required this.startWeekWithSunday,
     this.minDate,
     this.maxDate,
+    this.selectedDate,
   });
 
   final Month month;
@@ -27,11 +28,12 @@ class MonthView extends StatelessWidget {
 
   final Widget weeksSeparator;
   final DayBuilder? dayBuilder;
-  final ValueChanged<DateTime>? onDayPressed;
+  final ValueChanged<DateTime?>? onDayPressed;
   final bool startWeekWithSunday;
   final List<int> weekDaysToHide;
   final DateTime? minDate;
   final DateTime? maxDate;
+  final DateTime? selectedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,8 @@ class MonthView extends StatelessWidget {
                     (week) => WeekView(
                       week,
                       weeksSeparator: weeksSeparator,
+                      onDayPressed: onDayPressed,
+                      selectedDate: selectedDate,
                     ),
                   )
                   .toList(),
