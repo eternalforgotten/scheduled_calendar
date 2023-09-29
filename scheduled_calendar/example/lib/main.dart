@@ -72,9 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: ScheduledCalendar(
-          minDate: DateTime(2023, 3, 3),
-          maxDate: DateTime(2023, 4, 16),
-          initialDate: DateTime(2023, 3, 5),
+          minDate: DateTime(2023, 1, 1),
+          maxDate: DateTime(2023, 12, 31),
+          initialDate: DateTime(2023, 4, 16),
         ),
       ),
     );

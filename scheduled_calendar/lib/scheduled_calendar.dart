@@ -374,9 +374,9 @@ class _MonthView extends StatelessWidget {
             children: [
               centerMonthName
                   ? const SizedBox()
-                  : Spacer(
+                  : weeksList.first.first.weekday > 1 ? Spacer(
                       flex: weeksList.first.first.weekday - 1,
-                    ),
+                    ) : const SizedBox(),
               Flexible(
                 flex: centerMonthName ? 1 : weeksList.first.length,
                 child:
