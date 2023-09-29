@@ -3,6 +3,7 @@ library scheduled_calendar;
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter/rendering.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:intl/intl.dart';
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 
@@ -381,7 +382,7 @@ class _MonthView extends StatelessWidget {
                 child:
                     monthNameBuilder?.call(context, month.month, month.year) ??
                         _DefaultMonthNameView(
-                          month: month.month,
+                          month: month,
                           year: month.year,
                           monthNameTextStyle: const TextStyle(
                             fontSize: 15,
@@ -518,7 +519,7 @@ class _MonthView extends StatelessWidget {
 }
 
 class _DefaultMonthNameView extends StatelessWidget {
-  final int month;
+  final Month month;
   final int year;
   final TextStyle monthNameTextStyle;
   final MonthDisplay monthNameDisplay;
@@ -530,25 +531,16 @@ class _DefaultMonthNameView extends StatelessWidget {
     required this.monthNameDisplay,
   });
 
-  final months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Text(
-      months[month - 1],
+      DateFormat(monthNameDisplay == MonthDisplay.full ? 'MMMM' : 'MMM').format(
+        DateTime(
+          month.year,
+          month.month,
+          1,
+        ),
+      ),
       style: monthNameTextStyle,
     );
   }
