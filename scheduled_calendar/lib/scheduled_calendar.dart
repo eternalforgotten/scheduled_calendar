@@ -2,7 +2,10 @@ library scheduled_calendar;
 
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter/rendering.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
@@ -27,6 +30,11 @@ class ScheduledCalendar extends StatefulWidget {
     this.scrollController,
     this.listPadding = const EdgeInsets.symmetric(horizontal: 16),
     this.startWeekWithSunday = false,
+    this.onDayPressed,
+    this.selectedDateCardBuilder,
+    this.disableInteraction = false,
+    this.selectedDateCardAnimationDuration,
+    this.selectedDateCardAnimationCurve,
     this.nextAvailableDate,
     this.role,
     this.dayStyle = const ScheduledCalendarDayStyle(),
@@ -63,11 +71,11 @@ class ScheduledCalendar extends StatefulWidget {
   /// * [int] month: 1-12
   final MonthNameBuilder? monthNameBuilder;
 
-  /// a Builder used for day generation. a default [DayBuilder] is
-  /// used when no custom [DayBuilder] is provided.
+  /// a Builder used for day generation. a default [DateBuilder] is
+  /// used when no custom [DateBuilder] is provided.
   /// * [context]
   /// * [DateTime] date
-  final DayBuilder? dayBuilder;
+  final DateBuilder? dayBuilder;
 
   /// if the calendar should stay cached when the widget is no longer loaded.
   /// this can be used for maintaining the last state. defaults to `false`
@@ -129,6 +137,23 @@ class ScheduledCalendar extends StatefulWidget {
   /// Appointments number badge style
   final AppointmentBadgeStyle appointmentBadgeStyle;
 
+  ///Callback that overrides behaviour of calendar day interaction
+  ///By default, calendar will show a card, appearing below the week of selected day,
+  ///which is customizable via [selectedDateCardBuilder]
+  ///The argument is null when pressing the selected day again
+  final DateCallback? onDayPressed;
+
+  ///Widget, used to display card when a day is tappped
+  final DateBuilder? selectedDateCardBuilder;
+
+  ///Whether to disable calendar interaction or not
+  ///if this is set to true, [onDayPressed] will be ignored
+  final bool disableInteraction;
+
+  final Duration? selectedDateCardAnimationDuration;
+
+  final Curve? selectedDateCardAnimationCurve;
+
   @override
   _ScheduledCalendarState createState() => _ScheduledCalendarState();
 }
@@ -139,12 +164,13 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
 
   final Key downListKey = UniqueKey();
   late bool hideUp;
-  DateTime? _selectedDate;
 
-  void _onDayTapped(DateTime? date) {
-    setState(() {
-      _selectedDate = date;
-    });
+  void _onDayTapped(BuildContext context, DateTime? date) {
+    final state = context.read<CalendarState>();
+    if (state.interaction != CalendarInteraction.disabled) {
+      widget.onDayPressed?.call(date);
+      state.setDate(date);
+    }
   }
 
   @override
@@ -275,93 +301,125 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollable(
-      controller: widget.scrollController,
-      physics: widget.physics,
-      viewportBuilder: (BuildContext context, ViewportOffset position) {
-        return Viewport(
-          offset: position,
-          center: downListKey,
-          slivers: [
-            if (!hideUp)
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(widget.listPadding.left,
-                    widget.listPadding.top, widget.listPadding.right, 0),
-                sliver: PagedSliverList(
-                  pagingController: _pagingReplyUpController,
-                  builderDelegate: PagedChildBuilderDelegate<Month>(
-                    itemBuilder:
-                        (BuildContext context, Month month, int index) {
-                      return MonthView(
-                        month: month,
-                        selectedDate: _selectedDate,
-                        monthNameBuilder: widget.monthNameBuilder,
-                        centerMonthName: widget.centerMonthName,
-                        dayBuilder: widget.dayBuilder,
-                        onDayPressed: _onDayTapped,
-                        startWeekWithSunday: widget.startWeekWithSunday,
-                        weeksSeparator: widget.weeksSeparator,
-                        minDate: widget.minDate != null &&
-                                widget.minDate!.month == month.month
-                            ? widget.minDate
-                            : DateTime(month.year, month.month, 1),
-                        maxDate: widget.maxDate != null &&
-                                widget.maxDate!.month == month.month
-                            ? widget.maxDate
-                            : DateTime(month.year, month.month + 1, -1),
-                        dayStyle: widget.dayStyle,
-                        monthNameTextStyle: widget.monthNameTextStyle,
-                        monthNameDisplay: widget.monthNameDisplay,
-                        displayYearInMonthName: widget.displayYearInMonthName,
-                        isCalendarMode: widget.isCalendarMode,
-                        appointmentBadgeStyle: widget.appointmentBadgeStyle,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            SliverPadding(
-              key: downListKey,
-              padding: _getDownListPadding(),
-              sliver: PagedSliverList(
-                pagingController: _pagingReplyDownController,
-                builderDelegate: PagedChildBuilderDelegate<Month>(
-                  itemBuilder: (BuildContext context, Month month, int index) {
-                    return MonthView(
-                      selectedDate: _selectedDate,
-                      month: month,
-                      monthNameBuilder: widget.monthNameBuilder,
-                      centerMonthName: false,
-                      dayBuilder: widget.dayBuilder,
-                      onDayPressed: _onDayTapped,
-                      startWeekWithSunday: widget.startWeekWithSunday,
-                      weeksSeparator: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 20),
-                        height: 1,
-                        color: const Color(0xFF5C5B5F),
-                      ),
-                      minDate: widget.minDate != null &&
-                              widget.minDate!.month == month.month
-                          ? widget.minDate
-                          : DateTime(month.year, month.month, 1),
-                      maxDate: widget.maxDate != null &&
-                              widget.maxDate!.month == month.month
-                          ? widget.maxDate
-                          : DateTime(month.year, month.month + 1, -1),
-                      dayStyle: widget.dayStyle,
-                      monthNameTextStyle: widget.monthNameTextStyle,
-                      monthNameDisplay: widget.monthNameDisplay,
-                      displayYearInMonthName: widget.displayYearInMonthName,
-                      isCalendarMode: widget.isCalendarMode,
-                      appointmentBadgeStyle: widget.appointmentBadgeStyle,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
+    return Provider(
+      create: (_) {
+        CalendarInteraction interaction;
+        if (widget.disableInteraction) {
+          interaction = CalendarInteraction.disabled;
+        } else {
+          interaction = widget.onDayPressed != null
+              ? CalendarInteraction.action
+              : CalendarInteraction.dateCard;
+        }
+        return CalendarState(interaction: interaction);
       },
+      child: Observer(
+        builder: (context) {
+          final selectedDate = context.watch<CalendarState>().selectedDate;
+          return Scrollable(
+            controller: widget.scrollController,
+            physics: widget.physics,
+            viewportBuilder: (BuildContext context, ViewportOffset position) {
+              return Viewport(
+                offset: position,
+                center: downListKey,
+                slivers: [
+                  if (!hideUp)
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(widget.listPadding.left,
+                          widget.listPadding.top, widget.listPadding.right, 0),
+                      sliver: PagedSliverList(
+                        pagingController: _pagingReplyUpController,
+                        builderDelegate: PagedChildBuilderDelegate<Month>(
+                          itemBuilder:
+                              (BuildContext context, Month month, int index) {
+                            return MonthView(
+                              selectedDateCardAnimationCurve:
+                                  widget.selectedDateCardAnimationCurve,
+                              selectedDateCardAnimationDuration:
+                                  widget.selectedDateCardAnimationDuration,
+                              selectedDateCardBuilder:
+                                  widget.selectedDateCardBuilder,
+                              month: month,
+                              selectedDate: selectedDate,
+                              monthNameBuilder: widget.monthNameBuilder,
+                              centerMonthName: false,
+                              dayBuilder: widget.dayBuilder,
+                              onDayPressed: (date) =>
+                                  _onDayTapped(context, date),
+                              startWeekWithSunday: widget.startWeekWithSunday,
+                              weeksSeparator: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                height: 1,
+                                color: const Color(0xFF5C5B5F),
+                              ),
+                              dayStyle: widget.dayStyle,
+                              monthNameTextStyle: widget.monthNameTextStyle,
+                              monthNameDisplay: widget.monthNameDisplay,
+                              displayYearInMonthName:
+                                  widget.displayYearInMonthName,
+                              isCalendarMode: widget.isCalendarMode,
+                              appointmentBadgeStyle:
+                                  widget.appointmentBadgeStyle,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  SliverPadding(
+                    key: downListKey,
+                    padding: _getDownListPadding(),
+                    sliver: PagedSliverList(
+                      pagingController: _pagingReplyDownController,
+                      builderDelegate: PagedChildBuilderDelegate<Month>(
+                        itemBuilder:
+                            (BuildContext context, Month month, int index) {
+                          return MonthView(
+                            selectedDateCardAnimationCurve:
+                                widget.selectedDateCardAnimationCurve,
+                            selectedDateCardAnimationDuration:
+                                widget.selectedDateCardAnimationDuration,
+                            selectedDateCardBuilder:
+                                widget.selectedDateCardBuilder,
+                            selectedDate: selectedDate,
+                            month: month,
+                            monthNameBuilder: widget.monthNameBuilder,
+                            centerMonthName: false,
+                            dayBuilder: widget.dayBuilder,
+                            onDayPressed: (date) => _onDayTapped(context, date),
+                            startWeekWithSunday: widget.startWeekWithSunday,
+                            weeksSeparator: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 20),
+                              height: 1,
+                              color: const Color(0xFF5C5B5F),
+                            ),
+                            minDate: widget.minDate != null &&
+                                    widget.minDate!.month == month.month
+                                ? widget.minDate
+                                : DateTime(month.year, month.month, 1),
+                            maxDate: widget.maxDate != null &&
+                                    widget.maxDate!.month == month.month
+                                ? widget.maxDate
+                                : DateTime(month.year, month.month + 1, -1),
+                            dayStyle: widget.dayStyle,
+                            monthNameTextStyle: widget.monthNameTextStyle,
+                            monthNameDisplay: widget.monthNameDisplay,
+                            displayYearInMonthName:
+                                widget.displayYearInMonthName,
+                            isCalendarMode: widget.isCalendarMode,
+                            appointmentBadgeStyle: widget.appointmentBadgeStyle,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

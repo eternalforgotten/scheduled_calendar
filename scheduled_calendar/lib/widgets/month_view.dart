@@ -20,6 +20,9 @@ class MonthView extends StatelessWidget {
     this.minDate,
     this.maxDate,
     this.selectedDate,
+    this.selectedDateCardBuilder,
+    this.selectedDateCardAnimationCurve,
+    this.selectedDateCardAnimationDuration,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
     this.monthNameTextStyle = const TextStyle(
@@ -37,12 +40,16 @@ class MonthView extends StatelessWidget {
   final Month month;
   final bool centerMonthName;
   final Widget weeksSeparator;
+  final DateBuilder? dayBuilder;
+  final DateCallback? onDayPressed;
   final bool startWeekWithSunday;
   final MonthNameBuilder? monthNameBuilder;
-  final DayBuilder? dayBuilder;
   final DateTime? minDate;
   final DateTime? maxDate;
   final DateTime? selectedDate;
+  final DateBuilder? selectedDateCardBuilder;
+  final Duration? selectedDateCardAnimationDuration;
+  final Curve? selectedDateCardAnimationCurve;
   final TextStyle monthNameTextStyle;
   final MonthNameDisplay monthNameDisplay;
   final bool displayYearInMonthName;
@@ -50,7 +57,6 @@ class MonthView extends StatelessWidget {
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
   final AppointmentBadgeStyle appointmentBadgeStyle;
-  final ValueChanged<DateTime?>? onDayPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +106,11 @@ class MonthView extends StatelessWidget {
                     dayStyle: dayStyle,
                     appointmentBadgeStyle: appointmentBadgeStyle,
                     isCalendarMode: isCalendarMode,
+                    selectedDateCardBuilder: selectedDateCardBuilder,
+                    selectedDateCardAnimationCurve:
+                        selectedDateCardAnimationCurve,
+                    selectedDateCardAnimationDuration:
+                        selectedDateCardAnimationDuration,
                   ),
                 )
                 .toList(),

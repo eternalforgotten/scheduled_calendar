@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
+import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
+import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
@@ -8,10 +12,13 @@ class WeekView extends StatefulWidget {
   final List<DateTime> week;
   final DateTime? selectedDate;
   final Widget weeksSeparator;
+  final DateCallback? onDayPressed;
+  final DateBuilder? selectedDateCardBuilder;
+  final Duration selectedDateCardAnimationDuration;
+  final Curve selectedDateCardAnimationCurve;
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
   final AppointmentBadgeStyle appointmentBadgeStyle;
-  final void Function(DateTime?)? onDayPressed;
   const WeekView(
     this.week, {
     super.key,
@@ -21,48 +28,70 @@ class WeekView extends StatefulWidget {
     this.onDayPressed,
     this.isCalendarMode = false,
     this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
-  });
+    this.selectedDateCardBuilder,
+    Duration? selectedDateCardAnimationDuration,
+    Curve? selectedDateCardAnimationCurve,
+  })  : selectedDateCardAnimationCurve =
+            selectedDateCardAnimationCurve ?? Curves.linear,
+        selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
+            const Duration(milliseconds: 400);
 
   @override
   State<WeekView> createState() => _WeekViewState();
 }
 
-class _WeekViewState extends State<WeekView> {
+class _WeekViewState extends State<WeekView>
+    with SingleTickerProviderStateMixin {
   bool expanded = false;
   DateTime? dateToDisplay;
+  late AnimationController animationController;
+  late CalendarInteraction interaction;
+
+  @override
+  void initState() {
+    super.initState();
+    interaction = context.read<CalendarState>().interaction;
+    animationController = AnimationController(
+      vsync: this,
+      duration: widget.selectedDateCardAnimationDuration,
+    );
+  }
+
   @override
   void didUpdateWidget(covariant WeekView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final date = widget.selectedDate;
-    final oldDate = oldWidget.selectedDate;
-    if (date != null) {
-      final dateInWeek = date.isSameDayOrAfter(widget.week.first) &&
-          date.isSameDayOrBefore(widget.week.last);
-      if (dateInWeek) {
-        dateToDisplay = date;
-        _expand();
+    if (interaction == CalendarInteraction.dateCard) {
+      final date = widget.selectedDate;
+      final oldDate = oldWidget.selectedDate;
+      if (date != null) {
+        final dateInWeek = date.isSameDayOrAfter(widget.week.first) &&
+            date.isSameDayOrBefore(widget.week.last);
+        if (dateInWeek) {
+          dateToDisplay = date;
+          _expand();
+        } else {
+          dateToDisplay = oldDate;
+          _collapse();
+        }
       } else {
-        dateToDisplay = oldDate;
-        _collapse();
-      }
-    } else {
-      if (oldDate != null) {
-        dateToDisplay = oldDate;
-        _collapse();
+        if (oldDate != null) {
+          dateToDisplay = oldDate;
+          _collapse();
+        }
       }
     }
   }
 
   void _expand() {
-    setState(() {
-      expanded = true;
-    });
+    if (!animationController.isCompleted) {
+      animationController.forward();
+    }
   }
 
   void _collapse() {
-    setState(() {
-      expanded = false;
-    });
+    if (animationController.isCompleted) {
+      animationController.reverse();
+    }
   }
 
   @override
@@ -97,10 +126,14 @@ class _WeekViewState extends State<WeekView> {
                     child: DayView(
                       date,
                       onPressed: (date) {
-                        final newSelectedDate = widget.selectedDate;
-                        if (newSelectedDate != null &&
-                            date.isSameDay(newSelectedDate)) {
-                          widget.onDayPressed?.call(null);
+                        if (interaction == CalendarInteraction.dateCard) {
+                          final newSelectedDate = widget.selectedDate;
+                          if (newSelectedDate != null &&
+                              date.isSameDay(newSelectedDate)) {
+                            widget.onDayPressed?.call(null);
+                          } else {
+                            widget.onDayPressed?.call(date);
+                          }
                         } else {
                           widget.onDayPressed?.call(date);
                         }
@@ -130,38 +163,51 @@ class _WeekViewState extends State<WeekView> {
               ),
           ],
         ),
-        _DateCard(
-          expanded: expanded,
-          date: dateToDisplay,
-        ),
+        widget.selectedDateCardBuilder != null
+            ? SizeTransition(
+                sizeFactor: CurvedAnimation(
+                  curve: widget.selectedDateCardAnimationCurve,
+                  parent: animationController,
+                ),
+                child: widget.selectedDateCardBuilder!(
+                  context,
+                  dateToDisplay ?? DateTime.now(),
+                ),
+              )
+            : _DefaultDateCard(
+                date: dateToDisplay ?? DateTime.now(),
+                controller: animationController,
+              ),
       ],
     );
   }
 }
 
-class _DateCard extends StatelessWidget {
-  final DateTime? date;
-  final bool expanded;
-  const _DateCard({
+class _DefaultDateCard extends StatelessWidget {
+  final DateTime date;
+  final AnimationController controller;
+  const _DefaultDateCard({
     super.key,
     required this.date,
-    required this.expanded,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 400),
-      alignment: Alignment.center,
-      height: expanded ? 100 : 0,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.amber,
-      ),
-      child: Text(
-        date.toString(),
-        style: const TextStyle(
-          fontSize: 16,
+    return SizeTransition(
+      sizeFactor: controller,
+      child: Container(
+        alignment: Alignment.center,
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.amber,
+        ),
+        child: Text(
+          date.toString(),
+          style: TextStyle(
+            fontSize: 16,
+          ),
         ),
       ),
     );

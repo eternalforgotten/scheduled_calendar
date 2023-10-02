@@ -10,6 +10,13 @@ enum PaginationDirection {
   down,
 }
 
+/// enum for defining calendar interaction
+enum CalendarInteraction {
+  dateCard,
+  action,
+  disabled,
+}
+
 /// enum for user's role
 enum Role {
   performer,
