@@ -8,6 +8,7 @@ import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_view.dart';
+import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class ScheduledCalendar extends StatefulWidget {
   ScheduledCalendar({
@@ -255,11 +256,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                         onDayPressed: _onDayTapped,
                         startWeekWithSunday: widget.startWeekWithSunday,
                         weekDaysToHide: widget.weekdaysToHide,
-                        weeksSeparator: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20),
-                          height: 1,
-                          color: const Color(0xFF5C5B5F),
-                        ),
+                        weeksSeparator: const WeeksSeparator(),
                       );
                     },
                   ),
