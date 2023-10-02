@@ -169,7 +169,6 @@ abstract class DateUtils {
   /// This method returns the list of the weeks for month, where every week is the list of days
   static List<List<DateTime>> weeksList({
     required Month month,
-    bool startWeekWithSunday = false,
   }) {
     List<List<DateTime>> weeks = [];
     for (final week in month.weeks) {

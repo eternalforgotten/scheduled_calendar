@@ -19,8 +19,12 @@ class WeekView extends StatefulWidget {
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
   final AppointmentBadgeStyle appointmentBadgeStyle;
+  final bool startWeekWithSunday;
+  final bool isFirstWeek;
+  final bool isLastWeek;
   const WeekView(
     this.week, {
+    this.startWeekWithSunday = false,
     super.key,
     this.selectedDate,
     this.weeksSeparator = const WeeksSeparator(),
@@ -31,6 +35,8 @@ class WeekView extends StatefulWidget {
     this.selectedDateCardBuilder,
     Duration? selectedDateCardAnimationDuration,
     Curve? selectedDateCardAnimationCurve,
+    required this.isFirstWeek,
+    required this.isLastWeek,
   })  : selectedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -96,29 +102,32 @@ class _WeekViewState extends State<WeekView>
 
   @override
   Widget build(BuildContext context) {
+    final isLastWeek = widget.isLastWeek;
+    final isFirstWeek = widget.isFirstWeek;
+    final week = widget.week;
     return Column(
       children: [
         Row(
           children: [
-            if (widget.week.first.weekday > 1)
+            if (isFirstWeek && week.length < 7)
               Spacer(
-                flex: widget.week.first.weekday - 1,
+                flex: 7 - week.length,
               ),
             Flexible(
-              flex: widget.week.length,
+              flex: week.length,
               child: widget.weeksSeparator,
             ),
-            if (widget.week.last.weekday < 7)
+            if (isLastWeek && week.length < 7)
               Spacer(
-                flex: 7 - widget.week.last.weekday,
+                flex: 7 - week.length,
               ),
           ],
         ),
         Row(
           children: [
-            if (widget.week.first.weekday > 1)
+            if (isFirstWeek && week.length < 7)
               Spacer(
-                flex: widget.week.first.weekday - 1,
+                flex: 7 - week.length,
               ),
             ...widget.week
                 .map(
@@ -157,9 +166,9 @@ class _WeekViewState extends State<WeekView>
                   ),
                 )
                 .toList(),
-            if (widget.week.last.weekday < 7)
+            if (isLastWeek && week.length < 7)
               Spacer(
-                flex: 7 - widget.week.last.weekday,
+                flex: 7 - week.length,
               ),
           ],
         ),
@@ -187,7 +196,6 @@ class _DefaultDateCard extends StatelessWidget {
   final DateTime date;
   final AnimationController controller;
   const _DefaultDateCard({
-    super.key,
     required this.date,
     required this.controller,
   });
@@ -205,7 +213,7 @@ class _DefaultDateCard extends StatelessWidget {
         ),
         child: Text(
           date.toString(),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
           ),
         ),

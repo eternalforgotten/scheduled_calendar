@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
@@ -74,9 +75,9 @@ class MonthView extends StatelessWidget {
           children: [
             centerMonthName
                 ? const SizedBox()
-                : weeksList.first.first.weekday > 1
+                : weeksList.first.length < 7
                     ? Spacer(
-                        flex: weeksList.first.first.weekday - 1,
+                        flex: 7 - weeksList.first.length,
                       )
                     : const SizedBox(),
             Flexible(
@@ -96,9 +97,10 @@ class MonthView extends StatelessWidget {
         Column(
           children: [
             ...weeksList
-                .map(
-                  (week) => WeekView(
+                .mapIndexed(
+                  (index, week) => WeekView(
                     week,
+                    startWeekWithSunday: startWeekWithSunday,
                     weeksSeparator: weeksSeparator,
                     onDayPressed: onDayPressed,
                     selectedDate: selectedDate,
@@ -110,6 +112,8 @@ class MonthView extends StatelessWidget {
                         selectedDateCardAnimationCurve,
                     selectedDateCardAnimationDuration:
                         selectedDateCardAnimationDuration,
+                    isFirstWeek: index == 0,
+                    isLastWeek: index == weeksList.length - 1,
                   ),
                 )
                 .toList(),

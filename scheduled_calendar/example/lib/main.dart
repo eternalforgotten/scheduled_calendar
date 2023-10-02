@@ -72,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: ScheduledCalendar(
+          startWeekWithSunday: true,
           minDate: DateTime(2023, 9, 7),
           maxDate: DateTime(2023, 11, 16),
           initialDate: DateTime(2023, 9, 9),
