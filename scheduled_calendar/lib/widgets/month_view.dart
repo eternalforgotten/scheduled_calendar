@@ -20,6 +20,9 @@ class MonthView extends StatelessWidget {
     this.minDate,
     this.maxDate,
     this.selectedDate,
+    this.selectedDateCardBuilder,
+    this.selectedDateCardAnimationCurve,
+    this.selectedDateCardAnimationDuration,
   });
 
   final Month month;
@@ -27,13 +30,16 @@ class MonthView extends StatelessWidget {
   final bool centerMonthName;
 
   final Widget weeksSeparator;
-  final DayBuilder? dayBuilder;
-  final ValueChanged<DateTime?>? onDayPressed;
+  final DateBuilder? dayBuilder;
+  final DateCallback? onDayPressed;
   final bool startWeekWithSunday;
   final List<int> weekDaysToHide;
   final DateTime? minDate;
   final DateTime? maxDate;
   final DateTime? selectedDate;
+  final DateBuilder? selectedDateCardBuilder;
+  final Duration? selectedDateCardAnimationDuration;
+  final Curve? selectedDateCardAnimationCurve;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +92,9 @@ class MonthView extends StatelessWidget {
                       weeksSeparator: weeksSeparator,
                       onDayPressed: onDayPressed,
                       selectedDate: selectedDate,
+                      selectedDateCardBuilder: selectedDateCardBuilder,
+                      selectedDateCardAnimationCurve: selectedDateCardAnimationCurve,
+                      selectedDateCardAnimationDuration: selectedDateCardAnimationDuration,
                     ),
                   )
                   .toList(),

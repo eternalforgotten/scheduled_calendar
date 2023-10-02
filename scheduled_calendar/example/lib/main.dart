@@ -75,6 +75,26 @@ class _MyHomePageState extends State<MyHomePage> {
           minDate: DateTime(2023, 3, 3),
           maxDate: DateTime(2023, 6, 16),
           initialDate: DateTime(2023, 3, 5),
+          selectedDateCardAnimationCurve: Curves.easeInOutBack,
+          selectedDateCardAnimationDuration: const Duration(milliseconds: 300),
+          selectedDateCardBuilder: (context, date) {
+            return Container(
+              height: 50,
+              color: Colors.green,
+              alignment: Alignment.center,
+              child: Text(date.toString()),
+            );
+          },
+          onDayPressed: (date) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: Text(date.toString()),
+                );
+              },
+            );
+          },
         ),
       ),
     );

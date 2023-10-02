@@ -8,3 +8,9 @@ enum PaginationDirection {
   up,
   down,
 }
+
+enum CalendarInteraction {
+  dateCard,
+  action,
+  disabled,
+}
