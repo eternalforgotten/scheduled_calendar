@@ -3,7 +3,7 @@ import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
-import 'package:scheduled_calendar/widgets/default_month_name_view.dart';
+import 'package:scheduled_calendar/widgets/month_name_view.dart';
 import 'package:scheduled_calendar/widgets/week_view.dart';
 
 class MonthView extends StatelessWidget {
@@ -64,9 +64,8 @@ class MonthView extends StatelessWidget {
                 flex: centerMonthName ? 1 : weeksList.first.length,
                 child:
                     monthNameBuilder?.call(context, month.month, month.year) ??
-                        DefaultMonthNameView(
+                        MonthNameView(
                           month: month,
-                          year: month.year,
                           monthNameTextStyle: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,

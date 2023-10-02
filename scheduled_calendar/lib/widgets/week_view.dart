@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/widgets/badge_view.dart';
-import 'package:scheduled_calendar/widgets/default_day_view.dart';
+import 'package:scheduled_calendar/widgets/day_view.dart';
 
 class WeekView extends StatefulWidget {
   final DateTime? selectedDate;
@@ -88,7 +88,7 @@ class _WeekViewState extends State<WeekView> {
             ...widget.week
                 .map(
                   (date) => Flexible(
-                    child: DefaultDayView(
+                    child: DayView(
                       day: date,
                       onPressed: (date) {
                         final newSelectedDate = widget.selectedDate;

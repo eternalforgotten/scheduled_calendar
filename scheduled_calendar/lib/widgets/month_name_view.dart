@@ -3,16 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 
-class DefaultMonthNameView extends StatelessWidget {
+class MonthNameView extends StatelessWidget {
   final Month month;
-  final int year;
   final TextStyle monthNameTextStyle;
   final MonthDisplay monthNameDisplay;
 
-  const DefaultMonthNameView({
+  const MonthNameView({
     super.key,
     required this.month,
-    required this.year,
     required this.monthNameTextStyle,
     required this.monthNameDisplay,
   });

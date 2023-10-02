@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 
-class DefaultDayView extends StatelessWidget {
+class DayView extends StatelessWidget {
   final DateTime day;
   final void Function(DateTime day)? onPressed;
   final bool
@@ -9,7 +9,7 @@ class DefaultDayView extends StatelessWidget {
   final bool isHoliday;
   final bool isPerformerWorkDay;
   final ScheduledCalendarDayStyle style;
-  const DefaultDayView({
+  const DayView({
     super.key,
     required this.day,
     required this.onPressed,
