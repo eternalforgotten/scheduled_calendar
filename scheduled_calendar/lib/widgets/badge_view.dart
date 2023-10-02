@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
 
-class AppointmentNumberBadge extends StatelessWidget {
+class BadgeView extends StatelessWidget {
+  final int appointmentNumber; // количество записей в день
   final double width;
   final double height;
-  final int appointmentNumber; // количество записей в день
   final Decoration badgeDecoration; // стиль фона
   final TextStyle numberTextStyle; // стиль текста
-  const AppointmentNumberBadge({
+  const BadgeView({
     super.key,
-    required this.width,
-    required this.height,
     required this.appointmentNumber,
-    required this.badgeDecoration,
-    required this.numberTextStyle,
+    this.width = 16,
+    this.height = 16,
+    this.badgeDecoration = const BoxDecoration(
+      color: Color(0xFFEFD23C),
+      shape: BoxShape.circle,
+    ),
+    this.numberTextStyle = const TextStyle(fontSize: 10),
   });
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return appointmentNumber == 0
+        ? const SizedBox()
+        : Container(
+            width: width,
+            height: height,
+            decoration: badgeDecoration,
+            child: Center(
+              child: Text(
+                appointmentNumber.toString(),
+                style: numberTextStyle,
+              ),
+            ),
+          );
   }
 }

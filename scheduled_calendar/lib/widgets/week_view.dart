@@ -35,8 +35,7 @@ class _WeekViewState extends State<WeekView> {
       if (dateInWeek) {
         dateToDisplay = date;
         _expand();
-      }
-      else {
+      } else {
         dateToDisplay = oldDate;
         _collapse();
       }
@@ -100,7 +99,7 @@ class _WeekViewState extends State<WeekView> {
                           widget.onDayPressed?.call(date);
                         }
                       },
-                      isCalendarMode: false,
+                      isCalendarMode: true,
                       isHoliday: date.weekday == DateTime.saturday ||
                           date.weekday == DateTime.sunday,
                       isPerformerWorkDay: date.month == 3 &&
@@ -152,12 +151,8 @@ class _WeekViewState extends State<WeekView> {
                         selectionModeDecoration: const BoxDecoration(),
                         selectedDayTextStyle: const TextStyle(),
                         selectedDayDecoration: const BoxDecoration(),
-                        appointmentNumberBadge: const AppointmentNumberBadge(
-                          width: 10,
-                          height: 10,
+                        appointmentNumberBadge: const BadgeView(
                           appointmentNumber: 3,
-                          badgeDecoration: BoxDecoration(),
-                          numberTextStyle: TextStyle(),
                         ),
                       ),
                     ),
