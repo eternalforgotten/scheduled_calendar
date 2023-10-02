@@ -4,34 +4,33 @@ import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_name_view.dart';
 import 'package:scheduled_calendar/widgets/week_view.dart';
+import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class MonthView extends StatelessWidget {
   const MonthView({
     super.key,
     required this.month,
-    this.monthNameBuilder,
-    required this.centerMonthName,
-    required this.weeksSeparator,
-    this.dayBuilder,
-    this.onDayPressed,
-    required this.weekDaysToHide,
+    this.centerMonthName = false,
+    this.weeksSeparator = const WeeksSeparator(),
     required this.startWeekWithSunday,
+    this.monthNameBuilder,
+    this.dayBuilder,
     this.minDate,
     this.maxDate,
     this.selectedDate,
+    this.onDayPressed,
   });
 
   final Month month;
-  final MonthBuilder? monthNameBuilder;
-  final bool centerMonthName;
-  final Widget weeksSeparator;
-  final DayBuilder? dayBuilder;
-  final ValueChanged<DateTime?>? onDayPressed;
-  final bool startWeekWithSunday;
-  final List<int> weekDaysToHide;
-  final DateTime? minDate;
-  final DateTime? maxDate;
-  final DateTime? selectedDate;
+  final bool centerMonthName; // расположить ли название месяца по центру, а не над началом недели
+  final Widget weeksSeparator; // разделитель между неделями
+  final bool startWeekWithSunday; // начинать ли неделю с воскресенья, а не с понедельника
+  final MonthNameBuilder? monthNameBuilder; // билдер кастомного виджета для названия месяца
+  final DayBuilder? dayBuilder; // билдер кастомного виджета для дня
+  final DateTime? minDate; // дата начала периода
+  final DateTime? maxDate; // дата конца периода
+  final DateTime? selectedDate; // выбранная дата
+  final ValueChanged<DateTime?>? onDayPressed; // тип действия при нажатии на день
 
   @override
   Widget build(BuildContext context) {

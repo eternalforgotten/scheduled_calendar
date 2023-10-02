@@ -14,7 +14,7 @@ class WeekView extends StatefulWidget {
     this.week, {
     super.key,
     this.selectedDate,
-    this.weeksSeparator = const WeeksSeparator(),
+    this.weeksSeparator = const WeeksSeparator(), // разделитель между неделями
     this.onDayPressed,
   });
 

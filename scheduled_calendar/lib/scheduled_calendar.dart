@@ -26,7 +26,6 @@ class ScheduledCalendar extends StatefulWidget {
     this.scrollController,
     this.listPadding = EdgeInsets.zero,
     this.startWeekWithSunday = false,
-    this.weekdaysToHide = const [],
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -41,12 +40,12 @@ class ScheduledCalendar extends StatefulWidget {
   /// if inititial date is nulll, the start date will be used
   final DateTime initialDate;
 
-  /// a Builder used for month header generation. a default [MonthBuilder] is
-  /// used when no custom [MonthBuilder] is provided.
+  /// a Builder used for month header generation. a default [MonthNameBuilder] is
+  /// used when no custom [MonthNameBuilder] is provided.
   /// * [context]
   /// * [int] year: 2021
   /// * [int] month: 1-12
-  final MonthBuilder? monthBuilder;
+  final MonthNameBuilder? monthBuilder;
 
   /// a Builder used for day generation. a default [DayBuilder] is
   /// used when no custom [DayBuilder] is provided.
@@ -80,10 +79,6 @@ class ScheduledCalendar extends StatefulWidget {
   /// Select start day of the week to be Sunday
   final bool startWeekWithSunday;
 
-  /// Hide certain Weekdays eg.Weekends by providing
-  /// `[DateTime.sunday,DateTime.monday]`. By default all weekdays are shown
-  final List<int> weekdaysToHide;
-
   @override
   _ScheduledCalendarState createState() => _ScheduledCalendarState();
 }
@@ -95,7 +90,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
   final Key downListKey = UniqueKey();
   late bool hideUp;
   DateTime? _selectedDate;
-  
+
   void _onDayTapped(DateTime? date) {
     setState(() {
       _selectedDate = date;
@@ -255,8 +250,15 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                         dayBuilder: widget.dayBuilder,
                         onDayPressed: _onDayTapped,
                         startWeekWithSunday: widget.startWeekWithSunday,
-                        weekDaysToHide: widget.weekdaysToHide,
                         weeksSeparator: const WeeksSeparator(),
+                        minDate: widget.minDate != null &&
+                                widget.minDate!.month == month.month
+                            ? widget.minDate
+                            : DateTime(month.year, month.month, 1),
+                        maxDate: widget.maxDate != null &&
+                                widget.maxDate!.month == month.month
+                            ? widget.maxDate
+                            : DateTime(month.year, month.month + 1, -1),
                       );
                     },
                   ),
@@ -277,7 +279,6 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                       dayBuilder: widget.dayBuilder,
                       onDayPressed: _onDayTapped,
                       startWeekWithSunday: widget.startWeekWithSunday,
-                      weekDaysToHide: widget.weekdaysToHide,
                       weeksSeparator: Container(
                         margin: const EdgeInsets.symmetric(vertical: 20),
                         height: 1,
