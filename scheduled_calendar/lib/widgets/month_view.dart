@@ -34,14 +34,14 @@ class MonthView extends StatelessWidget {
     this.displayYearInMonthName = false,
     this.monthNameLocale,
     this.isCalendarMode = false,
-    required this.appointmentBadgeStyle,
+    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
+    this.monthCustomNames = const {},
   });
 
   final Month month;
   final bool centerMonthName;
   final Widget weeksSeparator;
   final DateBuilder? dayBuilder;
-  final DateCallback? onDayPressed;
   final bool startWeekWithSunday;
   final MonthNameBuilder? monthNameBuilder;
   final DateTime? minDate;
@@ -57,6 +57,8 @@ class MonthView extends StatelessWidget {
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
   final AppointmentBadgeStyle appointmentBadgeStyle;
+  final Map<int, String> monthCustomNames;
+  final ValueChanged<DateTime?>? onDayPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +90,9 @@ class MonthView extends StatelessWidget {
                     month,
                     monthNameTextStyle: monthNameTextStyle,
                     monthNameDisplay: monthNameDisplay,
-                    displayYear: false,
+                    displayYear: displayYearInMonthName,
                     nameLocale: monthNameLocale,
+                    monthCustomNames: monthCustomNames,
                   ),
             ),
           ],
