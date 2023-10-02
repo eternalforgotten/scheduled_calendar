@@ -190,6 +190,7 @@ abstract class DateUtils {
         : mondayWeekDayList.indexOf(weekdayValueForFirstValidDay);
   }
 
+  /// This method returns the list of the weeks for month, where every week is the list of days
   static List<List<DateTime>> weeksList({
     required Month month,
     DateTime? minDate,

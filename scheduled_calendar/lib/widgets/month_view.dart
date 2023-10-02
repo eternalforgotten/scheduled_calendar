@@ -27,7 +27,7 @@ class MonthView extends StatelessWidget {
       fontWeight: FontWeight.w600,
       color: Color(0xFFEFD23C),
     ),
-    this.monthNameDisplay = MonthDisplay.full,
+    this.monthNameDisplay = MonthNameDisplay.full,
     this.displayYearInMonthName = false,
     this.monthNameLocale,
     this.isCalendarMode = false,
@@ -35,30 +35,22 @@ class MonthView extends StatelessWidget {
   });
 
   final Month month;
-  final bool
-      centerMonthName; // расположить ли название месяца по центру, а не над началом недели
-  final Widget weeksSeparator; // разделитель между неделями
-  final bool
-      startWeekWithSunday; // начинать ли неделю с воскресенья, а не с понедельника
-  final MonthNameBuilder?
-      monthNameBuilder; // билдер кастомного виджета для названия месяца
-  final DayBuilder? dayBuilder; // билдер кастомного виджета для дня
-  final DateTime? minDate; // дата начала периода
-  final DateTime? maxDate; // дата конца периода
-  final DateTime? selectedDate; // выбранная дата
-  final TextStyle monthNameTextStyle; // стиль текста
-
-  final MonthDisplay
-      monthNameDisplay; // способ отображения названия: полностью или кратко
-
-  final bool displayYearInMonthName; // отображать ли год
-
-  final String? monthNameLocale; // локаль языка отображения названия месяца
+  final bool centerMonthName;
+  final Widget weeksSeparator;
+  final bool startWeekWithSunday;
+  final MonthNameBuilder? monthNameBuilder;
+  final DayBuilder? dayBuilder;
+  final DateTime? minDate;
+  final DateTime? maxDate;
+  final DateTime? selectedDate;
+  final TextStyle monthNameTextStyle;
+  final MonthNameDisplay monthNameDisplay;
+  final bool displayYearInMonthName;
+  final String? monthNameLocale;
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
   final AppointmentBadgeStyle appointmentBadgeStyle;
-  final ValueChanged<DateTime?>?
-      onDayPressed; // тип действия при нажатии на день
+  final ValueChanged<DateTime?>? onDayPressed;
 
   @override
   Widget build(BuildContext context) {

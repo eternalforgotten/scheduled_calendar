@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 
 class BadgeView extends StatelessWidget {
-  final int appointmentNumber; // количество записей в день
+  /// Appointments number in the day
+  final int appointmentNumber;
   final AppointmentBadgeStyle style;
 
   const BadgeView(
