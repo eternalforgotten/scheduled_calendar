@@ -6,11 +6,14 @@ class DayView extends StatelessWidget {
   final DateTime day;
   final void Function(DateTime day)? onPressed;
   final bool
-      isCalendarMode; // если режим календаря, а не расписания, будет виджет с числом записей
-  final bool isHoliday; // является ли день календарным выходным
-  final bool isPerformerWorkDay; // является ли день рабочим днём исполнителя
+      isCalendarMode;
+      /// Is the day the calendar holiday
+       final bool isHoliday;
+       /// Is the day the performer work day
+  final bool isPerformerWorkDay;
+  /// Widget for displaying of the appointments number
   final AppointmentBadgeStyle
-      appointmentBadgeStyle; // виджет для количества записей
+      appointmentBadgeStyle;
   final ScheduledCalendarDayStyle style;
   const DayView(
     this.day, {

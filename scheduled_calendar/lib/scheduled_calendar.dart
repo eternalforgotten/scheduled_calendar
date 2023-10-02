@@ -37,7 +37,7 @@ class ScheduledCalendar extends StatefulWidget {
       fontWeight: FontWeight.w600,
       color: Color(0xFFEFD23C),
     ),
-    this.monthNameDisplay = MonthDisplay.full,
+    this.monthNameDisplay = MonthNameDisplay.full,
     this.displayYearInMonthName = false,
     this.monthNameLocale,
     this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
@@ -92,33 +92,41 @@ class ScheduledCalendar extends StatefulWidget {
   /// scroll controller for making programmable scroll interactions
   final ScrollController? scrollController;
 
-  /// Select start day of the week to be Sunday
+  /// Select start day of the week to be Sunday. Defaults to 'false'
   final bool startWeekWithSunday;
 
-  /// Дата, в которую появится следующая неделя расписания
+  /// Date when the next schedule week will be available
   final DateTime? nextAvailableDate;
 
+  /// User role: performer or client
   final Role? role;
 
+  /// Default day view style
   final ScheduledCalendarDayStyle dayStyle;
 
-  final bool
-      centerMonthName; // расположить ли название месяца по центру, а не над началом недели
+  /// Select wether center month name or leave it below the week start. Defaults to 'false'
+  final bool centerMonthName;
 
-  final Widget weeksSeparator; // разделитель между неделями
+  /// Separator between weeks in month
+  final Widget weeksSeparator;
 
-  final TextStyle monthNameTextStyle; // стиль текста
+  /// Text style of month name
+  final TextStyle monthNameTextStyle;
 
-  final MonthDisplay
-      monthNameDisplay; // способ отображения названия: полностью или кратко
+  /// Way of the month name displaying: full or short. Defaults to 'full'
+  final MonthNameDisplay monthNameDisplay;
 
-  final bool displayYearInMonthName; // отображать ли год
+  /// Select wether display year in month name or no. Defaults to 'false'
+  final bool displayYearInMonthName;
 
-  final String? monthNameLocale; // локаль языка отображения названия месяца
+  /// Locale of month name
+  final String? monthNameLocale;
 
-  final bool
-      isCalendarMode; // если режим календаря, а не расписания, будет виджет с числом записей
+  /// If calender mode is, badge view with appointments number is displaying under the date.
+  /// Defaults to 'false'
+  final bool isCalendarMode;
 
+  /// Appointments number badge style
   final AppointmentBadgeStyle appointmentBadgeStyle;
 
   @override

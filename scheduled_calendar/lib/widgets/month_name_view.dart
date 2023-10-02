@@ -8,11 +8,11 @@ import 'package:scheduled_calendar/utils/enums.dart';
 
 class MonthNameView extends StatefulWidget {
   final Month month;
-  final TextStyle monthNameTextStyle; // стиль текста
-  final MonthDisplay
-      monthNameDisplay; // способ отображения названия: полностью или кратко
-  final bool displayYear; // отображать ли год
-  final String? nameLocale; // локаль языка отображения названия месяца
+  final TextStyle monthNameTextStyle;
+  final MonthNameDisplay
+      monthNameDisplay;
+  final bool displayYear;
+  final String? nameLocale;
 
   const MonthNameView(
     this.month, {
@@ -22,7 +22,7 @@ class MonthNameView extends StatefulWidget {
       fontWeight: FontWeight.w600,
       color: Color(0xFFEFD23C),
     ),
-    this.monthNameDisplay = MonthDisplay.full,
+    this.monthNameDisplay = MonthNameDisplay.full,
     this.displayYear = false,
     this.nameLocale,
   });
@@ -43,7 +43,7 @@ class _MonthNameViewState extends State<MonthNameView> {
     final locale = widget.nameLocale ?? Platform.localeName;
     return Text(
       DateFormat(
-        (widget.monthNameDisplay == MonthDisplay.full
+        (widget.monthNameDisplay == MonthNameDisplay.full
             ? widget.displayYear
                 ? 'MMMM y'
                 : 'MMMM'
