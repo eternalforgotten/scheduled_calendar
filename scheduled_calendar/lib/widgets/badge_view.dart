@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:scheduled_calendar/utils/styles.dart';
 
-class AppointmentNumberBadge extends StatelessWidget {
-  final double width;
-  final double height;
-  final int appointmentNumber; // количество записей в день
-  final Decoration badgeDecoration; // стиль фона
-  final TextStyle numberTextStyle; // стиль текста
-  const AppointmentNumberBadge({
+class BadgeView extends StatelessWidget {
+  /// Appointments number in the day
+  final int appointmentNumber;
+  final AppointmentBadgeStyle style;
+
+  const BadgeView(
+    this.appointmentNumber, {
     super.key,
-    required this.width,
-    required this.height,
-    required this.appointmentNumber,
-    required this.badgeDecoration,
-    required this.numberTextStyle,
+    this.style = const AppointmentBadgeStyle(),
   });
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return appointmentNumber == 0
+        ? const SizedBox()
+        : Container(
+            width: style.width,
+            height: style.height,
+            decoration: style.badgeDecoration,
+            child: Center(
+              child: Text(
+                appointmentNumber.toString(),
+                style: style.numberTextStyle,
+              ),
+            ),
+          );
   }
 }

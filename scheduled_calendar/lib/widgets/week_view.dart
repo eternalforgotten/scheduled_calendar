@@ -5,23 +5,29 @@ import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
-import 'package:scheduled_calendar/widgets/badge_view.dart';
-import 'package:scheduled_calendar/widgets/default_day_view.dart';
+import 'package:scheduled_calendar/widgets/day_view.dart';
+import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class WeekView extends StatefulWidget {
-  final DateTime? selectedDate;
   final List<DateTime> week;
+  final DateTime? selectedDate;
   final Widget weeksSeparator;
   final DateCallback? onDayPressed;
   final DateBuilder? selectedDateCardBuilder;
   final Duration selectedDateCardAnimationDuration;
   final Curve selectedDateCardAnimationCurve;
+  final ScheduledCalendarDayStyle dayStyle;
+  final bool isCalendarMode;
+  final AppointmentBadgeStyle appointmentBadgeStyle;
   const WeekView(
     this.week, {
     super.key,
-    required this.weeksSeparator,
-    this.onDayPressed,
     this.selectedDate,
+    this.weeksSeparator = const WeeksSeparator(),
+    this.dayStyle = const ScheduledCalendarDayStyle(),
+    this.onDayPressed,
+    this.isCalendarMode = false,
+    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.selectedDateCardBuilder,
     Duration? selectedDateCardAnimationDuration,
     Curve? selectedDateCardAnimationCurve,
@@ -117,8 +123,8 @@ class _WeekViewState extends State<WeekView>
             ...widget.week
                 .map(
                   (date) => Flexible(
-                    child: DefaultDayView(
-                      day: date,
+                    child: DayView(
+                      date,
                       onPressed: (date) {
                         if (interaction == CalendarInteraction.dateCard) {
                           final newSelectedDate = widget.selectedDate;
@@ -128,12 +134,11 @@ class _WeekViewState extends State<WeekView>
                           } else {
                             widget.onDayPressed?.call(date);
                           }
-                        }
-                        else {
+                        } else {
                           widget.onDayPressed?.call(date);
                         }
                       },
-                      isCalendarMode: false,
+                      isCalendarMode: widget.isCalendarMode,
                       isHoliday: date.weekday == DateTime.saturday ||
                           date.weekday == DateTime.sunday,
                       isPerformerWorkDay: date.month == 3 &&
@@ -146,53 +151,8 @@ class _WeekViewState extends State<WeekView>
                               date.day == 6 ||
                               date.day == 7 ||
                               date.day == 8),
-                      style: ScheduledCalendarDayStyle(
-                        width: null,
-                        height: null,
-                        padding: const EdgeInsets.all(8),
-                        inscriptionTextStyle: const TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF5C5B5F),
-                        ),
-                        currentDayTextStyle: const TextStyle(),
-                        workDayTextStyle: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                        workDayInscription: 'Раб.',
-                        holidayTextStyle: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF5C5B5F),
-                        ),
-                        holidayInscription: 'Вых.',
-                        focusedDayTextStyle: const TextStyle(),
-                        focusedDayDecoration: const BoxDecoration(),
-                        performerWorkDayDecoration: const BoxDecoration(
-                          border: Border.fromBorderSide(
-                            BorderSide(
-                              width: 1,
-                              color: Color(0xFF5C5B5F),
-                            ),
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        performerWorkDayInscription:
-                            'performerWorkDayInscription',
-                        selectionModeTextStyle: const TextStyle(),
-                        selectionModeDecoration: const BoxDecoration(),
-                        selectedDayTextStyle: const TextStyle(),
-                        selectedDayDecoration: const BoxDecoration(),
-                        appointmentNumberBadge: const AppointmentNumberBadge(
-                          width: 10,
-                          height: 10,
-                          appointmentNumber: 3,
-                          badgeDecoration: BoxDecoration(),
-                          numberTextStyle: TextStyle(),
-                        ),
-                      ),
+                      style: widget.dayStyle,
+                      appointmentBadgeStyle: widget.appointmentBadgeStyle,
                     ),
                   ),
                 )

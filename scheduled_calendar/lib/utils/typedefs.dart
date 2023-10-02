@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-typedef MonthBuilder = Widget Function(
+typedef MonthNameBuilder = Widget Function(
     BuildContext context, int month, int year);
 
 typedef DateBuilder = Widget Function(BuildContext context, DateTime date);

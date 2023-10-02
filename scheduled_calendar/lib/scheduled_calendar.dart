@@ -9,8 +9,10 @@ import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
+import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_view.dart';
+import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class ScheduledCalendar extends StatefulWidget {
   ScheduledCalendar({
@@ -18,7 +20,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.minDate,
     this.maxDate,
     DateTime? initialDate,
-    this.monthBuilder,
+    this.monthNameBuilder,
     this.dayBuilder,
     this.addAutomaticKeepAlives = false,
     this.onMonthLoaded,
@@ -26,14 +28,28 @@ class ScheduledCalendar extends StatefulWidget {
     this.invisibleMonthsThreshold = 1,
     this.physics,
     this.scrollController,
-    this.listPadding = EdgeInsets.zero,
+    this.listPadding = const EdgeInsets.symmetric(horizontal: 16),
     this.startWeekWithSunday = false,
-    this.weekdaysToHide = const [],
     this.onDayPressed,
     this.selectedDateCardBuilder,
     this.disableInteraction = false,
     this.selectedDateCardAnimationDuration,
     this.selectedDateCardAnimationCurve,
+    this.nextAvailableDate,
+    this.role,
+    this.dayStyle = const ScheduledCalendarDayStyle(),
+    this.weeksSeparator = const WeeksSeparator(),
+    this.centerMonthName = false,
+    this.monthNameTextStyle = const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFFEFD23C),
+    ),
+    this.monthNameDisplay = MonthNameDisplay.full,
+    this.displayYearInMonthName = false,
+    this.monthNameLocale,
+    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
+    this.isCalendarMode = false,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -48,12 +64,12 @@ class ScheduledCalendar extends StatefulWidget {
   /// if inititial date is nulll, the start date will be used
   final DateTime initialDate;
 
-  /// a Builder used for month header generation. a default [MonthBuilder] is
-  /// used when no custom [MonthBuilder] is provided.
+  /// a Builder used for month header generation. a default [MonthNameBuilder] is
+  /// used when no custom [MonthNameBuilder] is provided.
   /// * [context]
   /// * [int] year: 2021
   /// * [int] month: 1-12
-  final MonthBuilder? monthBuilder;
+  final MonthNameBuilder? monthNameBuilder;
 
   /// a Builder used for day generation. a default [DateBuilder] is
   /// used when no custom [DateBuilder] is provided.
@@ -84,12 +100,42 @@ class ScheduledCalendar extends StatefulWidget {
   /// scroll controller for making programmable scroll interactions
   final ScrollController? scrollController;
 
-  /// Select start day of the week to be Sunday
+  /// Select start day of the week to be Sunday. Defaults to 'false'
   final bool startWeekWithSunday;
 
-  /// Hide certain Weekdays eg.Weekends by providing
-  /// `[DateTime.sunday,DateTime.monday]`. By default all weekdays are shown
-  final List<int> weekdaysToHide;
+  /// Date when the next schedule week will be available
+  final DateTime? nextAvailableDate;
+
+  /// User role: performer or client
+  final Role? role;
+
+  /// Default day view style
+  final ScheduledCalendarDayStyle dayStyle;
+
+  /// Select wether center month name or leave it below the week start. Defaults to 'false'
+  final bool centerMonthName;
+
+  /// Separator between weeks in month
+  final Widget weeksSeparator;
+
+  /// Text style of month name
+  final TextStyle monthNameTextStyle;
+
+  /// Way of the month name displaying: full or short. Defaults to 'full'
+  final MonthNameDisplay monthNameDisplay;
+
+  /// Select wether display year in month name or no. Defaults to 'false'
+  final bool displayYearInMonthName;
+
+  /// Locale of month name
+  final String? monthNameLocale;
+
+  /// If calender mode is, badge view with appointments number is displaying under the date.
+  /// Defaults to 'false'
+  final bool isCalendarMode;
+
+  /// Appointments number badge style
+  final AppointmentBadgeStyle appointmentBadgeStyle;
 
   ///Callback that overrides behaviour of calendar day interaction
   ///By default, calendar will show a card, appearing below the week of selected day,
@@ -296,19 +342,26 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                   widget.selectedDateCardBuilder,
                               month: month,
                               selectedDate: selectedDate,
-                              monthNameBuilder: widget.monthBuilder,
+                              monthNameBuilder: widget.monthNameBuilder,
                               centerMonthName: false,
                               dayBuilder: widget.dayBuilder,
                               onDayPressed: (date) =>
                                   _onDayTapped(context, date),
                               startWeekWithSunday: widget.startWeekWithSunday,
-                              weekDaysToHide: widget.weekdaysToHide,
                               weeksSeparator: Container(
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 20),
                                 height: 1,
                                 color: const Color(0xFF5C5B5F),
                               ),
+                              dayStyle: widget.dayStyle,
+                              monthNameTextStyle: widget.monthNameTextStyle,
+                              monthNameDisplay: widget.monthNameDisplay,
+                              displayYearInMonthName:
+                                  widget.displayYearInMonthName,
+                              isCalendarMode: widget.isCalendarMode,
+                              appointmentBadgeStyle:
+                                  widget.appointmentBadgeStyle,
                             );
                           },
                         ),
@@ -331,12 +384,11 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                 widget.selectedDateCardBuilder,
                             selectedDate: selectedDate,
                             month: month,
-                            monthNameBuilder: widget.monthBuilder,
+                            monthNameBuilder: widget.monthNameBuilder,
                             centerMonthName: false,
                             dayBuilder: widget.dayBuilder,
                             onDayPressed: (date) => _onDayTapped(context, date),
                             startWeekWithSunday: widget.startWeekWithSunday,
-                            weekDaysToHide: widget.weekdaysToHide,
                             weeksSeparator: Container(
                               margin: const EdgeInsets.symmetric(vertical: 20),
                               height: 1,
@@ -350,6 +402,13 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                     widget.maxDate!.month == month.month
                                 ? widget.maxDate
                                 : DateTime(month.year, month.month + 1, -1),
+                            dayStyle: widget.dayStyle,
+                            monthNameTextStyle: widget.monthNameTextStyle,
+                            monthNameDisplay: widget.monthNameDisplay,
+                            displayYearInMonthName:
+                                widget.displayYearInMonthName,
+                            isCalendarMode: widget.isCalendarMode,
+                            appointmentBadgeStyle: widget.appointmentBadgeStyle,
                           );
                         },
                       ),
