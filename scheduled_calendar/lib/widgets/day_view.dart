@@ -1,22 +1,25 @@
 import 'package:flutter/widgets.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
+import 'package:scheduled_calendar/widgets/badge_view.dart';
 
 class DayView extends StatelessWidget {
   final DateTime day;
   final void Function(DateTime day)? onPressed;
   final bool
-      isCalendarMode; // Если режим календаря, а не расписания, будет виджет с числом записей
-  final bool isHoliday;
-  final bool isPerformerWorkDay;
+      isCalendarMode; // если режим календаря, а не расписания, будет виджет с числом записей
+  final bool isHoliday; // является ли день календарным выходным
+  final bool isPerformerWorkDay; // является ли день рабочим днём исполнителя
+  final Widget appointmentNumberBadge; // виджет для количества записей
   final ScheduledCalendarDayStyle style;
   const DayView(
     this.day, {
     super.key,
     required this.onPressed,
-    required this.isCalendarMode,
-    required this.isHoliday,
-    required this.isPerformerWorkDay,
-    required this.style,
+    this.isCalendarMode = false,
+    this.isHoliday = false,
+    this.isPerformerWorkDay = false,
+    this.appointmentNumberBadge = const BadgeView(3),
+    this.style = const ScheduledCalendarDayStyle(),
   });
 
   @override
@@ -42,7 +45,7 @@ class DayView extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             isCalendarMode
-                ? style.appointmentNumberBadge
+                ? appointmentNumberBadge
                 : Text(
                     isPerformerWorkDay
                         ? style.workDayInscription ?? ''

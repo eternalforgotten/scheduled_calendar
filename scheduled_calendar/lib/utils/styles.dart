@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ScheduledCalendarDayStyle {
-  final double? width;
-  final double? height;
   final EdgeInsets padding; // отступ от числа до краёв кружочка
   final TextStyle? inscriptionTextStyle; // стиль текста под числом
   final TextStyle? currentDayTextStyle; // стиль текста текущего числа
@@ -21,27 +19,53 @@ class ScheduledCalendarDayStyle {
       selectionModeDecoration; // стиль фона чисел дней в режиме выделения
   final TextStyle selectedDayTextStyle; // стиль текста выбранного дня
   final Decoration selectedDayDecoration; // стиль фона выбранного дня
-  final Widget
-      appointmentNumberBadge; // виджет для количества записей
 
-  ScheduledCalendarDayStyle({
-    required this.width,
-    required this.height,
-    required this.padding,
-    required this.inscriptionTextStyle,
-    required this.currentDayTextStyle,
-    required this.workDayTextStyle,
-    required this.workDayInscription,
-    required this.holidayTextStyle,
-    required this.holidayInscription,
-    required this.focusedDayTextStyle,
-    required this.focusedDayDecoration,
-    required this.performerWorkDayDecoration,
-    required this.performerWorkDayInscription,
-    required this.selectionModeTextStyle,
-    required this.selectionModeDecoration,
-    required this.selectedDayTextStyle,
-    required this.selectedDayDecoration,
-    required this.appointmentNumberBadge,
+  const ScheduledCalendarDayStyle({
+    this.padding = const EdgeInsets.all(8),
+    this.inscriptionTextStyle = const TextStyle(
+      fontSize: 9,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFF5C5B5F),
+    ),
+    this.currentDayTextStyle = const TextStyle(),
+    this.workDayTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Colors.white,
+    ),
+    this.workDayInscription = 'Раб.',
+    this.holidayTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Color(0xFF5C5B5F),
+    ),
+    this.holidayInscription = 'Вых.',
+    this.focusedDayTextStyle = const TextStyle(),
+    this.focusedDayDecoration = const BoxDecoration(),
+    this.performerWorkDayDecoration = const BoxDecoration(
+      border: Border.fromBorderSide(
+        BorderSide(
+          width: 1,
+          color: Color(0xFF5C5B5F),
+        ),
+      ),
+      shape: BoxShape.circle,
+    ),
+    this.performerWorkDayInscription = '3 окна',
+    this.selectionModeTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Colors.black,
+    ),
+    this.selectionModeDecoration = const BoxDecoration(
+      color: Color(0xFFEFD23C),
+      shape: BoxShape.circle,
+    ),
+    this.selectedDayTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Color(0xFFEFD23C),
+    ),
+    this.selectedDayDecoration = const BoxDecoration(),
   });
 }

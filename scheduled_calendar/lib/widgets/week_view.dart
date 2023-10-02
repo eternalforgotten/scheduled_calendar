@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
-import 'package:scheduled_calendar/widgets/badge_view.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
@@ -100,7 +98,6 @@ class _WeekViewState extends State<WeekView> {
                           widget.onDayPressed?.call(date);
                         }
                       },
-                      isCalendarMode: false,
                       isHoliday: date.weekday == DateTime.saturday ||
                           date.weekday == DateTime.sunday,
                       isPerformerWorkDay: date.month == 3 &&
@@ -113,47 +110,6 @@ class _WeekViewState extends State<WeekView> {
                               date.day == 6 ||
                               date.day == 7 ||
                               date.day == 8),
-                      style: ScheduledCalendarDayStyle(
-                        width: null,
-                        height: null,
-                        padding: const EdgeInsets.all(8),
-                        inscriptionTextStyle: const TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF5C5B5F),
-                        ),
-                        currentDayTextStyle: const TextStyle(),
-                        workDayTextStyle: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                        workDayInscription: 'Раб.',
-                        holidayTextStyle: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF5C5B5F),
-                        ),
-                        holidayInscription: 'Вых.',
-                        focusedDayTextStyle: const TextStyle(),
-                        focusedDayDecoration: const BoxDecoration(),
-                        performerWorkDayDecoration: const BoxDecoration(
-                          border: Border.fromBorderSide(
-                            BorderSide(
-                              width: 1,
-                              color: Color(0xFF5C5B5F),
-                            ),
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        performerWorkDayInscription:
-                            'performerWorkDayInscription',
-                        selectionModeTextStyle: const TextStyle(),
-                        selectionModeDecoration: const BoxDecoration(),
-                        selectedDayTextStyle: const TextStyle(),
-                        selectedDayDecoration: const BoxDecoration(),
-                        appointmentNumberBadge: const BadgeView(3),
-                      ),
                     ),
                   ),
                 )
@@ -194,7 +150,7 @@ class _DateCard extends StatelessWidget {
       ),
       child: Text(
         date.toString(),
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
         ),
       ),
