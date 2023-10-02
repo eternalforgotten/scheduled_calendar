@@ -55,15 +55,17 @@ class MonthView extends StatelessWidget {
             children: [
               centerMonthName
                   ? const SizedBox()
-                  : Spacer(
-                      flex: weeksList.first.first.weekday - 1,
-                    ),
+                  : weeksList.first.first.weekday > 1
+                      ? Spacer(
+                          flex: weeksList.first.first.weekday - 1,
+                        )
+                      : const SizedBox(),
               Flexible(
                 flex: centerMonthName ? 1 : weeksList.first.length,
                 child:
                     monthNameBuilder?.call(context, month.month, month.year) ??
                         DefaultMonthNameView(
-                          month: month.month,
+                          month: month,
                           year: month.year,
                           monthNameTextStyle: const TextStyle(
                             fontSize: 15,

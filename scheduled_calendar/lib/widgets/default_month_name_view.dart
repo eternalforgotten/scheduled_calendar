@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 
 class DefaultMonthNameView extends StatelessWidget {
-  final int month;
+  final Month month;
   final int year;
   final TextStyle monthNameTextStyle;
   final MonthDisplay monthNameDisplay;
 
-  DefaultMonthNameView({
+  const DefaultMonthNameView({
     super.key,
     required this.month,
     required this.year,
@@ -15,25 +17,16 @@ class DefaultMonthNameView extends StatelessWidget {
     required this.monthNameDisplay,
   });
 
-  final months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Text(
-      months[month - 1],
+      DateFormat(monthNameDisplay == MonthDisplay.full ? 'MMMM' : 'MMM').format(
+        DateTime(
+          month.year,
+          month.month,
+          1,
+        ),
+      ),
       style: monthNameTextStyle,
     );
   }
