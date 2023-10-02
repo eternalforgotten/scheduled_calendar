@@ -6,6 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
+import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_view.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
@@ -16,7 +17,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.minDate,
     this.maxDate,
     DateTime? initialDate,
-    this.monthBuilder,
+    this.monthNameBuilder,
     this.dayBuilder,
     this.addAutomaticKeepAlives = false,
     this.onMonthLoaded,
@@ -24,8 +25,11 @@ class ScheduledCalendar extends StatefulWidget {
     this.invisibleMonthsThreshold = 1,
     this.physics,
     this.scrollController,
-    this.listPadding = EdgeInsets.zero,
+    this.listPadding = const EdgeInsets.symmetric(horizontal: 16),
     this.startWeekWithSunday = false,
+    this.nextAvailableDate,
+    this.role,
+    this.dayStyle = const ScheduledCalendarDayStyle(),
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -45,7 +49,7 @@ class ScheduledCalendar extends StatefulWidget {
   /// * [context]
   /// * [int] year: 2021
   /// * [int] month: 1-12
-  final MonthNameBuilder? monthBuilder;
+  final MonthNameBuilder? monthNameBuilder;
 
   /// a Builder used for day generation. a default [DayBuilder] is
   /// used when no custom [DayBuilder] is provided.
@@ -78,6 +82,13 @@ class ScheduledCalendar extends StatefulWidget {
 
   /// Select start day of the week to be Sunday
   final bool startWeekWithSunday;
+
+  /// Дата, в которую появится следующая неделя расписания
+  final DateTime? nextAvailableDate;
+
+  final Role? role;
+
+  final ScheduledCalendarDayStyle dayStyle;
 
   @override
   _ScheduledCalendarState createState() => _ScheduledCalendarState();
@@ -245,7 +256,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                       return MonthView(
                         month: month,
                         selectedDate: _selectedDate,
-                        monthNameBuilder: widget.monthBuilder,
+                        monthNameBuilder: widget.monthNameBuilder,
                         centerMonthName: false,
                         dayBuilder: widget.dayBuilder,
                         onDayPressed: _onDayTapped,
@@ -259,6 +270,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                 widget.maxDate!.month == month.month
                             ? widget.maxDate
                             : DateTime(month.year, month.month + 1, -1),
+                        dayStyle: widget.dayStyle,
                       );
                     },
                   ),
@@ -274,7 +286,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                     return MonthView(
                       selectedDate: _selectedDate,
                       month: month,
-                      monthNameBuilder: widget.monthBuilder,
+                      monthNameBuilder: widget.monthNameBuilder,
                       centerMonthName: false,
                       dayBuilder: widget.dayBuilder,
                       onDayPressed: _onDayTapped,
@@ -292,6 +304,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               widget.maxDate!.month == month.month
                           ? widget.maxDate
                           : DateTime(month.year, month.month + 1, -1),
+                      dayStyle: widget.dayStyle,
                     );
                   },
                 ),

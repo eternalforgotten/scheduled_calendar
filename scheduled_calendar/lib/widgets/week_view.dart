@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
+import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
@@ -7,12 +8,14 @@ class WeekView extends StatefulWidget {
   final List<DateTime> week;
   final DateTime? selectedDate;
   final Widget weeksSeparator;
+  final ScheduledCalendarDayStyle dayStyle;
   final void Function(DateTime?)? onDayPressed;
   const WeekView(
     this.week, {
     super.key,
     this.selectedDate,
     this.weeksSeparator = const WeeksSeparator(), // разделитель между неделями
+    this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
   });
 
@@ -110,6 +113,7 @@ class _WeekViewState extends State<WeekView> {
                               date.day == 6 ||
                               date.day == 7 ||
                               date.day == 8),
+                      style: widget.dayStyle,
                     ),
                   ),
                 )

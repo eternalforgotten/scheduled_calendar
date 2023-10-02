@@ -8,3 +8,8 @@ enum PaginationDirection {
   up,
   down,
 }
+
+enum Role {
+  performer,
+  client,
+}
