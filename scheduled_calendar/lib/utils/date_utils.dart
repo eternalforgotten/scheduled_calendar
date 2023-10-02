@@ -143,30 +143,6 @@ abstract class DateUtils {
     return (year & 3) == 0 && ((year % 25) != 0 || (year & 15) == 0);
   }
 
-  static List<DateTime> listOfValidDatesInMonth(
-    Month month,
-    List<int> weekdaysToHide,
-  ) {
-    //final totalDays = month.daysInMonth;
-    final validDates = <DateTime>[];
-    for (final week in month.weeks) {
-      DateTime dateTemp = week.firstDay;
-      while (dateTemp.isSameDayOrBefore(week.lastDay)) {
-        if (!weekdaysToHide.contains(dateTemp.weekday)) {
-          validDates.add(dateTemp);
-        }
-        dateTemp = DateTime(dateTemp.year, dateTemp.month, dateTemp.day + 1);
-      }
-    }
-    // for (int i = 1; i <= totalDays; i++) {
-    //   final date = DateTime(month.year, month.month, i);
-    //   if (!weekdaysToHide.contains(date.weekday)) {
-    //     validDates.add(date);
-    //   }
-    // }
-    return (validDates);
-  }
-
   /// This method returns the number of spaces required before first valid based of the hidden weekdays.
   /// For example, if the first valid date falls on a Tuesday, that means that the weekday "monday"
   /// is hidden, which makes the first valid date index "1"
@@ -193,24 +169,19 @@ abstract class DateUtils {
   /// This method returns the list of the weeks for month, where every week is the list of days
   static List<List<DateTime>> weeksList({
     required Month month,
-    DateTime? minDate,
-    DateTime? maxDate,
     bool startWeekWithSunday = false,
   }) {
-    final firstDate = minDate ?? DateTime(month.year, month.month, 1);
-    final weeksList = <List<DateTime>>[];
-    weeksList.add([firstDate]);
-    var nextDay = firstDate.nextDay;
-    maxDate ??= DateTime(month.year, month.month + 1, -1);
-    while (!nextDay.isAfter(maxDate)) {
-      if (nextDay.weekday != 1) {
-        weeksList.last.add(nextDay);
-      } else {
-        weeksList.add([nextDay]);
+    List<List<DateTime>> weeks = [];
+    for (final week in month.weeks) {
+      List<DateTime> weekDays = [];
+      DateTime dateTemp = week.firstDay;
+      while (dateTemp.isSameDayOrBefore(week.lastDay)) {
+        weekDays.add(dateTemp);
+        dateTemp = dateTemp.nextDay;
       }
-      nextDay = nextDay.nextDay;
+      weeks.add(weekDays);
     }
-    return weeksList;
+    return weeks;
   }
 }
 

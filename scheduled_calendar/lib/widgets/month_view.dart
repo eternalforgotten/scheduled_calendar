@@ -62,11 +62,7 @@ class MonthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weeksList = DateUtils.weeksList(
-      month: month,
-      minDate: minDate,
-      maxDate: maxDate,
-    );
+    final weeksList = DateUtils.weeksList(month: month);
 
     return Column(
       children: <Widget>[
