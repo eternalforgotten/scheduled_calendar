@@ -42,6 +42,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.monthNameLocale,
     this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.isCalendarMode = false,
+    this.monthCustomNames = const {},
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -121,6 +122,9 @@ class ScheduledCalendar extends StatefulWidget {
 
   /// Locale of month name
   final String? monthNameLocale;
+
+  /// Map of custom names for months
+  final Map<int, String> monthCustomNames;
 
   /// If calender mode is, badge view with appointments number is displaying under the date.
   /// Defaults to 'false'
@@ -315,6 +319,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                         displayYearInMonthName: widget.displayYearInMonthName,
                         isCalendarMode: widget.isCalendarMode,
                         appointmentBadgeStyle: widget.appointmentBadgeStyle,
+                        monthCustomNames: widget.monthCustomNames,
                       );
                     },
                   ),
@@ -354,6 +359,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                       displayYearInMonthName: widget.displayYearInMonthName,
                       isCalendarMode: widget.isCalendarMode,
                       appointmentBadgeStyle: widget.appointmentBadgeStyle,
+                      monthCustomNames: widget.monthCustomNames,
                     );
                   },
                 ),

@@ -32,6 +32,7 @@ class MonthView extends StatelessWidget {
     this.monthNameLocale,
     this.isCalendarMode = false,
     required this.appointmentBadgeStyle,
+    required this.monthCustomNames,
   });
 
   final Month month;
@@ -50,6 +51,7 @@ class MonthView extends StatelessWidget {
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
   final AppointmentBadgeStyle appointmentBadgeStyle;
+  final Map<int, String> monthCustomNames;
   final ValueChanged<DateTime?>? onDayPressed;
 
   @override
@@ -82,8 +84,9 @@ class MonthView extends StatelessWidget {
                     month,
                     monthNameTextStyle: monthNameTextStyle,
                     monthNameDisplay: monthNameDisplay,
-                    displayYear: false,
+                    displayYear: displayYearInMonthName,
                     nameLocale: monthNameLocale,
+                    monthCustomNames: monthCustomNames,
                   ),
             ),
           ],
