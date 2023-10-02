@@ -6,16 +6,16 @@ import 'package:scheduled_calendar/widgets/day_view.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class WeekView extends StatefulWidget {
-  final DateTime? selectedDate;
   final List<DateTime> week;
+  final DateTime? selectedDate;
   final Widget weeksSeparator;
   final void Function(DateTime?)? onDayPressed;
   const WeekView(
     this.week, {
     super.key,
-    this.weeksSeparator =  const WeeksSeparator(),
-    this.onDayPressed,
     this.selectedDate,
+    this.weeksSeparator = const WeeksSeparator(),
+    this.onDayPressed,
   });
 
   @override
