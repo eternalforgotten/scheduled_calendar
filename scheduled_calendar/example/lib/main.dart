@@ -89,6 +89,26 @@ class _MyHomePageState extends State<MyHomePage> {
             11: 'Ноя.',
             12: 'Дек.',
           },
+          selectedDateCardAnimationCurve: Curves.easeInOutBack,
+          selectedDateCardAnimationDuration: const Duration(milliseconds: 300),
+          selectedDateCardBuilder: (context, date) {
+            return Container(
+              height: 50,
+              color: Colors.green,
+              alignment: Alignment.center,
+              child: Text(date.toString()),
+            );
+          },
+          onDayPressed: (date) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: Text(date.toString()),
+                );
+              },
+            );
+          },
         ),
       ),
     );
