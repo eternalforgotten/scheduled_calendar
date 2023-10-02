@@ -99,7 +99,7 @@ class _WeekViewState extends State<WeekView> {
                           widget.onDayPressed?.call(date);
                         }
                       },
-                      isCalendarMode: true,
+                      isCalendarMode: false,
                       isHoliday: date.weekday == DateTime.saturday ||
                           date.weekday == DateTime.sunday,
                       isPerformerWorkDay: date.month == 3 &&

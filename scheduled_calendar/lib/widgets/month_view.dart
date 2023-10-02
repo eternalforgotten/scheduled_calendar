@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
-import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_name_view.dart';
 import 'package:scheduled_calendar/widgets/week_view.dart';
@@ -66,12 +65,6 @@ class MonthView extends StatelessWidget {
                     monthNameBuilder?.call(context, month.month, month.year) ??
                         MonthNameView(
                           month: month,
-                          monthNameTextStyle: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFEFD23C),
-                          ),
-                          monthNameDisplay: MonthDisplay.short,
                         ),
               ),
             ],
