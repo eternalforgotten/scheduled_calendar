@@ -89,7 +89,7 @@ class _WeekViewState extends State<WeekView> {
                 .map(
                   (date) => Flexible(
                     child: DayView(
-                      day: date,
+                      date,
                       onPressed: (date) {
                         final newSelectedDate = widget.selectedDate;
                         if (newSelectedDate != null &&
@@ -151,9 +151,7 @@ class _WeekViewState extends State<WeekView> {
                         selectionModeDecoration: const BoxDecoration(),
                         selectedDayTextStyle: const TextStyle(),
                         selectedDayDecoration: const BoxDecoration(),
-                        appointmentNumberBadge: const BadgeView(
-                          appointmentNumber: 3,
-                        ),
+                        appointmentNumberBadge: const BadgeView(3),
                       ),
                     ),
                   ),

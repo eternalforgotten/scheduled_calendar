@@ -6,9 +6,9 @@ class BadgeView extends StatelessWidget {
   final double height;
   final Decoration badgeDecoration; // стиль фона
   final TextStyle numberTextStyle; // стиль текста
-  const BadgeView({
+  const BadgeView(
+    this.appointmentNumber, {
     super.key,
-    required this.appointmentNumber,
     this.width = 16,
     this.height = 16,
     this.badgeDecoration = const BoxDecoration(

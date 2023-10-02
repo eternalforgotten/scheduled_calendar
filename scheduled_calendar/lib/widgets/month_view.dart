@@ -24,7 +24,6 @@ class MonthView extends StatelessWidget {
   final Month month;
   final MonthBuilder? monthNameBuilder;
   final bool centerMonthName;
-
   final Widget weeksSeparator;
   final DayBuilder? dayBuilder;
   final ValueChanged<DateTime?>? onDayPressed;
@@ -63,9 +62,7 @@ class MonthView extends StatelessWidget {
                 flex: centerMonthName ? 1 : weeksList.first.length,
                 child:
                     monthNameBuilder?.call(context, month.month, month.year) ??
-                        MonthNameView(
-                          month: month,
-                        ),
+                        MonthNameView(month),
               ),
             ],
           ),

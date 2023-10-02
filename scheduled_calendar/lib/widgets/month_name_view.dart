@@ -14,9 +14,9 @@ class MonthNameView extends StatefulWidget {
   final bool displayYear; // отображать ли год
   final String? nameLocale; // локаль языка отображения названия месяца
 
-  const MonthNameView({
+  const MonthNameView(
+    this.month, {
     super.key,
-    required this.month,
     this.monthNameTextStyle = const TextStyle(
       fontSize: 15,
       fontWeight: FontWeight.w600,

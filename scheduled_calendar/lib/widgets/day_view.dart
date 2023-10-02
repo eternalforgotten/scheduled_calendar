@@ -9,9 +9,9 @@ class DayView extends StatelessWidget {
   final bool isHoliday;
   final bool isPerformerWorkDay;
   final ScheduledCalendarDayStyle style;
-  const DayView({
+  const DayView(
+    this.day, {
     super.key,
-    required this.day,
     required this.onPressed,
     required this.isCalendarMode,
     required this.isHoliday,
@@ -34,8 +34,9 @@ class DayView extends StatelessWidget {
               child: Center(
                 child: Text(
                   day.day.toString(),
-                  style:
-                      isHoliday ? style.holidayTextStyle : style.workDayTextStyle,
+                  style: isHoliday
+                      ? style.holidayTextStyle
+                      : style.workDayTextStyle,
                 ),
               ),
             ),
