@@ -1,22 +1,26 @@
 import 'package:flutter/widgets.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
+import 'package:scheduled_calendar/widgets/badge_view.dart';
 
-class DefaultDayView extends StatelessWidget {
+class DayView extends StatelessWidget {
   final DateTime day;
   final void Function(DateTime day)? onPressed;
   final bool
-      isCalendarMode; // Если режим календаря, а не расписания, будет виджет с числом записей
-  final bool isHoliday;
-  final bool isPerformerWorkDay;
+      isCalendarMode; // если режим календаря, а не расписания, будет виджет с числом записей
+  final bool isHoliday; // является ли день календарным выходным
+  final bool isPerformerWorkDay; // является ли день рабочим днём исполнителя
+  final AppointmentBadgeStyle
+      appointmentBadgeStyle; // виджет для количества записей
   final ScheduledCalendarDayStyle style;
-  const DefaultDayView({
+  const DayView(
+    this.day, {
     super.key,
-    required this.day,
     required this.onPressed,
-    required this.isCalendarMode,
-    required this.isHoliday,
-    required this.isPerformerWorkDay,
-    required this.style,
+    this.isCalendarMode = false,
+    this.isHoliday = false,
+    this.isPerformerWorkDay = false,
+    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
+    this.style = const ScheduledCalendarDayStyle(),
   });
 
   @override
@@ -34,14 +38,18 @@ class DefaultDayView extends StatelessWidget {
               child: Center(
                 child: Text(
                   day.day.toString(),
-                  style:
-                      isHoliday ? style.holidayTextStyle : style.workDayTextStyle,
+                  style: isHoliday
+                      ? style.holidayTextStyle
+                      : style.workDayTextStyle,
                 ),
               ),
             ),
             const SizedBox(height: 5),
             isCalendarMode
-                ? style.appointmentNumberBadge
+                ? BadgeView(
+                    3,
+                    style: appointmentBadgeStyle,
+                  )
                 : Text(
                     isPerformerWorkDay
                         ? style.workDayInscription ?? ''
