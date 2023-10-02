@@ -9,6 +9,8 @@ class WeekView extends StatefulWidget {
   final DateTime? selectedDate;
   final Widget weeksSeparator;
   final ScheduledCalendarDayStyle dayStyle;
+  final bool isCalendarMode;
+  final AppointmentBadgeStyle appointmentBadgeStyle;
   final void Function(DateTime?)? onDayPressed;
   const WeekView(
     this.week, {
@@ -17,6 +19,8 @@ class WeekView extends StatefulWidget {
     this.weeksSeparator = const WeeksSeparator(), // разделитель между неделями
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
+    this.isCalendarMode = false,
+    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
   });
 
   @override
@@ -101,6 +105,7 @@ class _WeekViewState extends State<WeekView> {
                           widget.onDayPressed?.call(date);
                         }
                       },
+                      isCalendarMode: widget.isCalendarMode,
                       isHoliday: date.weekday == DateTime.saturday ||
                           date.weekday == DateTime.sunday,
                       isPerformerWorkDay: date.month == 3 &&
@@ -114,6 +119,7 @@ class _WeekViewState extends State<WeekView> {
                               date.day == 7 ||
                               date.day == 8),
                       style: widget.dayStyle,
+                      appointmentBadgeStyle: widget.appointmentBadgeStyle,
                     ),
                   ),
                 )

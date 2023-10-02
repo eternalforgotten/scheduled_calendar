@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
+import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_name_view.dart';
@@ -21,6 +22,16 @@ class MonthView extends StatelessWidget {
     this.selectedDate,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
+    this.monthNameTextStyle = const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFFEFD23C),
+    ),
+    this.monthNameDisplay = MonthDisplay.full,
+    this.displayYearInMonthName = false,
+    this.monthNameLocale,
+    this.isCalendarMode = false,
+    required this.appointmentBadgeStyle,
   });
 
   final Month month;
@@ -35,7 +46,17 @@ class MonthView extends StatelessWidget {
   final DateTime? minDate; // дата начала периода
   final DateTime? maxDate; // дата конца периода
   final DateTime? selectedDate; // выбранная дата
+  final TextStyle monthNameTextStyle; // стиль текста
+
+  final MonthDisplay
+      monthNameDisplay; // способ отображения названия: полностью или кратко
+
+  final bool displayYearInMonthName; // отображать ли год
+
+  final String? monthNameLocale; // локаль языка отображения названия месяца
   final ScheduledCalendarDayStyle dayStyle;
+  final bool isCalendarMode;
+  final AppointmentBadgeStyle appointmentBadgeStyle;
   final ValueChanged<DateTime?>?
       onDayPressed; // тип действия при нажатии на день
 
@@ -65,7 +86,13 @@ class MonthView extends StatelessWidget {
             Flexible(
               flex: centerMonthName ? 1 : weeksList.first.length,
               child: monthNameBuilder?.call(context, month.month, month.year) ??
-                  MonthNameView(month),
+                  MonthNameView(
+                    month,
+                    monthNameTextStyle: monthNameTextStyle,
+                    monthNameDisplay: monthNameDisplay,
+                    displayYear: false,
+                    nameLocale: monthNameLocale,
+                  ),
             ),
           ],
         ),
@@ -79,6 +106,8 @@ class MonthView extends StatelessWidget {
                     onDayPressed: onDayPressed,
                     selectedDate: selectedDate,
                     dayStyle: dayStyle,
+                    appointmentBadgeStyle: appointmentBadgeStyle,
+                    isCalendarMode: isCalendarMode,
                   ),
                 )
                 .toList(),

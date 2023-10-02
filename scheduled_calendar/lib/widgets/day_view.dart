@@ -9,7 +9,8 @@ class DayView extends StatelessWidget {
       isCalendarMode; // если режим календаря, а не расписания, будет виджет с числом записей
   final bool isHoliday; // является ли день календарным выходным
   final bool isPerformerWorkDay; // является ли день рабочим днём исполнителя
-  final Widget appointmentNumberBadge; // виджет для количества записей
+  final AppointmentBadgeStyle
+      appointmentBadgeStyle; // виджет для количества записей
   final ScheduledCalendarDayStyle style;
   const DayView(
     this.day, {
@@ -18,7 +19,7 @@ class DayView extends StatelessWidget {
     this.isCalendarMode = false,
     this.isHoliday = false,
     this.isPerformerWorkDay = false,
-    this.appointmentNumberBadge = const BadgeView(3),
+    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.style = const ScheduledCalendarDayStyle(),
   });
 
@@ -45,7 +46,10 @@ class DayView extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             isCalendarMode
-                ? appointmentNumberBadge
+                ? BadgeView(
+                    3,
+                    style: appointmentBadgeStyle,
+                  )
                 : Text(
                     isPerformerWorkDay
                         ? style.workDayInscription ?? ''

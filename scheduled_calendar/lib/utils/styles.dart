@@ -69,3 +69,20 @@ class ScheduledCalendarDayStyle {
     this.selectedDayDecoration = const BoxDecoration(),
   });
 }
+
+class AppointmentBadgeStyle {
+  final double width;
+  final double height;
+  final Decoration badgeDecoration;
+  final TextStyle numberTextStyle;
+
+  const AppointmentBadgeStyle({
+    this.width = 16,
+    this.height = 16,
+    this.badgeDecoration = const BoxDecoration(
+      color: Color(0xFFEFD23C),
+      shape: BoxShape.circle,
+    ),
+    this.numberTextStyle = const TextStyle(fontSize: 10),
+  });
+}

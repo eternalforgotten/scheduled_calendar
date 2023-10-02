@@ -30,6 +30,18 @@ class ScheduledCalendar extends StatefulWidget {
     this.nextAvailableDate,
     this.role,
     this.dayStyle = const ScheduledCalendarDayStyle(),
+    this.weeksSeparator = const WeeksSeparator(),
+    this.centerMonthName = false,
+    this.monthNameTextStyle = const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFFEFD23C),
+    ),
+    this.monthNameDisplay = MonthDisplay.full,
+    this.displayYearInMonthName = false,
+    this.monthNameLocale,
+    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
+    this.isCalendarMode = false,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -89,6 +101,25 @@ class ScheduledCalendar extends StatefulWidget {
   final Role? role;
 
   final ScheduledCalendarDayStyle dayStyle;
+
+  final bool
+      centerMonthName; // расположить ли название месяца по центру, а не над началом недели
+
+  final Widget weeksSeparator; // разделитель между неделями
+
+  final TextStyle monthNameTextStyle; // стиль текста
+
+  final MonthDisplay
+      monthNameDisplay; // способ отображения названия: полностью или кратко
+
+  final bool displayYearInMonthName; // отображать ли год
+
+  final String? monthNameLocale; // локаль языка отображения названия месяца
+
+  final bool
+      isCalendarMode; // если режим календаря, а не расписания, будет виджет с числом записей
+
+  final AppointmentBadgeStyle appointmentBadgeStyle;
 
   @override
   _ScheduledCalendarState createState() => _ScheduledCalendarState();
@@ -257,11 +288,11 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                         month: month,
                         selectedDate: _selectedDate,
                         monthNameBuilder: widget.monthNameBuilder,
-                        centerMonthName: false,
+                        centerMonthName: widget.centerMonthName,
                         dayBuilder: widget.dayBuilder,
                         onDayPressed: _onDayTapped,
                         startWeekWithSunday: widget.startWeekWithSunday,
-                        weeksSeparator: const WeeksSeparator(),
+                        weeksSeparator: widget.weeksSeparator,
                         minDate: widget.minDate != null &&
                                 widget.minDate!.month == month.month
                             ? widget.minDate
@@ -271,6 +302,11 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             ? widget.maxDate
                             : DateTime(month.year, month.month + 1, -1),
                         dayStyle: widget.dayStyle,
+                        monthNameTextStyle: widget.monthNameTextStyle,
+                        monthNameDisplay: widget.monthNameDisplay,
+                        displayYearInMonthName: widget.displayYearInMonthName,
+                        isCalendarMode: widget.isCalendarMode,
+                        appointmentBadgeStyle: widget.appointmentBadgeStyle,
                       );
                     },
                   ),
@@ -305,6 +341,11 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                           ? widget.maxDate
                           : DateTime(month.year, month.month + 1, -1),
                       dayStyle: widget.dayStyle,
+                      monthNameTextStyle: widget.monthNameTextStyle,
+                      monthNameDisplay: widget.monthNameDisplay,
+                      displayYearInMonthName: widget.displayYearInMonthName,
+                      isCalendarMode: widget.isCalendarMode,
+                      appointmentBadgeStyle: widget.appointmentBadgeStyle,
                     );
                   },
                 ),
