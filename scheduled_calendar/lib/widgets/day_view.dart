@@ -8,7 +8,7 @@ class DayView extends StatelessWidget {
   final bool
       isCalendarMode;
       /// Is the day the calendar holiday
-       final bool isHoliday;
+       final bool isDayOff;
        /// Is the day the performer work day
   final bool isPerformerWorkDay;
   /// Widget for displaying of the appointments number
@@ -20,7 +20,7 @@ class DayView extends StatelessWidget {
     super.key,
     required this.onPressed,
     this.isCalendarMode = false,
-    this.isHoliday = false,
+    this.isDayOff = false,
     this.isPerformerWorkDay = false,
     this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.style = const ScheduledCalendarDayStyle(),
@@ -41,8 +41,8 @@ class DayView extends StatelessWidget {
               child: Center(
                 child: Text(
                   day.day.toString(),
-                  style: isHoliday
-                      ? style.holidayTextStyle
+                  style: isDayOff
+                      ? style.dayOffTextStyle
                       : style.workDayTextStyle,
                 ),
               ),
@@ -56,7 +56,7 @@ class DayView extends StatelessWidget {
                 : Text(
                     isPerformerWorkDay
                         ? style.workDayInscription ?? ''
-                        : style.holidayInscription ?? '',
+                        : style.dayOffInscription ?? '',
                     style: style.inscriptionTextStyle,
                   ),
           ],

@@ -51,6 +51,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.isCalendarMode = false,
     this.monthCustomNames = const {},
+    this.daysOff = const [DateTime.saturday, DateTime.sunday],
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -141,13 +142,16 @@ class ScheduledCalendar extends StatefulWidget {
   /// Appointments number badge style
   final AppointmentBadgeStyle appointmentBadgeStyle;
 
-  ///Callback that overrides behaviour of calendar day interaction
+  /// List of days that are calendar days off and have different text style in calendar
+  final List<int> daysOff;
+
+  ///Callback that overrides behavior of calendar day interaction
   ///By default, calendar will show a card, appearing below the week of selected day,
   ///which is customizable via [selectedDateCardBuilder]
   ///The argument is null when pressing the selected day again
   final DateCallback? onDayPressed;
 
-  ///Widget, used to display card when a day is tappped
+  ///Widget, used to display card when a day is tapped
   final DateBuilder? selectedDateCardBuilder;
 
   ///Whether to disable calendar interaction or not
@@ -367,6 +371,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               appointmentBadgeStyle:
                                   widget.appointmentBadgeStyle,
                               monthCustomNames: widget.monthCustomNames,
+                              daysOff: widget.daysOff,
                             );
                           },
                         ),
@@ -399,14 +404,6 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               height: 1,
                               color: const Color(0xFF5C5B5F),
                             ),
-                            minDate: widget.minDate != null &&
-                                    widget.minDate!.month == month.month
-                                ? widget.minDate
-                                : DateTime(month.year, month.month, 1),
-                            maxDate: widget.maxDate != null &&
-                                    widget.maxDate!.month == month.month
-                                ? widget.maxDate
-                                : DateTime(month.year, month.month + 1, -1),
                             dayStyle: widget.dayStyle,
                             monthNameTextStyle: widget.monthNameTextStyle,
                             monthNameDisplay: widget.monthNameDisplay,
@@ -415,6 +412,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             isCalendarMode: widget.isCalendarMode,
                             appointmentBadgeStyle: widget.appointmentBadgeStyle,
                             monthCustomNames: widget.monthCustomNames,
+                            daysOff: widget.daysOff,
                           );
                         },
                       ),
