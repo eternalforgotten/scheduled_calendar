@@ -17,10 +17,10 @@ class ScheduledCalendarDayStyle {
   final String? workDayInscription;
 
   /// Text style of the holiday
-  final TextStyle holidayTextStyle;
+  final TextStyle dayOffTextStyle;
 
   /// Inscription under the holiday
-  final String? holidayInscription;
+  final String? dayOffInscription;
 
   /// Text style of the focused, pressed day
   final TextStyle focusedDayTextStyle;
@@ -60,12 +60,12 @@ class ScheduledCalendarDayStyle {
       color: Colors.white,
     ),
     this.workDayInscription = 'Раб.',
-    this.holidayTextStyle = const TextStyle(
+    this.dayOffTextStyle = const TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w700,
       color: Color(0xFF5C5B5F),
     ),
-    this.holidayInscription = 'Вых.',
+    this.dayOffInscription = 'Вых.',
     this.focusedDayTextStyle = const TextStyle(),
     this.focusedDayDecoration = const BoxDecoration(),
     this.performerWorkDayDecoration = const BoxDecoration(

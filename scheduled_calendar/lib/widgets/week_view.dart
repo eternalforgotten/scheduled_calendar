@@ -22,6 +22,7 @@ class WeekView extends StatefulWidget {
   final bool startWeekWithSunday;
   final bool isFirstWeek;
   final bool isLastWeek;
+  final List<int> daysOff;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -37,6 +38,7 @@ class WeekView extends StatefulWidget {
     Curve? selectedDateCardAnimationCurve,
     required this.isFirstWeek,
     required this.isLastWeek,
+    required this.daysOff,
   })  : selectedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -148,8 +150,9 @@ class _WeekViewState extends State<WeekView>
                         }
                       },
                       isCalendarMode: widget.isCalendarMode,
-                      isHoliday: date.weekday == DateTime.saturday ||
-                          date.weekday == DateTime.sunday,
+                      isDayOff: widget.daysOff.any(
+                        (day) => date.weekday == day,
+                      ),
                       isPerformerWorkDay: date.month == 3 &&
                           (date.day == 1 ||
                               date.day == 1 ||
