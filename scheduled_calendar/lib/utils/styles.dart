@@ -181,10 +181,10 @@ class ClientBookingCardStyle {
       color: Color(0xFF5C5B5F),
     ),
     this.timeSlotTextStyle = const TextStyle(
-      fontSize: 11,
+      fontSize: 14,
       fontWeight: FontWeight.w400,
       color: Colors.white,
-      height: 18 / 11,
+      height: 22 / 14,
     ),
     this.timeSlotDecoration = const BoxDecoration(
       border: Border.fromBorderSide(
@@ -200,10 +200,10 @@ class ClientBookingCardStyle {
       vertical: 5,
     ),
     this.selectedTimeSlotTextStyle = const TextStyle(
-      fontSize: 11,
+      fontSize: 14,
       fontWeight: FontWeight.w400,
       color: Color(0xFF0A0A0A),
-      height: 18 / 11,
+      height: 22 / 14,
     ),
     this.selectedTimeSlotDecoration = const BoxDecoration(
       border: Border.fromBorderSide(

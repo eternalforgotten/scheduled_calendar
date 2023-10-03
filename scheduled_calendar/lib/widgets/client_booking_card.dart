@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -48,6 +49,7 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
     return SizeTransition(
       sizeFactor: widget.controller,
       child: Container(
+        width: double.infinity,
         padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
         decoration: widget.style.cardDecoration,
         child: Column(
@@ -61,40 +63,40 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
               style: widget.style.instructionTextStyle,
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 25, 16, 16),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  childAspectRatio: 62 / 32,
-                  mainAxisSpacing: 7,
-                  crossAxisSpacing: 7,
-                ),
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (selectedSlotIndex != index) {
-                        selectedSlotIndex = index;
-                      } else {
-                        selectedSlotIndex = -1;
-                      }
-                    });
-                  },
-                  child: Container(
-                    padding: widget.style.timeSlotPadding,
-                    decoration: selectedSlotIndex == index
-                        ? widget.style.selectedTimeSlotDecoration
-                        : widget.style.timeSlotDecoration,
-                    child: Text(
-                      DateFormat('Hm', locale).format(widget.timeSlots[index]),
-                      style: selectedSlotIndex == index
-                          ? widget.style.selectedTimeSlotTextStyle
-                          : widget.style.timeSlotTextStyle,
-                    ),
-                  ),
-                ),
-                itemCount: widget.timeSlots.length,
+              padding: const EdgeInsets.fromLTRB(0, 25, 0, 16),
+              child: Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                alignment: WrapAlignment.center,
+                children: [
+                  ...widget.timeSlots
+                      .mapIndexed(
+                        (index, timeSlot) => GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (selectedSlotIndex != index) {
+                                selectedSlotIndex = index;
+                              } else {
+                                selectedSlotIndex = -1;
+                              }
+                            });
+                          },
+                          child: Container(
+                            padding: widget.style.timeSlotPadding,
+                            decoration: selectedSlotIndex == index
+                                ? widget.style.selectedTimeSlotDecoration
+                                : widget.style.timeSlotDecoration,
+                            child: Text(
+                              DateFormat('Hm', locale).format(timeSlot),
+                              style: selectedSlotIndex == index
+                                  ? widget.style.selectedTimeSlotTextStyle
+                                  : widget.style.timeSlotTextStyle,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ],
               ),
             ),
             TextButton(
