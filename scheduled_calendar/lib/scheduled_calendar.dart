@@ -12,6 +12,7 @@ import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_view.dart';
+import 'package:scheduled_calendar/widgets/schedule_inscription.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class ScheduledCalendar extends StatefulWidget {
@@ -52,6 +53,8 @@ class ScheduledCalendar extends StatefulWidget {
     this.isCalendarMode = false,
     this.monthCustomNames = const {},
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
+    this.scheduleInscriptionTextStyle = const ScheduleInscriptionStyle(),
+    this.displayScheduleInscription = true,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -144,6 +147,13 @@ class ScheduledCalendar extends StatefulWidget {
 
   /// List of days that are calendar days off and have different text style in calendar
   final List<int> daysOff;
+
+  /// Text style of the schedule inscription
+  final ScheduleInscriptionStyle scheduleInscriptionTextStyle;
+
+  /// Select wether display schedule inscription or not. Defaults to 'true'.
+  /// If [nextAvailableDate] == null, schedule inscription won't be displayed
+  final bool displayScheduleInscription;
 
   ///Callback that overrides behavior of calendar day interaction
   ///By default, calendar will show a card, appearing below the week of selected day,
@@ -416,6 +426,28 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                           );
                         },
                       ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                        widget.listPadding.left,
+                        0,
+                        widget.listPadding.right,
+                        widget.nextAvailableDate != null &&
+                                widget.displayScheduleInscription &&
+                                !widget.isCalendarMode
+                            ? 16
+                            : 0),
+                    sliver: SliverToBoxAdapter(
+                      child: widget.nextAvailableDate != null &&
+                              widget.displayScheduleInscription &&
+                              !widget.isCalendarMode
+                          ? ScheduleInscription(
+                              widget.nextAvailableDate!,
+                              style: widget.scheduleInscriptionTextStyle,
+                              locale: widget.monthNameLocale,
+                            )
+                          : const SizedBox(),
                     ),
                   ),
                 ],
