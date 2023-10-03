@@ -37,7 +37,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.selectedDateCardAnimationDuration,
     this.selectedDateCardAnimationCurve,
     this.nextAvailableDate,
-    this.role,
+    this.role = Role.client,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.weeksSeparator = const WeeksSeparator(),
     this.centerMonthName = false,
@@ -55,6 +55,8 @@ class ScheduledCalendar extends StatefulWidget {
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
     this.scheduleInscriptionTextStyle = const ScheduleInscriptionStyle(),
     this.displayScheduleInscription = true,
+    this.clientCardStyle = const ClientBookingCardStyle(),
+    this.onClientCardButtonPressed,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -112,7 +114,7 @@ class ScheduledCalendar extends StatefulWidget {
   final DateTime? nextAvailableDate;
 
   /// User role: performer or client
-  final Role? role;
+  final Role role;
 
   /// Default day view style
   final ScheduledCalendarDayStyle dayStyle;
@@ -160,6 +162,10 @@ class ScheduledCalendar extends StatefulWidget {
   ///which is customizable via [selectedDateCardBuilder]
   ///The argument is null when pressing the selected day again
   final DateCallback? onDayPressed;
+
+  final ClientBookingCardStyle clientCardStyle;
+
+  final ValueChanged<DateTime>? onClientCardButtonPressed;
 
   ///Widget, used to display card when a day is tapped
   final DateBuilder? selectedDateCardBuilder;
@@ -382,6 +388,10 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                   widget.appointmentBadgeStyle,
                               monthCustomNames: widget.monthCustomNames,
                               daysOff: widget.daysOff,
+                              role: widget.role,
+                              clientCardStyle: widget.clientCardStyle,
+                              onClientCardButtonPressed:
+                                  widget.onClientCardButtonPressed ?? (date) {},
                             );
                           },
                         ),
@@ -423,6 +433,10 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             appointmentBadgeStyle: widget.appointmentBadgeStyle,
                             monthCustomNames: widget.monthCustomNames,
                             daysOff: widget.daysOff,
+                            role: widget.role,
+                            clientCardStyle: widget.clientCardStyle,
+                            onClientCardButtonPressed:
+                                widget.onClientCardButtonPressed ?? (date) {},
                           );
                         },
                       ),

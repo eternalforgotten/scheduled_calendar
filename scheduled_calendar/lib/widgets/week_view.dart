@@ -5,6 +5,7 @@ import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
+import 'package:scheduled_calendar/widgets/client_booking_card.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
@@ -23,6 +24,10 @@ class WeekView extends StatefulWidget {
   final bool isFirstWeek;
   final bool isLastWeek;
   final List<int> daysOff;
+  final Role role;
+  final String? locale;
+  final ClientBookingCardStyle clientCardStyle;
+  final ValueChanged<DateTime> onClientCardButtonPressed;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -39,6 +44,10 @@ class WeekView extends StatefulWidget {
     required this.isFirstWeek,
     required this.isLastWeek,
     required this.daysOff,
+    required this.role,
+    this.locale,
+    required this.clientCardStyle,
+    required this.onClientCardButtonPressed,
   })  : selectedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -175,52 +184,43 @@ class _WeekViewState extends State<WeekView>
               ),
           ],
         ),
-        widget.selectedDateCardBuilder != null
-            ? SizeTransition(
-                sizeFactor: CurvedAnimation(
-                  curve: widget.selectedDateCardAnimationCurve,
-                  parent: animationController,
-                ),
-                child: widget.selectedDateCardBuilder!(
-                  context,
-                  dateToDisplay ?? DateTime.now(),
-                ),
-              )
-            : _DefaultDateCard(
-                date: dateToDisplay ?? DateTime.now(),
-                controller: animationController,
-              ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+          child: widget.selectedDateCardBuilder != null
+              ? SizeTransition(
+                  sizeFactor: CurvedAnimation(
+                    curve: widget.selectedDateCardAnimationCurve,
+                    parent: animationController,
+                  ),
+                  child: widget.selectedDateCardBuilder!(
+                    context,
+                    dateToDisplay ?? DateTime.now(),
+                  ),
+                )
+              : widget.role == Role.client
+                  ? ClientBookingCard(
+                      dateToDisplay ?? DateTime.now(),
+                      timeSlots: [
+                        DateTime(2023, 10, 1, 22, 00),
+                        DateTime(2023, 10, 1, 22, 30),
+                        DateTime(2023, 10, 1, 23, 00),
+                        DateTime(2023, 10, 1, 23, 30),
+                        DateTime(2023, 10, 1, 22, 30),
+                        DateTime(2023, 10, 1, 22, 30),
+                      ],
+                      onClientCardButtonPressed: (date) =>
+                          widget.onClientCardButtonPressed(date),
+                      controller: animationController,
+                      locale: widget.locale,
+                      style: widget.clientCardStyle,
+                    )
+                  // TODO: вставить сюда карточку исполнителя
+                  : Container(
+                      height: 50,
+                      color: Colors.yellow,
+                    ),
+        ),
       ],
-    );
-  }
-}
-
-class _DefaultDateCard extends StatelessWidget {
-  final DateTime date;
-  final AnimationController controller;
-  const _DefaultDateCard({
-    required this.date,
-    required this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizeTransition(
-      sizeFactor: controller,
-      child: Container(
-        alignment: Alignment.center,
-        height: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.amber,
-        ),
-        child: Text(
-          date.toString(),
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-      ),
     );
   }
 }
