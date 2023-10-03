@@ -37,7 +37,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.selectedDateCardAnimationDuration,
     this.selectedDateCardAnimationCurve,
     this.nextAvailableDate,
-    this.role,
+    this.role = Role.client,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.weeksSeparator = const WeeksSeparator(),
     this.centerMonthName = false,
@@ -112,7 +112,7 @@ class ScheduledCalendar extends StatefulWidget {
   final DateTime? nextAvailableDate;
 
   /// User role: performer or client
-  final Role? role;
+  final Role role;
 
   /// Default day view style
   final ScheduledCalendarDayStyle dayStyle;
@@ -382,6 +382,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                   widget.appointmentBadgeStyle,
                               monthCustomNames: widget.monthCustomNames,
                               daysOff: widget.daysOff,
+                              role: widget.role,
                             );
                           },
                         ),
@@ -423,6 +424,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             appointmentBadgeStyle: widget.appointmentBadgeStyle,
                             monthCustomNames: widget.monthCustomNames,
                             daysOff: widget.daysOff,
+                            role: widget.role,
                           );
                         },
                       ),

@@ -37,7 +37,7 @@ class MonthView extends StatelessWidget {
     this.isCalendarMode = false,
     this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.monthCustomNames = const {},
-    this.daysOff = const [DateTime.saturday, DateTime.sunday],
+    this.daysOff = const [DateTime.saturday, DateTime.sunday], required this.role,
   });
 
   final Month month;
@@ -61,6 +61,7 @@ class MonthView extends StatelessWidget {
   final AppointmentBadgeStyle appointmentBadgeStyle;
   final Map<int, String> monthCustomNames;
   final List<int> daysOff;
+  final Role role;
   final ValueChanged<DateTime?>? onDayPressed;
 
   @override
@@ -117,6 +118,7 @@ class MonthView extends StatelessWidget {
                     isFirstWeek: index == 0,
                     isLastWeek: index == weeksList.length - 1,
                     daysOff: daysOff,
+                    role: role,
                   ),
                 )
                 .toList(),
