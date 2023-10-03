@@ -36,6 +36,12 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
   @override
   Widget build(BuildContext context) {
     final locale = widget.locale ?? Platform.localeName;
+    var date = DateFormat('EEEE, d MMMM', locale).format(widget.date);
+    date = date = date.replaceRange(
+      0,
+      1,
+      date.substring(0, 1).toUpperCase(),
+    );
     final slots = [
       DateTime(2023, 10, 1, 22, 00),
       DateTime(2023, 10, 1, 22, 30),
@@ -52,7 +58,7 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
         child: Column(
           children: [
             Text(
-              DateFormat('EEEE, d MMMM', locale).format(widget.date),
+              date,
               style: widget.style.dateTextStyle,
             ),
             Text(
