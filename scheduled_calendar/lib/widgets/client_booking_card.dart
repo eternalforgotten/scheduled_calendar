@@ -43,7 +43,7 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
       DateTime(2023, 10, 1, 22, 30),
     ];
     return Container(
-      padding: const EdgeInsets.fromLTRB(37, 22, 37, 25),
+      padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
       decoration: widget.style.cardDecoration,
       child: Column(
         children: [
@@ -56,28 +56,32 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
             style: widget.style.instructionTextStyle,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25),
+            padding: const EdgeInsets.fromLTRB(16, 25, 16, 16),
             child: GridView.builder(
+              shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 4,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
                 childAspectRatio: 62 / 32,
                 mainAxisSpacing: 7,
                 crossAxisSpacing: 7,
               ),
               itemBuilder: (context, index) => Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
+                  horizontal: 14,
                   vertical: 5,
                 ),
                 decoration: widget.style.timeSlotDecoration,
                 child: Text(
                   DateFormat('Hm', locale).format(slots[index]),
+                  style: widget.style.timeSlotTextStyle,
                 ),
               ),
+              itemCount: slots.length,
             ),
           ),
           TextButton(
+            style: widget.style.buttonStyle,
             onPressed: () => widget.onClientCardButtonPressed(widget.date),
             child: Text(
               widget.style.buttonText,

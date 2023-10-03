@@ -141,6 +141,7 @@ class ClientBookingCardStyle {
   final TextStyle instructionTextStyle;
   final String buttonText;
   final TextStyle buttonTextStyle;
+  final ButtonStyle buttonStyle;
   final TextStyle inactiveButtonTextStyle;
   final TextStyle timeSlotTextStyle;
   final Decoration timeSlotDecoration;
@@ -172,17 +173,17 @@ class ClientBookingCardStyle {
       color: Color(0xFFEFD23C),
       height: 22 / 14,
     ),
+    this.buttonStyle = const ButtonStyle(),
     this.inactiveButtonTextStyle = const TextStyle(
-      fontSize: 14,
+      fontSize: 12,
       fontWeight: FontWeight.w600,
       color: Color(0xFF5C5B5F),
-      height: 22 / 14,
     ),
     this.timeSlotTextStyle = const TextStyle(
-      fontSize: 14,
+      fontSize: 11,
       fontWeight: FontWeight.w400,
       color: Colors.white,
-      height: 22 / 13,
+      height: 18 / 11,
     ),
     this.timeSlotDecoration = const BoxDecoration(
       border: Border.fromBorderSide(
