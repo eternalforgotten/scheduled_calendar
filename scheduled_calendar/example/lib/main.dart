@@ -72,9 +72,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: ScheduledCalendar(
-          minDate: DateTime(2023, 3, 3),
-          maxDate: DateTime(2023, 6, 16),
-          initialDate: DateTime(2023, 3, 5),
+          startWeekWithSunday: true,
+          minDate: DateTime(2023, 9, 7),
+          maxDate: DateTime(2023, 11, 16),
+          initialDate: DateTime(2023, 9, 9),
           monthCustomNames: const {
             1: 'Янв.',
             2: 'Фев.',
@@ -97,16 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.green,
               alignment: Alignment.center,
               child: Text(date.toString()),
-            );
-          },
-          onDayPressed: (date) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  content: Text(date.toString()),
-                );
-              },
             );
           },
         ),
