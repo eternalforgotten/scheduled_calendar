@@ -89,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
             11: 'Ноя.',
             12: 'Дек.',
           },
+          nextAvailableDate: DateTime(2023, 9, 11),
           selectedDateCardAnimationCurve: Curves.easeInOutBack,
           selectedDateCardAnimationDuration: const Duration(milliseconds: 300),
         ),

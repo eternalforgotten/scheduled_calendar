@@ -55,6 +55,8 @@ class ScheduledCalendar extends StatefulWidget {
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
     this.scheduleInscriptionTextStyle = const ScheduleInscriptionStyle(),
     this.displayScheduleInscription = true,
+    this.clientCardStyle = const ClientBookingCardStyle(),
+    this.onClientCardButtonPressed,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -160,6 +162,10 @@ class ScheduledCalendar extends StatefulWidget {
   ///which is customizable via [selectedDateCardBuilder]
   ///The argument is null when pressing the selected day again
   final DateCallback? onDayPressed;
+
+  final ClientBookingCardStyle clientCardStyle;
+
+  final ValueChanged<DateTime>? onClientCardButtonPressed;
 
   ///Widget, used to display card when a day is tapped
   final DateBuilder? selectedDateCardBuilder;
@@ -383,6 +389,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               monthCustomNames: widget.monthCustomNames,
                               daysOff: widget.daysOff,
                               role: widget.role,
+                              clientCardStyle: widget.clientCardStyle,
+                              onClientCardButtonPressed:
+                                  widget.onClientCardButtonPressed ?? (date) {},
                             );
                           },
                         ),
@@ -425,6 +434,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             monthCustomNames: widget.monthCustomNames,
                             daysOff: widget.daysOff,
                             role: widget.role,
+                            clientCardStyle: widget.clientCardStyle,
+                            onClientCardButtonPressed:
+                                widget.onClientCardButtonPressed ?? (date) {},
                           );
                         },
                       ),
