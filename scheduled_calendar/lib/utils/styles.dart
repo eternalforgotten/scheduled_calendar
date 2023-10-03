@@ -112,3 +112,24 @@ class AppointmentBadgeStyle {
     this.numberTextStyle = const TextStyle(fontSize: 10),
   });
 }
+
+class ScheduleInscriptionStyle {
+  final TextStyle textStyle;
+  final String instructionText;
+  final TextStyle instructionTextStyle;
+  final TextStyle dateTextStyle;
+
+  const ScheduleInscriptionStyle({
+    this.textStyle = const TextStyle(
+      fontSize: 12,
+      height: 16/12,
+    ),
+    this.instructionText = 'Расписание на дальнейшую неделю будет доступно',
+    this.instructionTextStyle = const TextStyle(
+      color: Color(0xFF5C5B5F),
+    ),
+    this.dateTextStyle = const TextStyle(
+      color: Color(0xFFEFD23C),
+    ),
+  });
+}
