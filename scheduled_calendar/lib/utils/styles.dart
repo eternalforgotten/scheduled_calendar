@@ -145,6 +145,7 @@ class ClientBookingCardStyle {
   final TextStyle inactiveButtonTextStyle;
   final TextStyle timeSlotTextStyle;
   final Decoration timeSlotDecoration;
+  final EdgeInsets timeSlotPadding;
   final TextStyle selectedTimeSlotTextStyle;
   final Decoration selectedTimeSlotDecoration;
 
@@ -193,6 +194,10 @@ class ClientBookingCardStyle {
         ),
       ),
       borderRadius: BorderRadius.all(Radius.circular(6)),
+    ),
+    this.timeSlotPadding = const EdgeInsets.symmetric(
+      horizontal: 14,
+      vertical: 5,
     ),
     this.selectedTimeSlotTextStyle = const TextStyle(
       fontSize: 14,

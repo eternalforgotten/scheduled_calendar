@@ -67,10 +67,7 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
                 crossAxisSpacing: 7,
               ),
               itemBuilder: (context, index) => Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 5,
-                ),
+                padding: widget.style.timeSlotPadding,
                 decoration: widget.style.timeSlotDecoration,
                 child: Text(
                   DateFormat('Hm', locale).format(slots[index]),
