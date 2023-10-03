@@ -176,7 +176,7 @@ class ClientBookingCardStyle {
     ),
     this.buttonStyle = const ButtonStyle(),
     this.inactiveButtonTextStyle = const TextStyle(
-      fontSize: 12,
+      fontSize: 14,
       fontWeight: FontWeight.w600,
       color: Color(0xFF5C5B5F),
     ),
@@ -200,12 +200,18 @@ class ClientBookingCardStyle {
       vertical: 5,
     ),
     this.selectedTimeSlotTextStyle = const TextStyle(
-      fontSize: 14,
+      fontSize: 11,
       fontWeight: FontWeight.w400,
       color: Color(0xFF0A0A0A),
-      height: 22 / 13,
+      height: 18 / 11,
     ),
     this.selectedTimeSlotDecoration = const BoxDecoration(
+      border: Border.fromBorderSide(
+        BorderSide(
+          width: 1,
+          color: Color(0xFFEFD23C),
+        ),
+      ),
       borderRadius: BorderRadius.all(Radius.circular(6)),
       color: Color(0xFFEFD23C),
     ),

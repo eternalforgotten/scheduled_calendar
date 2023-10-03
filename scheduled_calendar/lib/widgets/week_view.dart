@@ -194,11 +194,18 @@ class _WeekViewState extends State<WeekView>
               : widget.role == Role.client
                   ? ClientBookingCard(
                       dateToDisplay ?? DateTime.now(),
-                      timeSlots: [],
+                      timeSlots: [
+                        DateTime(2023, 10, 1, 22, 00),
+                        DateTime(2023, 10, 1, 22, 30),
+                        DateTime(2023, 10, 1, 23, 00),
+                        DateTime(2023, 10, 1, 23, 30),
+                        DateTime(2023, 10, 1, 22, 30),
+                        DateTime(2023, 10, 1, 22, 30),
+                      ],
                       onClientCardButtonPressed: (date) {},
                       controller: animationController,
                     )
-                    // TODO: вставить сюда карточку исполнителя 
+                  // TODO: вставить сюда карточку исполнителя
                   : Container(
                       height: 50,
                       color: Colors.yellow,

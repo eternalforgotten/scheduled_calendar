@@ -27,6 +27,8 @@ class ClientBookingCard extends StatefulWidget {
 }
 
 class _ClientBookingCardState extends State<ClientBookingCard> {
+  int selectedSlotIndex = -1;
+
   @override
   void initState() {
     super.initState();
@@ -42,14 +44,7 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
       1,
       date.substring(0, 1).toUpperCase(),
     );
-    final slots = [
-      DateTime(2023, 10, 1, 22, 00),
-      DateTime(2023, 10, 1, 22, 30),
-      DateTime(2023, 10, 1, 23, 00),
-      DateTime(2023, 10, 1, 23, 30),
-      DateTime(2023, 10, 1, 22, 30),
-      DateTime(2023, 10, 1, 22, 30),
-    ];
+
     return SizeTransition(
       sizeFactor: widget.controller,
       child: Container(
@@ -76,23 +71,43 @@ class _ClientBookingCardState extends State<ClientBookingCard> {
                   mainAxisSpacing: 7,
                   crossAxisSpacing: 7,
                 ),
-                itemBuilder: (context, index) => Container(
-                  padding: widget.style.timeSlotPadding,
-                  decoration: widget.style.timeSlotDecoration,
-                  child: Text(
-                    DateFormat('Hm', locale).format(slots[index]),
-                    style: widget.style.timeSlotTextStyle,
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (selectedSlotIndex != index) {
+                        selectedSlotIndex = index;
+                      } else {
+                        selectedSlotIndex = -1;
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: widget.style.timeSlotPadding,
+                    decoration: selectedSlotIndex == index
+                        ? widget.style.selectedTimeSlotDecoration
+                        : widget.style.timeSlotDecoration,
+                    child: Text(
+                      DateFormat('Hm', locale).format(widget.timeSlots[index]),
+                      style: selectedSlotIndex == index
+                          ? widget.style.selectedTimeSlotTextStyle
+                          : widget.style.timeSlotTextStyle,
+                    ),
                   ),
                 ),
-                itemCount: slots.length,
+                itemCount: widget.timeSlots.length,
               ),
             ),
             TextButton(
               style: widget.style.buttonStyle,
-              onPressed: () => widget.onClientCardButtonPressed(widget.date),
+              onPressed: selectedSlotIndex == -1
+                  ? null
+                  : () => widget.onClientCardButtonPressed(
+                      widget.timeSlots[selectedSlotIndex]),
               child: Text(
                 widget.style.buttonText,
-                style: widget.style.buttonTextStyle,
+                style: selectedSlotIndex == -1
+                    ? widget.style.inactiveButtonTextStyle
+                    : widget.style.buttonTextStyle,
               ),
             ),
           ],
