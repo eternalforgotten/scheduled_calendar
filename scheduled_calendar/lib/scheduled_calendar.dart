@@ -15,8 +15,6 @@ import 'package:scheduled_calendar/widgets/month_view.dart';
 import 'package:scheduled_calendar/widgets/schedule_inscription.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
-export 'package:scheduled_calendar/widgets/client_booking_card.dart';
-
 class ScheduledCalendar extends StatefulWidget {
   ScheduledCalendar({
     super.key,

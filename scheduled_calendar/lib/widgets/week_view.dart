@@ -5,6 +5,7 @@ import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
+import 'package:scheduled_calendar/widgets/client_booking_card.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
@@ -175,52 +176,27 @@ class _WeekViewState extends State<WeekView>
               ),
           ],
         ),
-        widget.selectedDateCardBuilder != null
-            ? SizeTransition(
-                sizeFactor: CurvedAnimation(
-                  curve: widget.selectedDateCardAnimationCurve,
-                  parent: animationController,
-                ),
-                child: widget.selectedDateCardBuilder!(
-                  context,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+          child: widget.selectedDateCardBuilder != null
+              ? SizeTransition(
+                  sizeFactor: CurvedAnimation(
+                    curve: widget.selectedDateCardAnimationCurve,
+                    parent: animationController,
+                  ),
+                  child: widget.selectedDateCardBuilder!(
+                    context,
+                    dateToDisplay ?? DateTime.now(),
+                  ),
+                )
+              : ClientBookingCard(
                   dateToDisplay ?? DateTime.now(),
+                  timeSlots: [],
+                  onClientCardButtonPressed: (date) {},
+                  controller: animationController,
                 ),
-              )
-            : _DefaultDateCard(
-                date: dateToDisplay ?? DateTime.now(),
-                controller: animationController,
-              ),
+        ),
       ],
-    );
-  }
-}
-
-class _DefaultDateCard extends StatelessWidget {
-  final DateTime date;
-  final AnimationController controller;
-  const _DefaultDateCard({
-    required this.date,
-    required this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizeTransition(
-      sizeFactor: controller,
-      child: Container(
-        alignment: Alignment.center,
-        height: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.amber,
-        ),
-        child: Text(
-          date.toString(),
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-      ),
     );
   }
 }
