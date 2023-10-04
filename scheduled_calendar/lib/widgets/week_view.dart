@@ -30,6 +30,8 @@ class WeekView extends StatefulWidget {
   final String? locale;
   final ClientBookingCardStyle clientCardStyle;
   final ValueChanged<DateTime> onClientCardButtonPressed;
+  final PerformerCardStyle performerCardStyle;
+  final VoidCallback onPerformerCardButtonPressed;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -50,6 +52,8 @@ class WeekView extends StatefulWidget {
     this.locale,
     required this.clientCardStyle,
     required this.onClientCardButtonPressed,
+    required this.performerCardStyle,
+    required this.onPerformerCardButtonPressed,
   })  : selectedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -228,7 +232,9 @@ class _WeekViewState extends State<WeekView>
                           DateTime(2023, 10, 1, 23, 00),
                         ),
                       ],
-                      onPerformerCardButtonPressed: (period) {},
+                      style: widget.performerCardStyle,
+                      onPerformerCardButtonPressed:
+                          widget.onPerformerCardButtonPressed,
                       controller: animationController,
                     ),
         ),

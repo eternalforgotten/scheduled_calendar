@@ -11,7 +11,7 @@ class PerformerCard extends StatefulWidget {
   final DateTime date;
   final List<Period> periods;
   final PerformerCardStyle style;
-  final ValueChanged<Period> onPerformerCardButtonPressed;
+  final VoidCallback onPerformerCardButtonPressed;
   final String? locale;
   final AnimationController controller;
   const PerformerCard(

@@ -57,6 +57,8 @@ class ScheduledCalendar extends StatefulWidget {
     this.displayScheduleInscription = true,
     this.clientCardStyle = const ClientBookingCardStyle(),
     this.onClientCardButtonPressed,
+    this.performerCardStyle = const PerformerCardStyle(),
+    this.onPerformerCardButtonPressed,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -166,6 +168,10 @@ class ScheduledCalendar extends StatefulWidget {
   final ClientBookingCardStyle clientCardStyle;
 
   final ValueChanged<DateTime>? onClientCardButtonPressed;
+
+  final PerformerCardStyle performerCardStyle;
+
+  final VoidCallback? onPerformerCardButtonPressed;
 
   ///Widget, used to display card when a day is tapped
   final DateBuilder? selectedDateCardBuilder;
@@ -392,6 +398,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               clientCardStyle: widget.clientCardStyle,
                               onClientCardButtonPressed:
                                   widget.onClientCardButtonPressed ?? (date) {},
+                              performerCardStyle: widget.performerCardStyle,
+                              onPerformerCardButtonPressed:
+                                  widget.onPerformerCardButtonPressed ?? () {},
                             );
                           },
                         ),
@@ -437,6 +446,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             clientCardStyle: widget.clientCardStyle,
                             onClientCardButtonPressed:
                                 widget.onClientCardButtonPressed ?? (date) {},
+                            performerCardStyle: widget.performerCardStyle,
+                            onPerformerCardButtonPressed:
+                                widget.onPerformerCardButtonPressed ?? () {},
                           );
                         },
                       ),
