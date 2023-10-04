@@ -1,16 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:mobx/mobx.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
-import 'package:scheduled_calendar/utils/enums.dart';
 
 part 'calendar_state.g.dart';
 
 class CalendarState = CalendarStateBase with _$CalendarState;
 
 abstract class CalendarStateBase with Store {
-  final CalendarInteraction interaction;
-  CalendarStateBase({required this.interaction});
-
   @observable
   DateTime? selectedDate;
 
@@ -24,13 +20,16 @@ abstract class CalendarStateBase with Store {
 
   @action
   void onSelected(DateTime date) {
-    final dateInList =
-        selectedDates.firstWhereOrNull((element) => element.isSameDay(date));
+    final dateInList = dateInSelectedList(date);
     if (dateInList == null) {
       selectedDates.add(date);
     } else {
       selectedDates.remove(dateInList);
     }
+  }
+
+  DateTime? dateInSelectedList(DateTime date) {
+    return selectedDates.firstWhereOrNull((element) => element.isSameDay(date));
   }
 
   @action

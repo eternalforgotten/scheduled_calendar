@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
@@ -28,6 +26,7 @@ class WeekView extends StatefulWidget {
   final String? locale;
   final ClientBookingCardStyle clientCardStyle;
   final ValueChanged<DateTime> onClientCardButtonPressed;
+  final CalendarInteraction interaction;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -48,6 +47,7 @@ class WeekView extends StatefulWidget {
     this.locale,
     required this.clientCardStyle,
     required this.onClientCardButtonPressed,
+    required this.interaction,
   })  : selectedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -62,12 +62,10 @@ class _WeekViewState extends State<WeekView>
   bool expanded = false;
   DateTime? dateToDisplay;
   late AnimationController animationController;
-  late CalendarInteraction interaction;
 
   @override
   void initState() {
     super.initState();
-    interaction = context.read<CalendarState>().interaction;
     animationController = AnimationController(
       vsync: this,
       duration: widget.selectedDateCardAnimationDuration,
@@ -77,7 +75,7 @@ class _WeekViewState extends State<WeekView>
   @override
   void didUpdateWidget(covariant WeekView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (interaction == CalendarInteraction.dateCard) {
+    if (widget.interaction == CalendarInteraction.dateCard) {
       final date = widget.selectedDate;
       final oldDate = oldWidget.selectedDate;
       if (date != null) {
@@ -145,8 +143,9 @@ class _WeekViewState extends State<WeekView>
                   (date) => Flexible(
                     child: DayView(
                       date,
+                      interaction: widget.interaction,
                       onPressed: (date) {
-                        if (interaction == CalendarInteraction.dateCard) {
+                        if (widget.interaction == CalendarInteraction.dateCard) {
                           final newSelectedDate = widget.selectedDate;
                           if (newSelectedDate != null &&
                               date.isSameDay(newSelectedDate)) {

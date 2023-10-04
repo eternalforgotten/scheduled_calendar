@@ -196,10 +196,12 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
   final Key downListKey = UniqueKey();
   late bool hideUp;
 
+  BuildContext? realContext;
+
   @override
   void didUpdateWidget(covariant ScheduledCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final state = context.read<CalendarState>();
+    final state = realContext!.read<CalendarState>();
     final oldSelected = oldWidget.interaction == CalendarInteraction.selection;
     final newSelected = widget.interaction == CalendarInteraction.selection;
     if (oldSelected && !newSelected) {
@@ -220,6 +222,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
     if (widget.interaction == CalendarInteraction.selection) {
       assert(date != null);
       state.onSelected(date!);
+      setState(() {});
     } else if (widget.interaction != CalendarInteraction.disabled) {
       if (widget.interaction == CalendarInteraction.action) {
         widget.onDayPressed!(date!);
@@ -352,7 +355,11 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (_) => CalendarState(interaction: widget.interaction),
+      create: (_) => CalendarState(),
+      builder: (context, child) {
+        realContext = context;
+        return child!;
+      },
       child: Observer(
         builder: (context) {
           final state = context.watch<CalendarState>();
@@ -380,6 +387,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             itemBuilder:
                                 (BuildContext context, Month month, int index) {
                               return MonthView(
+                                interaction: widget.interaction,
                                 selectedDateCardAnimationCurve:
                                     widget.selectedDateCardAnimationCurve,
                                 selectedDateCardAnimationDuration:
@@ -429,6 +437,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                           itemBuilder:
                               (BuildContext context, Month month, int index) {
                             return MonthView(
+                              interaction: widget.interaction,
                               selectedDateCardAnimationCurve:
                                   widget.selectedDateCardAnimationCurve,
                               selectedDateCardAnimationDuration:

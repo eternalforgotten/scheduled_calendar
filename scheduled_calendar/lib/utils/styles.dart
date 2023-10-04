@@ -26,11 +26,11 @@ class ScheduledCalendarDayStyle {
   final TextStyle focusedDayTextStyle;
 
   /// Background decoration of the focused, active day
-  final Decoration focusedDayDecoration;
+  final BoxDecoration focusedDayDecoration;
 
   /// Background decoration of the performer's work day,
   /// when he is active
-  final Decoration performerWorkDayDecoration;
+  final BoxDecoration performerWorkDayDecoration;
 
   /// Inscription under the performer's work day
   final String performerWorkDayInscription;
@@ -39,13 +39,13 @@ class ScheduledCalendarDayStyle {
   final TextStyle selectionModeInactiveTextStyle;
 
   /// Background decoration of inactive days in selection mode
-  final Decoration selectionModeInactiveDecoration;
+  final BoxDecoration selectionModeInactiveDecoration;
 
   /// Text style of the active days in selection mode
   final TextStyle selectionModeActiveTextStyle;
 
   /// Background decoration of the active days in selection mode
-  final Decoration selectionModeActiveDecoration;
+  final BoxDecoration selectionModeActiveDecoration;
 
   const ScheduledCalendarDayStyle({
     this.padding = const EdgeInsets.all(8),

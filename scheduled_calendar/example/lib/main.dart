@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scheduled_calendar/helpers/selection_mode.dart';
 import 'package:scheduled_calendar/scheduled_calendar.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
+import 'package:scheduled_calendar/utils/enums.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,6 +58,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isSelection = false;
+
+  CalendarInteraction get interaction => isSelection
+      ? CalendarInteraction.selection
+      : CalendarInteraction.dateCard;
+
+  void _toggle() {
+    setState(() {
+      isSelection = !isSelection;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,10 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.white,
           ),
         ),
+        actions: [FloatingActionButton(onPressed: _toggle)],
       ),
       body: Center(
         child: ScheduledCalendar(
-          dayStyle: ScheduledCalendarDayStyle(),
+          selectionModeConfig: SelectionModeConfig(
+            onSelectionEnd: (list) {
+              print(list);
+            },
+          ),
+          interaction: interaction,
           minDate: DateTime(2023, 9, 7),
           maxDate: DateTime(2023, 11, 16),
           initialDate: DateTime(2023, 9, 9),

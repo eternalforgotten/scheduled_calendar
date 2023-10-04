@@ -1,20 +1,25 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
+import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/widgets/badge_view.dart';
 
 class DayView extends StatelessWidget {
   final DateTime day;
   final void Function(DateTime day)? onPressed;
-  final bool
-      isCalendarMode;
-      /// Is the day the calendar holiday
-       final bool isDayOff;
-       /// Is the day the performer work day
+  final bool isCalendarMode;
+
+  /// Is the day the calendar holiday
+  final bool isDayOff;
+
+  /// Is the day the performer work day
   final bool isPerformerWorkDay;
+
   /// Widget for displaying of the appointments number
-  final AppointmentBadgeStyle
-      appointmentBadgeStyle;
+  final AppointmentBadgeStyle appointmentBadgeStyle;
   final ScheduledCalendarDayStyle style;
+  final CalendarInteraction interaction;
   const DayView(
     this.day, {
     super.key,
@@ -24,26 +29,42 @@ class DayView extends StatelessWidget {
     this.isPerformerWorkDay = false,
     this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.style = const ScheduledCalendarDayStyle(),
+    required this.interaction,
   });
 
   @override
   Widget build(BuildContext context) {
+    final state = context.read<CalendarState>();
+    final selected = state.dateInSelectedList(day) != null;
+    BoxDecoration? dayDecoration;
+    TextStyle? textStyle;
+    if (interaction == CalendarInteraction.selection) {
+      dayDecoration = selected
+          ? style.selectionModeActiveDecoration
+          : style.selectionModeInactiveDecoration;
+      textStyle = selected
+          ? style.selectionModeActiveTextStyle
+          : style.selectionModeInactiveTextStyle;
+    }
     return GestureDetector(
       onTap: () => onPressed?.call(day),
+      //TODO приколы с decoration
       child: Container(
-        decoration: style.selectionModeActiveDecoration,
+        decoration: dayDecoration,
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.5),
-              decoration:
-                  isPerformerWorkDay ? style.performerWorkDayDecoration : null,
+              decoration: isPerformerWorkDay
+                  ? style.performerWorkDayDecoration
+                  : null,
               child: Center(
                 child: Text(
                   day.day.toString(),
-                  style: isDayOff
-                      ? style.dayOffTextStyle
-                      : style.workDayTextStyle,
+                  style: textStyle ??
+                      (isDayOff
+                          ? style.dayOffTextStyle
+                          : style.workDayTextStyle),
                 ),
               ),
             ),
