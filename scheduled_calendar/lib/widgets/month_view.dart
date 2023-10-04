@@ -41,6 +41,8 @@ class MonthView extends StatelessWidget {
     required this.role,
     required this.clientCardStyle,
     required this.onClientCardButtonPressed,
+    required this.performerCardStyle,
+    required this.onPerformerCardButtonPressed,
   });
 
   final Month month;
@@ -67,6 +69,8 @@ class MonthView extends StatelessWidget {
   final Role role;
   final ClientBookingCardStyle clientCardStyle;
   final ValueChanged<DateTime> onClientCardButtonPressed;
+  final PerformerCardStyle performerCardStyle;
+  final ValueChanged<List<Period>> onPerformerCardButtonPressed;
   final ValueChanged<DateTime?>? onDayPressed;
 
   @override
@@ -126,8 +130,10 @@ class MonthView extends StatelessWidget {
                     role: role,
                     locale: monthNameLocale,
                     clientCardStyle: clientCardStyle,
-                    onClientCardButtonPressed: (date) =>
-                        onClientCardButtonPressed(date),
+                    onClientCardButtonPressed: (time) =>
+                        onClientCardButtonPressed(time),
+                    performerCardStyle: performerCardStyle,
+                    onPerformerCardButtonPressed: (periods) => onPerformerCardButtonPressed(periods),
                   ),
                 )
                 .toList(),

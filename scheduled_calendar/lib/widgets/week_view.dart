@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
+import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/client_booking_card.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
+import 'package:scheduled_calendar/widgets/performer_card.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class WeekView extends StatefulWidget {
@@ -28,6 +30,8 @@ class WeekView extends StatefulWidget {
   final String? locale;
   final ClientBookingCardStyle clientCardStyle;
   final ValueChanged<DateTime> onClientCardButtonPressed;
+  final PerformerCardStyle performerCardStyle;
+  final ValueChanged<List<Period>> onPerformerCardButtonPressed;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -48,6 +52,8 @@ class WeekView extends StatefulWidget {
     this.locale,
     required this.clientCardStyle,
     required this.onClientCardButtonPressed,
+    required this.performerCardStyle,
+    required this.onPerformerCardButtonPressed,
   })  : selectedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -208,16 +214,28 @@ class _WeekViewState extends State<WeekView>
                         DateTime(2023, 10, 1, 22, 30),
                         DateTime(2023, 10, 1, 22, 30),
                       ],
-                      onClientCardButtonPressed: (date) =>
-                          widget.onClientCardButtonPressed(date),
+                      onClientCardButtonPressed: (time) =>
+                          widget.onClientCardButtonPressed(time),
                       controller: animationController,
                       locale: widget.locale,
                       style: widget.clientCardStyle,
                     )
-                  // TODO: вставить сюда карточку исполнителя
-                  : Container(
-                      height: 50,
-                      color: Colors.yellow,
+                  : PerformerCard(
+                      dateToDisplay ?? DateTime.now(),
+                      periods: [
+                        Period(
+                          DateTime(2023, 10, 1, 22, 00),
+                          DateTime(2023, 10, 1, 23, 00),
+                        ),
+                        Period(
+                          DateTime(2023, 10, 1, 22, 00),
+                          DateTime(2023, 10, 1, 23, 00),
+                        ),
+                      ],
+                      style: widget.performerCardStyle,
+                      onPerformerCardButtonPressed: (periods) =>
+                          widget.onPerformerCardButtonPressed(periods),
+                      controller: animationController,
                     ),
         ),
       ],

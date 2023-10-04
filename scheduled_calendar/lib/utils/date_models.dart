@@ -32,3 +32,10 @@ class Week {
     return 'Week{firstDay: $firstDay, lastDay: $lastDay}';
   }
 }
+
+class Period {
+  final DateTime startTime;
+  final DateTime endTime;
+
+  Period(this.startTime, this.endTime,);
+}
