@@ -214,8 +214,8 @@ class _WeekViewState extends State<WeekView>
                         DateTime(2023, 10, 1, 22, 30),
                         DateTime(2023, 10, 1, 22, 30),
                       ],
-                      onClientCardButtonPressed: (date) =>
-                          widget.onClientCardButtonPressed(date),
+                      onClientCardButtonPressed: (time) =>
+                          widget.onClientCardButtonPressed(time),
                       controller: animationController,
                       locale: widget.locale,
                       style: widget.clientCardStyle,

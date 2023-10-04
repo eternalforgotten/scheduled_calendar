@@ -130,8 +130,8 @@ class MonthView extends StatelessWidget {
                     role: role,
                     locale: monthNameLocale,
                     clientCardStyle: clientCardStyle,
-                    onClientCardButtonPressed: (date) =>
-                        onClientCardButtonPressed(date),
+                    onClientCardButtonPressed: (time) =>
+                        onClientCardButtonPressed(time),
                     performerCardStyle: performerCardStyle,
                     onPerformerCardButtonPressed: (periods) => onPerformerCardButtonPressed(periods),
                   ),

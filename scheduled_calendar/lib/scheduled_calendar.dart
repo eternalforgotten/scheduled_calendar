@@ -165,12 +165,16 @@ class ScheduledCalendar extends StatefulWidget {
   ///The argument is null when pressing the selected day again
   final DateCallback? onDayPressed;
 
+  /// Style of the client booking card
   final ClientBookingCardStyle clientCardStyle;
 
+  /// Callback for action with the time slot selected by client
   final ValueChanged<DateTime>? onClientCardButtonPressed;
 
+  /// Style of the performer card
   final PerformerCardStyle performerCardStyle;
 
+  /// Callback for action with the list of working periods created by performer
   final ValueChanged<List<Period>>? onPerformerCardButtonPressed;
 
   ///Widget, used to display card when a day is tapped
@@ -399,9 +403,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               onClientCardButtonPressed: widget
                                           .onClientCardButtonPressed !=
                                       null
-                                  ? (date) =>
-                                      widget.onClientCardButtonPressed!(date)
-                                  : (date) {},
+                                  ? (time) =>
+                                      widget.onClientCardButtonPressed!(time)
+                                  : (time) {},
                               performerCardStyle: widget.performerCardStyle,
                               onPerformerCardButtonPressed:
                                   widget.onPerformerCardButtonPressed != null
