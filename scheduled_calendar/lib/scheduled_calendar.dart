@@ -37,7 +37,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.selectedDateCardAnimationDuration,
     this.selectedDateCardAnimationCurve,
     this.nextAvailableDate,
-    this.role = Role.client,
+    this.role = Role.performer,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.weeksSeparator = const WeeksSeparator(),
     this.centerMonthName = false,

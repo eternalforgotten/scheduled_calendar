@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
+import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/client_booking_card.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
+import 'package:scheduled_calendar/widgets/performer_card.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class WeekView extends StatefulWidget {
@@ -214,10 +216,20 @@ class _WeekViewState extends State<WeekView>
                       locale: widget.locale,
                       style: widget.clientCardStyle,
                     )
-                  // TODO: вставить сюда карточку исполнителя
-                  : Container(
-                      height: 50,
-                      color: Colors.yellow,
+                  : PerformerCard(
+                      dateToDisplay ?? DateTime.now(),
+                      periods: [
+                        Period(
+                          DateTime(2023, 10, 1, 22, 00),
+                          DateTime(2023, 10, 1, 23, 00),
+                        ),
+                        Period(
+                          DateTime(2023, 10, 1, 22, 00),
+                          DateTime(2023, 10, 1, 23, 00),
+                        ),
+                      ],
+                      onPerformerCardButtonPressed: (period) {},
+                      controller: animationController,
                     ),
         ),
       ],
