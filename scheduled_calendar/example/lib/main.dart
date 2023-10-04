@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/scheduled_calendar.dart';
+import 'package:scheduled_calendar/utils/styles.dart';
 
 void main() {
   runApp(const MyApp());
@@ -72,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: ScheduledCalendar(
+          dayStyle: ScheduledCalendarDayStyle(),
           minDate: DateTime(2023, 9, 7),
           maxDate: DateTime(2023, 11, 16),
           initialDate: DateTime(2023, 9, 9),

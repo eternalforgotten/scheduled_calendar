@@ -25,6 +25,22 @@ mixin _$CalendarState on CalendarStateBase, Store {
     });
   }
 
+  late final _$selectedDatesAtom =
+      Atom(name: 'CalendarStateBase.selectedDates', context: context);
+
+  @override
+  List<DateTime> get selectedDates {
+    _$selectedDatesAtom.reportRead();
+    return super.selectedDates;
+  }
+
+  @override
+  set selectedDates(List<DateTime> value) {
+    _$selectedDatesAtom.reportWrite(value, super.selectedDates, () {
+      super.selectedDates = value;
+    });
+  }
+
   late final _$CalendarStateBaseActionController =
       ActionController(name: 'CalendarStateBase', context: context);
 
@@ -40,9 +56,32 @@ mixin _$CalendarState on CalendarStateBase, Store {
   }
 
   @override
+  void onSelected(DateTime date) {
+    final _$actionInfo = _$CalendarStateBaseActionController.startAction(
+        name: 'CalendarStateBase.onSelected');
+    try {
+      return super.onSelected(date);
+    } finally {
+      _$CalendarStateBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void clearDates() {
+    final _$actionInfo = _$CalendarStateBaseActionController.startAction(
+        name: 'CalendarStateBase.clearDates');
+    try {
+      return super.clearDates();
+    } finally {
+      _$CalendarStateBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-selectedDate: ${selectedDate}
+selectedDate: ${selectedDate},
+selectedDates: ${selectedDates}
     ''';
   }
 }

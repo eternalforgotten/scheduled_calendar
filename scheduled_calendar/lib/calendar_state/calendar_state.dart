@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:mobx/mobx.dart';
+import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 
 part 'calendar_state.g.dart';
@@ -7,7 +9,6 @@ class CalendarState = CalendarStateBase with _$CalendarState;
 
 abstract class CalendarStateBase with Store {
   final CalendarInteraction interaction;
-
   CalendarStateBase({required this.interaction});
 
   @observable
@@ -16,5 +17,24 @@ abstract class CalendarStateBase with Store {
   @action
   void setDate(DateTime? date) {
     selectedDate = date;
+  }
+
+  @observable
+  List<DateTime> selectedDates = [];
+
+  @action
+  void onSelected(DateTime date) {
+    final dateInList =
+        selectedDates.firstWhereOrNull((element) => element.isSameDay(date));
+    if (dateInList == null) {
+      selectedDates.add(date);
+    } else {
+      selectedDates.remove(dateInList);
+    }
+  }
+
+  @action
+  void clearDates() {
+    selectedDates.clear();
   }
 }
