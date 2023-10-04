@@ -31,7 +31,7 @@ class DayView extends StatelessWidget {
     return GestureDetector(
       onTap: () => onPressed?.call(day),
       child: Container(
-        decoration: style.selectedDayDecoration,
+        decoration: style.selectionModeActiveDecoration,
         child: Column(
           children: [
             Container(
