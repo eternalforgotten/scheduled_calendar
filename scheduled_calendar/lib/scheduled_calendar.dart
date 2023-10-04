@@ -171,7 +171,7 @@ class ScheduledCalendar extends StatefulWidget {
 
   final PerformerCardStyle performerCardStyle;
 
-  final VoidCallback? onPerformerCardButtonPressed;
+  final ValueChanged<List<Period>>? onPerformerCardButtonPressed;
 
   ///Widget, used to display card when a day is tapped
   final DateBuilder? selectedDateCardBuilder;
@@ -396,11 +396,19 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               daysOff: widget.daysOff,
                               role: widget.role,
                               clientCardStyle: widget.clientCardStyle,
-                              onClientCardButtonPressed:
-                                  widget.onClientCardButtonPressed ?? (date) {},
+                              onClientCardButtonPressed: widget
+                                          .onClientCardButtonPressed !=
+                                      null
+                                  ? (date) =>
+                                      widget.onClientCardButtonPressed!(date)
+                                  : (date) {},
                               performerCardStyle: widget.performerCardStyle,
                               onPerformerCardButtonPressed:
-                                  widget.onPerformerCardButtonPressed ?? () {},
+                                  widget.onPerformerCardButtonPressed != null
+                                      ? (periods) =>
+                                          widget.onPerformerCardButtonPressed!(
+                                              periods)
+                                      : (periods) {},
                             );
                           },
                         ),
@@ -445,10 +453,16 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             role: widget.role,
                             clientCardStyle: widget.clientCardStyle,
                             onClientCardButtonPressed:
-                                widget.onClientCardButtonPressed ?? (date) {},
+                                widget.onClientCardButtonPressed != null
+                                    ? (date) =>
+                                        widget.onClientCardButtonPressed!(date)
+                                    : (date) {},
                             performerCardStyle: widget.performerCardStyle,
                             onPerformerCardButtonPressed:
-                                widget.onPerformerCardButtonPressed ?? () {},
+                                widget.onPerformerCardButtonPressed != null
+                                    ? (periods) => widget
+                                        .onPerformerCardButtonPressed!(periods)
+                                    : (periods) {},
                           );
                         },
                       ),

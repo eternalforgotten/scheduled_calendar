@@ -11,7 +11,7 @@ class PerformerCard extends StatefulWidget {
   final DateTime date;
   final List<Period> periods;
   final PerformerCardStyle style;
-  final VoidCallback onPerformerCardButtonPressed;
+  final ValueChanged<List<Period>> onPerformerCardButtonPressed;
   final String? locale;
   final AnimationController controller;
   const PerformerCard(
@@ -102,7 +102,7 @@ class _PerformerCardState extends State<PerformerCard> {
             const SizedBox(height: 8),
             TextButton(
               style: widget.style.requestButtonStyle,
-              onPressed: () {},
+              onPressed: () => widget.onPerformerCardButtonPressed([]),
               child: Text(
                 widget.style.requestButtonText,
                 style: widget.style.requestButtonTextStyle,
