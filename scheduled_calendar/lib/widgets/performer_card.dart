@@ -69,15 +69,14 @@ class _PerformerCardState extends State<PerformerCard> {
                 children: [
                   ...widget.periods
                       .mapIndexed(
-                        (index, timeSlot) => Padding(
+                        (index, period) => Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 4,
                           ),
-                          child: Container(
-                            width: 100,
-                            height: 40,
-                            color: Colors.white,
+                          child: _PeriodRow(
+                            period: period,
+                            index: index,
                           ),
                         ),
                       )
@@ -100,6 +99,7 @@ class _PerformerCardState extends State<PerformerCard> {
                 ],
               ),
             ),
+            const SizedBox(height: 8),
             TextButton(
               style: widget.style.requestButtonStyle,
               onPressed: () {},
@@ -109,6 +109,87 @@ class _PerformerCardState extends State<PerformerCard> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PeriodRow extends StatelessWidget {
+  final Period period;
+  final int index;
+  const _PeriodRow({
+    super.key,
+    required this.period,
+    required this.index,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 23,
+            child: Center(
+              child: Text(
+                (index + 1).toString(),
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Color(0xFF5C5B5F),
+                  height: 11 / 18,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 5),
+          _TimeWidget(time: period.startTime),
+          const SizedBox(width: 5),
+          Container(
+            width: 10,
+            height: 1,
+            color: const Color(0xFF5C5B5F),
+          ),
+          const SizedBox(width: 5),
+          _TimeWidget(time: period.endTime),
+          const SizedBox(width: 10),
+          const Icon(
+            Icons.delete_outline,
+            color: Color(0xFFFF5454),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TimeWidget extends StatelessWidget {
+  final DateTime time;
+  const _TimeWidget({
+    super.key,
+    required this.time,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13.5),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(7)),
+          color: Color(0xFF131414),
+        ),
+        child: Text(
+          DateFormat('Hm').format(time),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+            height: 11 / 18,
+          ),
         ),
       ),
     );
