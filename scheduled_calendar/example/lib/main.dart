@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/helpers/selection_mode.dart';
 import 'package:scheduled_calendar/scheduled_calendar.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
+import 'package:scheduled_calendar/widgets/schedule_inscription.dart';
 
 void main() {
   runApp(const MyApp());
@@ -88,9 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: ScheduledCalendar(
           selectionModeConfig: SelectionModeConfig(
-            onSelectionEnd: (list) {
-              print(list);
-            },
+            onSelectionEnd: (list) {},
           ),
           interaction: interaction,
           minDate: DateTime(2023, 9, 7),
@@ -110,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
             11: 'Ноя.',
             12: 'Дек.',
           },
-          nextAvailableDate: DateTime(2023, 9, 11),
+          widgetBelowCalendar: ScheduleInscription(DateTime(2023, 9, 11)),
           selectedDateCardAnimationCurve: Curves.easeInOutBack,
           selectedDateCardAnimationDuration: const Duration(milliseconds: 300),
         ),

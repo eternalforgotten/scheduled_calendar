@@ -48,16 +48,18 @@ class DayView extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () => onPressed?.call(day),
-      //TODO приколы с decoration
+
+      //TODO: add decoration
       child: Container(
-        decoration: dayDecoration,
+        decoration: null,
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.5),
-              decoration: isPerformerWorkDay
-                  ? style.performerWorkDayDecoration
-                  : null,
+              decoration: dayDecoration ??
+                  (isPerformerWorkDay
+                      ? style.performerWorkDayDecoration
+                      : null),
               child: Center(
                 child: Text(
                   day.day.toString(),
