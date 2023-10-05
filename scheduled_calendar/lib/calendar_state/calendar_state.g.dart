@@ -9,19 +9,19 @@ part of 'calendar_state.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CalendarState on CalendarStateBase, Store {
-  late final _$selectedDateAtom =
-      Atom(name: 'CalendarStateBase.selectedDate', context: context);
+  late final _$focusedDateAtom =
+      Atom(name: 'CalendarStateBase.focusedDate', context: context);
 
   @override
-  DateTime? get selectedDate {
-    _$selectedDateAtom.reportRead();
-    return super.selectedDate;
+  DateTime? get focusedDate {
+    _$focusedDateAtom.reportRead();
+    return super.focusedDate;
   }
 
   @override
-  set selectedDate(DateTime? value) {
-    _$selectedDateAtom.reportWrite(value, super.selectedDate, () {
-      super.selectedDate = value;
+  set focusedDate(DateTime? value) {
+    _$focusedDateAtom.reportWrite(value, super.focusedDate, () {
+      super.focusedDate = value;
     });
   }
 
@@ -80,7 +80,7 @@ mixin _$CalendarState on CalendarStateBase, Store {
   @override
   String toString() {
     return '''
-selectedDate: ${selectedDate},
+focusedDate: ${focusedDate},
 selectedDates: ${selectedDates}
     ''';
   }

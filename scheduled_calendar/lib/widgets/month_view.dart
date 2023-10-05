@@ -17,13 +17,12 @@ class MonthView extends StatelessWidget {
     this.weeksSeparator = const WeeksSeparator(),
     required this.startWeekWithSunday,
     this.monthNameBuilder,
-    this.dayBuilder,
     this.minDate,
     this.maxDate,
-    this.selectedDate,
-    this.selectedDateCardBuilder,
-    this.selectedDateCardAnimationCurve,
-    this.selectedDateCardAnimationDuration,
+    this.focusedDate,
+    this.focusedDateCardBuilder,
+    this.focusedDateCardAnimationCurve,
+    this.focusedDateCardAnimationDuration,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
     this.monthNameTextStyle = const TextStyle(
@@ -35,45 +34,36 @@ class MonthView extends StatelessWidget {
     this.displayYearInMonthName = false,
     this.monthNameLocale,
     this.isCalendarMode = false,
-    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.monthCustomNames = const {},
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
     required this.role,
-    required this.clientCardStyle,
-    required this.onClientCardButtonPressed,
     required this.interaction,
-    required this.performerCardStyle,
-    required this.onPerformerCardButtonPressed,
+    required this.dayFooterBuilder,
   });
 
   final Month month;
   final bool centerMonthName;
   final Widget weeksSeparator;
-  final DateBuilder? dayBuilder;
   final bool startWeekWithSunday;
   final MonthNameBuilder? monthNameBuilder;
   final DateTime? minDate;
   final DateTime? maxDate;
-  final DateTime? selectedDate;
-  final DateBuilder? selectedDateCardBuilder;
-  final Duration? selectedDateCardAnimationDuration;
-  final Curve? selectedDateCardAnimationCurve;
+  final DateTime? focusedDate;
+  final DateBuilder? focusedDateCardBuilder;
+  final Duration? focusedDateCardAnimationDuration;
+  final Curve? focusedDateCardAnimationCurve;
   final TextStyle monthNameTextStyle;
   final MonthNameDisplay monthNameDisplay;
   final bool displayYearInMonthName;
   final String? monthNameLocale;
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
-  final AppointmentBadgeStyle appointmentBadgeStyle;
   final Map<int, String> monthCustomNames;
   final List<int> daysOff;
   final Role role;
-  final ClientBookingCardStyle clientCardStyle;
-  final ValueChanged<DateTime> onClientCardButtonPressed;
-  final PerformerCardStyle performerCardStyle;
-  final ValueChanged<List<Period>> onPerformerCardButtonPressed;
   final ValueChanged<DateTime?>? onDayPressed;
   final CalendarInteraction interaction;
+  final DateBuilder? dayFooterBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -118,25 +108,20 @@ class MonthView extends StatelessWidget {
                     interaction: interaction,
                     weeksSeparator: weeksSeparator,
                     onDayPressed: onDayPressed,
-                    selectedDate: selectedDate,
+                    focusedDate: focusedDate,
                     dayStyle: dayStyle,
-                    appointmentBadgeStyle: appointmentBadgeStyle,
                     isCalendarMode: isCalendarMode,
-                    selectedDateCardBuilder: selectedDateCardBuilder,
+                    focusedDateCardBuilder: focusedDateCardBuilder,
                     selectedDateCardAnimationCurve:
-                        selectedDateCardAnimationCurve,
+                        focusedDateCardAnimationCurve,
                     selectedDateCardAnimationDuration:
-                        selectedDateCardAnimationDuration,
+                        focusedDateCardAnimationDuration,
                     isFirstWeek: index == 0,
                     isLastWeek: index == weeksList.length - 1,
                     daysOff: daysOff,
                     role: role,
                     locale: monthNameLocale,
-                    clientCardStyle: clientCardStyle,
-                    onClientCardButtonPressed: (time) =>
-                        onClientCardButtonPressed(time),
-                    performerCardStyle: performerCardStyle,
-                    onPerformerCardButtonPressed: (periods) => onPerformerCardButtonPressed(periods),
+                    dayFooterBuilder: dayFooterBuilder,
                   ),
                 )
                 .toList(),

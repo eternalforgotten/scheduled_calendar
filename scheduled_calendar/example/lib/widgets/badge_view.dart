@@ -1,5 +1,5 @@
+import 'package:example/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
 
 class BadgeView extends StatelessWidget {
   /// Appointments number in the day

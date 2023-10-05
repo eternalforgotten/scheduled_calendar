@@ -8,11 +8,11 @@ class CalendarState = CalendarStateBase with _$CalendarState;
 
 abstract class CalendarStateBase with Store {
   @observable
-  DateTime? selectedDate;
+  DateTime? focusedDate;
 
   @action
   void setDate(DateTime? date) {
-    selectedDate = date;
+    focusedDate = date;
   }
 
   @observable
