@@ -41,6 +41,7 @@ class MonthView extends StatelessWidget {
     required this.role,
     required this.clientCardStyle,
     required this.onClientCardButtonPressed,
+    required this.interaction,
     required this.performerCardStyle,
     required this.onPerformerCardButtonPressed,
   });
@@ -72,6 +73,7 @@ class MonthView extends StatelessWidget {
   final PerformerCardStyle performerCardStyle;
   final ValueChanged<List<Period>> onPerformerCardButtonPressed;
   final ValueChanged<DateTime?>? onDayPressed;
+  final CalendarInteraction interaction;
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +115,7 @@ class MonthView extends StatelessWidget {
                   (index, week) => WeekView(
                     week,
                     startWeekWithSunday: startWeekWithSunday,
+                    interaction: interaction,
                     weeksSeparator: weeksSeparator,
                     onDayPressed: onDayPressed,
                     selectedDate: selectedDate,

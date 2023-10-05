@@ -16,35 +16,36 @@ class ScheduledCalendarDayStyle {
   /// Inscription under the work day
   final String? workDayInscription;
 
-  /// Text style of the holiday
+  /// Text style of the day off
   final TextStyle dayOffTextStyle;
 
-  /// Inscription under the holiday
+  /// Inscription under the day off
   final String? dayOffInscription;
 
-  /// Text style of the focused, pressed day
+  /// Text style of the focused, active day
   final TextStyle focusedDayTextStyle;
 
-  /// Background decoration if the focused day
-  final Decoration focusedDayDecoration;
+  /// Background decoration of the focused, active day
+  final BoxDecoration focusedDayDecoration;
 
-  /// Background decoration if the performer's work day
-  final Decoration performerWorkDayDecoration;
+  /// Background decoration of the performer's work day,
+  /// when he is active
+  final BoxDecoration performerWorkDayDecoration;
 
   /// Inscription under the performer's work day
   final String performerWorkDayInscription;
 
-  /// Text style of the days in selection mode
-  final TextStyle selectionModeTextStyle;
+  /// Text style of the inactive days in selection mode
+  final TextStyle selectionModeInactiveTextStyle;
 
-  /// Background decoration of days in selection mode
-  final Decoration selectionModeDecoration;
+  /// Background decoration of inactive days in selection mode
+  final BoxDecoration selectionModeInactiveDecoration;
 
-  /// Text style of the selected day
-  final TextStyle selectedDayTextStyle;
+  /// Text style of the active days in selection mode
+  final TextStyle selectionModeActiveTextStyle;
 
-  /// Background decoration of the selected day
-  final Decoration selectedDayDecoration;
+  /// Background decoration of the active days in selection mode
+  final BoxDecoration selectionModeActiveDecoration;
 
   const ScheduledCalendarDayStyle({
     this.padding = const EdgeInsets.all(8),
@@ -78,21 +79,29 @@ class ScheduledCalendarDayStyle {
       shape: BoxShape.circle,
     ),
     this.performerWorkDayInscription = '3 окна',
-    this.selectionModeTextStyle = const TextStyle(
+    this.selectionModeInactiveTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Colors.white,
+    ),
+    this.selectionModeInactiveDecoration = const BoxDecoration(
+      border: Border.fromBorderSide(
+        BorderSide(
+          width: 1,
+          color: Color(0xFFEFD23C),
+        ),
+      ),
+      shape: BoxShape.circle,
+    ),
+    this.selectionModeActiveTextStyle = const TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w700,
       color: Colors.black,
     ),
-    this.selectionModeDecoration = const BoxDecoration(
+    this.selectionModeActiveDecoration = const BoxDecoration(
       color: Color(0xFFEFD23C),
       shape: BoxShape.circle,
     ),
-    this.selectedDayTextStyle = const TextStyle(
-      fontSize: 13,
-      fontWeight: FontWeight.w700,
-      color: Color(0xFFEFD23C),
-    ),
-    this.selectedDayDecoration = const BoxDecoration(),
   });
 }
 

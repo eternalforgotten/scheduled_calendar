@@ -9,10 +9,10 @@ import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
+import 'package:scheduled_calendar/helpers/selection_mode.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
 import 'package:scheduled_calendar/widgets/month_view.dart';
-import 'package:scheduled_calendar/widgets/schedule_inscription.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class ScheduledCalendar extends StatefulWidget {
@@ -33,10 +33,9 @@ class ScheduledCalendar extends StatefulWidget {
     this.startWeekWithSunday = false,
     this.onDayPressed,
     this.selectedDateCardBuilder,
-    this.disableInteraction = false,
     this.selectedDateCardAnimationDuration,
     this.selectedDateCardAnimationCurve,
-    this.nextAvailableDate,
+    this.widgetBelowCalendar,
     this.role = Role.performer,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.weeksSeparator = const WeeksSeparator(),
@@ -53,13 +52,15 @@ class ScheduledCalendar extends StatefulWidget {
     this.isCalendarMode = false,
     this.monthCustomNames = const {},
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
-    this.scheduleInscriptionTextStyle = const ScheduleInscriptionStyle(),
-    this.displayScheduleInscription = true,
     this.clientCardStyle = const ClientBookingCardStyle(),
     this.onClientCardButtonPressed,
+    SelectionModeConfig? selectionModeConfig,
+    this.interaction = CalendarInteraction.disabled,
     this.performerCardStyle = const PerformerCardStyle(),
     this.onPerformerCardButtonPressed,
-  }) : initialDate = initialDate ?? DateTime.now().removeTime();
+  })  : initialDate = initialDate ?? DateTime.now().removeTime(),
+        selectionModeConfig =
+            selectionModeConfig ?? const SelectionModeConfig();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
   /// `DateTime.now()` will be used
@@ -113,7 +114,7 @@ class ScheduledCalendar extends StatefulWidget {
   final bool startWeekWithSunday;
 
   /// Date when the next schedule week will be available
-  final DateTime? nextAvailableDate;
+  final Widget? widgetBelowCalendar;
 
   /// User role: performer or client
   final Role role;
@@ -152,17 +153,7 @@ class ScheduledCalendar extends StatefulWidget {
   /// List of days that are calendar days off and have different text style in calendar
   final List<int> daysOff;
 
-  /// Text style of the schedule inscription
-  final ScheduleInscriptionStyle scheduleInscriptionTextStyle;
-
-  /// Select wether display schedule inscription or not. Defaults to 'true'.
-  /// If [nextAvailableDate] == null, schedule inscription won't be displayed
-  final bool displayScheduleInscription;
-
-  ///Callback that overrides behavior of calendar day interaction
-  ///By default, calendar will show a card, appearing below the week of selected day,
-  ///which is customizable via [selectedDateCardBuilder]
-  ///The argument is null when pressing the selected day again
+  ///Callback that will be called when [interaction] is set to [CalendarInteraction.action]
   final DateCallback? onDayPressed;
 
   /// Style of the client booking card
@@ -180,13 +171,18 @@ class ScheduledCalendar extends StatefulWidget {
   ///Widget, used to display card when a day is tapped
   final DateBuilder? selectedDateCardBuilder;
 
-  ///Whether to disable calendar interaction or not
-  ///if this is set to true, [onDayPressed] will be ignored
-  final bool disableInteraction;
-
   final Duration? selectedDateCardAnimationDuration;
 
   final Curve? selectedDateCardAnimationCurve;
+
+  ///Interaction mode of the calendar. By default, [CalendarInteraction.disabled] is set.
+  final CalendarInteraction interaction;
+
+  ///Customizable config for selection mode.
+  ///To enter this mode, provide the new widget with [interaction]
+  ///set to [CalendarInteraction.selection].
+  ///To exit the mode, provide the new widget with different [interaction]
+  final SelectionModeConfig selectionModeConfig;
 
   @override
   _ScheduledCalendarState createState() => _ScheduledCalendarState();
@@ -199,10 +195,37 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
   final Key downListKey = UniqueKey();
   late bool hideUp;
 
+  BuildContext? realContext;
+
+  @override
+  void didUpdateWidget(covariant ScheduledCalendar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final state = realContext!.read<CalendarState>();
+    final oldSelected = oldWidget.interaction == CalendarInteraction.selection;
+    final newSelected = widget.interaction == CalendarInteraction.selection;
+    if (oldSelected && !newSelected) {
+      widget.selectionModeConfig.onSelectionEnd?.call(state.selectedDates);
+      state.clearDates();
+    }
+
+    if (widget.minDate != oldWidget.minDate) {
+      _pagingReplyUpController.refresh();
+
+      hideUp = !(widget.minDate == null ||
+          !widget.minDate!.isSameMonth(widget.initialDate));
+    }
+  }
+
   void _onDayTapped(BuildContext context, DateTime? date) {
     final state = context.read<CalendarState>();
-    if (state.interaction != CalendarInteraction.disabled) {
-      widget.onDayPressed?.call(date);
+    if (widget.interaction == CalendarInteraction.selection) {
+      assert(date != null);
+      state.onSelected(date!);
+      setState(() {});
+    } else if (widget.interaction != CalendarInteraction.disabled) {
+      if (widget.interaction == CalendarInteraction.action) {
+        widget.onDayPressed!(date!);
+      }
       state.setDate(date);
     }
   }
@@ -218,6 +241,13 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
 
     if (widget.maxDate != null && widget.initialDate.isAfter(widget.maxDate!)) {
       throw ArgumentError("initialDate cannot be after maxDate");
+    }
+
+    if (widget.onDayPressed == null &&
+        widget.interaction == CalendarInteraction.action) {
+      throw ArgumentError(
+        'Provide the onDayPressed callback for CalendarInteraction.action',
+      );
     }
 
     hideUp = !(widget.minDate == null ||
@@ -236,18 +266,6 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
     );
     _pagingReplyDownController.addPageRequestListener(_fetchDownPage);
     _pagingReplyDownController.addStatusListener(paginationStatusDown);
-  }
-
-  @override
-  void didUpdateWidget(covariant ScheduledCalendar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.minDate != oldWidget.minDate) {
-      _pagingReplyUpController.refresh();
-
-      hideUp = !(widget.minDate == null ||
-          !widget.minDate!.isSameMonth(widget.initialDate));
-    }
   }
 
   void paginationStatusUp(PagingStatus state) {
@@ -336,46 +354,104 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (_) {
-        CalendarInteraction interaction;
-        if (widget.disableInteraction) {
-          interaction = CalendarInteraction.disabled;
-        } else {
-          interaction = widget.onDayPressed != null
-              ? CalendarInteraction.action
-              : CalendarInteraction.dateCard;
-        }
-        return CalendarState(interaction: interaction);
+      create: (_) => CalendarState(),
+      builder: (context, child) {
+        realContext = context;
+        return child!;
       },
       child: Observer(
         builder: (context) {
-          final selectedDate = context.watch<CalendarState>().selectedDate;
-          return Scrollable(
-            controller: widget.scrollController,
-            physics: widget.physics,
-            viewportBuilder: (BuildContext context, ViewportOffset position) {
-              return Viewport(
-                offset: position,
-                center: downListKey,
-                slivers: [
-                  if (!hideUp)
+          final state = context.watch<CalendarState>();
+          final selectedDate = state.selectedDate;
+          return IgnorePointer(
+            ignoring: widget.interaction == CalendarInteraction.disabled,
+            child: Scrollable(
+              controller: widget.scrollController,
+              physics: widget.physics,
+              viewportBuilder: (BuildContext context, ViewportOffset position) {
+                return Viewport(
+                  offset: position,
+                  center: downListKey,
+                  slivers: [
+                    if (!hideUp)
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(
+                            widget.listPadding.left,
+                            widget.listPadding.top,
+                            widget.listPadding.right,
+                            0),
+                        sliver: PagedSliverList(
+                          pagingController: _pagingReplyUpController,
+                          builderDelegate: PagedChildBuilderDelegate<Month>(
+                            itemBuilder:
+                                (BuildContext context, Month month, int index) {
+                              return MonthView(
+                                interaction: widget.interaction,
+                                selectedDateCardAnimationCurve:
+                                    widget.selectedDateCardAnimationCurve,
+                                selectedDateCardAnimationDuration:
+                                    widget.selectedDateCardAnimationDuration,
+                                selectedDateCardBuilder:
+                                    widget.selectedDateCardBuilder,
+                                month: month,
+                                selectedDate: selectedDate,
+                                monthNameBuilder: widget.monthNameBuilder,
+                                centerMonthName: false,
+                                dayBuilder: widget.dayBuilder,
+                                onDayPressed: (date) =>
+                                    _onDayTapped(context, date),
+                                startWeekWithSunday: widget.startWeekWithSunday,
+                                weeksSeparator: Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 20),
+                                  height: 1,
+                                  color: const Color(0xFF5C5B5F),
+                                ),
+                                dayStyle: widget.dayStyle,
+                                monthNameTextStyle: widget.monthNameTextStyle,
+                                monthNameDisplay: widget.monthNameDisplay,
+                                displayYearInMonthName:
+                                    widget.displayYearInMonthName,
+                                isCalendarMode: widget.isCalendarMode,
+                                appointmentBadgeStyle:
+                                    widget.appointmentBadgeStyle,
+                                monthCustomNames: widget.monthCustomNames,
+                                daysOff: widget.daysOff,
+                                role: widget.role,
+                                clientCardStyle: widget.clientCardStyle,
+                                onClientCardButtonPressed:
+                                    widget.onClientCardButtonPressed ??
+                                        (date) {},
+                                performerCardStyle: widget.performerCardStyle,
+                                onPerformerCardButtonPressed: widget
+                                            .onPerformerCardButtonPressed !=
+                                        null
+                                    ? (periods) => widget
+                                        .onPerformerCardButtonPressed!(periods)
+                                    : (periods) {},
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     SliverPadding(
-                      padding: EdgeInsets.fromLTRB(widget.listPadding.left,
-                          widget.listPadding.top, widget.listPadding.right, 0),
+                      key: downListKey,
+                      padding: _getDownListPadding(),
                       sliver: PagedSliverList(
-                        pagingController: _pagingReplyUpController,
+                        pagingController: _pagingReplyDownController,
                         builderDelegate: PagedChildBuilderDelegate<Month>(
                           itemBuilder:
                               (BuildContext context, Month month, int index) {
                             return MonthView(
+                              interaction: widget.interaction,
                               selectedDateCardAnimationCurve:
                                   widget.selectedDateCardAnimationCurve,
                               selectedDateCardAnimationDuration:
                                   widget.selectedDateCardAnimationDuration,
                               selectedDateCardBuilder:
                                   widget.selectedDateCardBuilder,
-                              month: month,
                               selectedDate: selectedDate,
+                              month: month,
                               monthNameBuilder: widget.monthNameBuilder,
                               centerMonthName: false,
                               dayBuilder: widget.dayBuilder,
@@ -403,9 +479,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               onClientCardButtonPressed: widget
                                           .onClientCardButtonPressed !=
                                       null
-                                  ? (time) =>
-                                      widget.onClientCardButtonPressed!(time)
-                                  : (time) {},
+                                  ? (date) =>
+                                      widget.onClientCardButtonPressed!(date)
+                                  : (date) {},
                               performerCardStyle: widget.performerCardStyle,
                               onPerformerCardButtonPressed:
                                   widget.onPerformerCardButtonPressed != null
@@ -418,85 +494,26 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                         ),
                       ),
                     ),
-                  SliverPadding(
-                    key: downListKey,
-                    padding: _getDownListPadding(),
-                    sliver: PagedSliverList(
-                      pagingController: _pagingReplyDownController,
-                      builderDelegate: PagedChildBuilderDelegate<Month>(
-                        itemBuilder:
-                            (BuildContext context, Month month, int index) {
-                          return MonthView(
-                            selectedDateCardAnimationCurve:
-                                widget.selectedDateCardAnimationCurve,
-                            selectedDateCardAnimationDuration:
-                                widget.selectedDateCardAnimationDuration,
-                            selectedDateCardBuilder:
-                                widget.selectedDateCardBuilder,
-                            selectedDate: selectedDate,
-                            month: month,
-                            monthNameBuilder: widget.monthNameBuilder,
-                            centerMonthName: false,
-                            dayBuilder: widget.dayBuilder,
-                            onDayPressed: (date) => _onDayTapped(context, date),
-                            startWeekWithSunday: widget.startWeekWithSunday,
-                            weeksSeparator: Container(
-                              margin: const EdgeInsets.symmetric(vertical: 20),
-                              height: 1,
-                              color: const Color(0xFF5C5B5F),
-                            ),
-                            dayStyle: widget.dayStyle,
-                            monthNameTextStyle: widget.monthNameTextStyle,
-                            monthNameDisplay: widget.monthNameDisplay,
-                            displayYearInMonthName:
-                                widget.displayYearInMonthName,
-                            isCalendarMode: widget.isCalendarMode,
-                            appointmentBadgeStyle: widget.appointmentBadgeStyle,
-                            monthCustomNames: widget.monthCustomNames,
-                            daysOff: widget.daysOff,
-                            role: widget.role,
-                            clientCardStyle: widget.clientCardStyle,
-                            onClientCardButtonPressed:
-                                widget.onClientCardButtonPressed != null
-                                    ? (date) =>
-                                        widget.onClientCardButtonPressed!(date)
-                                    : (date) {},
-                            performerCardStyle: widget.performerCardStyle,
-                            onPerformerCardButtonPressed:
-                                widget.onPerformerCardButtonPressed != null
-                                    ? (periods) => widget
-                                        .onPerformerCardButtonPressed!(periods)
-                                    : (periods) {},
-                          );
-                        },
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                          widget.listPadding.left,
+                          0,
+                          widget.listPadding.right,
+                          widget.widgetBelowCalendar != null &&
+                                  !widget.isCalendarMode
+                              ? 16
+                              : 0),
+                      sliver: SliverToBoxAdapter(
+                        child: widget.widgetBelowCalendar != null &&
+                                !widget.isCalendarMode
+                            ? widget.widgetBelowCalendar
+                            : const SizedBox(),
                       ),
                     ),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                        widget.listPadding.left,
-                        0,
-                        widget.listPadding.right,
-                        widget.nextAvailableDate != null &&
-                                widget.displayScheduleInscription &&
-                                !widget.isCalendarMode
-                            ? 16
-                            : 0),
-                    sliver: SliverToBoxAdapter(
-                      child: widget.nextAvailableDate != null &&
-                              widget.displayScheduleInscription &&
-                              !widget.isCalendarMode
-                          ? ScheduleInscription(
-                              widget.nextAvailableDate!,
-                              style: widget.scheduleInscriptionTextStyle,
-                              locale: widget.monthNameLocale,
-                            )
-                          : const SizedBox(),
-                    ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           );
         },
       ),
