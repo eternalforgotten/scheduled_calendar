@@ -226,3 +226,69 @@ class ClientBookingCardStyle {
     ),
   });
 }
+
+class PerformerCardStyle {
+  final Decoration cardDecoration;
+  final TextStyle dateTextStyle;
+  final String instructionText;
+  final String emptyInstructionText;
+  final TextStyle instructionTextStyle;
+  final String requestButtonText;
+  final TextStyle requestButtonTextStyle;
+  final ButtonStyle requestButtonStyle;
+  final String addButtonText;
+  final TextStyle addButtonTextStyle;
+  final ButtonStyle addButtonStyle;
+  final Widget addButtonIcon;
+
+  const PerformerCardStyle({
+    this.cardDecoration = const BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(15)),
+      color: Color(0xFF1C1C1F),
+    ),
+    this.dateTextStyle = const TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFFF6F5F8),
+      height: 24.51 / 18,
+    ),
+    this.instructionText = 'Задайте рабочее время на этот день',
+    this.emptyInstructionText = 'Рабочее время на этот день не задано',
+    this.instructionTextStyle = const TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFF5C5B5F),
+      height: 16 / 12,
+    ),
+    this.requestButtonText = 'Готово',
+    this.requestButtonTextStyle = const TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFFEFD23C),
+      height: 22 / 14,
+    ),
+    this.requestButtonStyle = const ButtonStyle(),
+    this.addButtonText = 'Добавить окно',
+    this.addButtonTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFFF6F5F8),
+      height: 22 / 13,
+    ),
+    this.addButtonStyle = const ButtonStyle(
+      padding: MaterialStatePropertyAll(
+        EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+      ),
+      backgroundColor: MaterialStatePropertyAll(Color(0xFF323137)),
+      shape: MaterialStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(7)),
+        ),
+      ),
+    ),
+    this.addButtonIcon = const Icon(
+      Icons.add,
+      color: Colors.white,
+    ),
+  });
+}

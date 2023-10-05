@@ -36,7 +36,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.selectedDateCardAnimationDuration,
     this.selectedDateCardAnimationCurve,
     this.widgetBelowCalendar,
-    this.role = Role.client,
+    this.role = Role.performer,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.weeksSeparator = const WeeksSeparator(),
     this.centerMonthName = false,
@@ -56,6 +56,8 @@ class ScheduledCalendar extends StatefulWidget {
     this.onClientCardButtonPressed,
     SelectionModeConfig? selectionModeConfig,
     this.interaction = CalendarInteraction.disabled,
+    this.performerCardStyle = const PerformerCardStyle(),
+    this.onPerformerCardButtonPressed,
   })  : initialDate = initialDate ?? DateTime.now().removeTime(),
         selectionModeConfig =
             selectionModeConfig ?? const SelectionModeConfig();
@@ -154,12 +156,19 @@ class ScheduledCalendar extends StatefulWidget {
   ///Callback that will be called when [interaction] is set to [CalendarInteraction.action]
   final DateCallback? onDayPressed;
 
+  /// Style of the client booking card
   final ClientBookingCardStyle clientCardStyle;
 
+  /// Callback for action with the time slot selected by client
   final ValueChanged<DateTime>? onClientCardButtonPressed;
 
-  ///Widget, used to display a card when a day is tapped,
-  ///if [interaction] is set to [CalendarInteraction.dateCard]
+  /// Style of the performer card
+  final PerformerCardStyle performerCardStyle;
+
+  /// Callback for action with the list of working periods created by performer
+  final ValueChanged<List<Period>>? onPerformerCardButtonPressed;
+
+  ///Widget, used to display card when a day is tapped
   final DateBuilder? selectedDateCardBuilder;
 
   final Duration? selectedDateCardAnimationDuration;
@@ -413,6 +422,13 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                 onClientCardButtonPressed:
                                     widget.onClientCardButtonPressed ??
                                         (date) {},
+                                performerCardStyle: widget.performerCardStyle,
+                                onPerformerCardButtonPressed: widget
+                                            .onPerformerCardButtonPressed !=
+                                        null
+                                    ? (periods) => widget
+                                        .onPerformerCardButtonPressed!(periods)
+                                    : (periods) {},
                               );
                             },
                           ),
@@ -460,8 +476,19 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               daysOff: widget.daysOff,
                               role: widget.role,
                               clientCardStyle: widget.clientCardStyle,
-                              onClientCardButtonPressed:
-                                  widget.onClientCardButtonPressed ?? (date) {},
+                              onClientCardButtonPressed: widget
+                                          .onClientCardButtonPressed !=
+                                      null
+                                  ? (date) =>
+                                      widget.onClientCardButtonPressed!(date)
+                                  : (date) {},
+                              performerCardStyle: widget.performerCardStyle,
+                              onPerformerCardButtonPressed:
+                                  widget.onPerformerCardButtonPressed != null
+                                      ? (periods) =>
+                                          widget.onPerformerCardButtonPressed!(
+                                              periods)
+                                      : (periods) {},
                             );
                           },
                         ),
