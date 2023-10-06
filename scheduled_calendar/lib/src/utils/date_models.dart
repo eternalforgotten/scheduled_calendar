@@ -1,5 +1,4 @@
-import 'package:scheduled_calendar/src/utils/date_utils.dart';
-
+import 'date_utils.dart';
 class Month {
   final int month;
   final int year;

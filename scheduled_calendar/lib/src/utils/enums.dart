@@ -24,6 +24,6 @@ enum CalendarInteraction {
   ///or remove date from it
   selection,
 
-  ///Type when any calendar interaction is disabled. Set by default
+  ///Type when any pressing on a day is disabled. Set by default
   disabled,
 }

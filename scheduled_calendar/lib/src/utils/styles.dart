@@ -102,10 +102,10 @@ class ScheduleCalendarMonthNameStyle {
   /// Text style of month name
   final TextStyle monthNameTextStyle;
 
-  /// Select whether center month name or leave it above the start week. Defaults to 'false'
+  /// Select whether center month name or leave it above the start week. Defaults to [false]
   final bool centerMonthName;
 
-  /// Way of the month name displaying: full or short. Defaults to 'full'
+  /// Way of the month name displaying: full or short. Defaults to [MonthNameDisplay.full]
   final MonthNameDisplay monthNameDisplay;
 
   /// Map of custom names for months
@@ -114,7 +114,7 @@ class ScheduleCalendarMonthNameStyle {
   /// Locale of month name
   final String? monthNameLocale;
 
-  /// Select whether display year in month name or no. Defaults to 'false'
+  /// Select whether display year in month name or no. Defaults to [false]
   final bool displayYearInMonthName;
 
   const ScheduleCalendarMonthNameStyle({
