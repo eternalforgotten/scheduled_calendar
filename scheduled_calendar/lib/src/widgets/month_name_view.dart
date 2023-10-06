@@ -3,29 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:scheduled_calendar/utils/date_models.dart';
-import 'package:scheduled_calendar/utils/enums.dart';
+import 'package:scheduled_calendar/scheduled_calendar.dart';
+import 'package:scheduled_calendar/src/utils/date_models.dart';
 
 class MonthNameView extends StatefulWidget {
   final Month month;
-  final TextStyle monthNameTextStyle;
-  final MonthNameDisplay monthNameDisplay;
-  final bool displayYear;
-  final String? nameLocale;
-  final Map<int, String> monthCustomNames;
+  final ScheduleCalendarMonthNameStyle monthNameStyle;
 
   const MonthNameView(
     this.month, {
     super.key,
-    this.monthNameTextStyle = const TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.w600,
-      color: Color(0xFFEFD23C),
-    ),
-    this.monthNameDisplay = MonthNameDisplay.full,
-    this.displayYear = false,
-    this.nameLocale,
-    this.monthCustomNames = const {},
+    required this.monthNameStyle,
   });
 
   @override
@@ -41,14 +29,15 @@ class _MonthNameViewState extends State<MonthNameView> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = widget.nameLocale ?? Platform.localeName;
-    var date = widget.monthCustomNames[widget.month.month] ??
+    final monthNameStyle = widget.monthNameStyle;
+    final locale = monthNameStyle.monthNameLocale ?? Platform.localeName;
+    var date = monthNameStyle.monthCustomNames[widget.month.month] ??
         DateFormat(
-          (widget.monthNameDisplay == MonthNameDisplay.full
-              ? widget.displayYear
+          (monthNameStyle.monthNameDisplay == MonthNameDisplay.full
+              ? monthNameStyle.displayYearInMonthName
                   ? 'MMMM y'
                   : 'MMMM'
-              : widget.displayYear
+              : monthNameStyle.displayYearInMonthName
                   ? 'MMM y'
                   : 'MMM'),
           locale,
@@ -61,7 +50,7 @@ class _MonthNameViewState extends State<MonthNameView> {
         );
     return Text(
       date,
-      style: widget.monthNameTextStyle,
+      style: monthNameStyle.monthNameTextStyle,
     );
   }
 }

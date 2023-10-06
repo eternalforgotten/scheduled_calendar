@@ -5,7 +5,6 @@ import 'package:example/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:scheduled_calendar/utils/date_models.dart';
 
 class PerformerCard extends StatefulWidget {
   final DateTime date;
@@ -187,4 +186,11 @@ class _TimeWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class Period {
+  final DateTime startTime;
+  final DateTime endTime;
+
+  Period(this.startTime, this.endTime,);
 }

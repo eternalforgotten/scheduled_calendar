@@ -1,10 +1,7 @@
 import 'package:example/widgets/performer_card.dart';
 import 'package:example/widgets/schedule_inscription.dart';
 import 'package:flutter/material.dart';
-import 'package:scheduled_calendar/helpers/selection_mode.dart';
 import 'package:scheduled_calendar/scheduled_calendar.dart';
-import 'package:scheduled_calendar/utils/enums.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
 
 void main() {
   runApp(const MyApp());
@@ -97,20 +94,23 @@ class _MyHomePageState extends State<MyHomePage> {
           minDate: DateTime(2023, 9, 7),
           maxDate: DateTime(2023, 11, 16),
           initialDate: DateTime(2023, 9, 9),
-          monthCustomNames: const {
-            1: 'Янв.',
-            2: 'Фев.',
-            3: 'Мар.',
-            4: 'Апр.',
-            5: 'Май',
-            6: 'Июн.',
-            7: 'Июл.',
-            8: 'Авг.',
-            9: 'Сен.',
-            10: 'Окт.',
-            11: 'Ноя.',
-            12: 'Дек.',
-          },
+          monthNameStyle: const ScheduleCalendarMonthNameStyle(
+            centerMonthName: true,
+            monthCustomNames: {
+              1: 'Янв.',
+              2: 'Фев.',
+              3: 'Мар.',
+              4: 'Апр.',
+              5: 'Май',
+              6: 'Июн.',
+              7: 'Июл.',
+              8: 'Авг.',
+              9: 'Сен.',
+              10: 'Окт.',
+              11: 'Ноя.',
+              12: 'Дек.',
+            },
+          ),
           calendarFooter: ScheduleInscription(DateTime(2023, 9, 11)),
           focusedDateCardAnimationCurve: Curves.easeInOutBack,
           focusedDateCardAnimationDuration: const Duration(milliseconds: 300),
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           focusedDateCardBuilder: (_, date) => PerformerCard(
             date,
-            periods: [],
+            periods: const [],
             onPerformerCardButtonPressed: (_) {},
           ),
           dayStyle: const ScheduledCalendarDayStyle(
@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             currentDayTextStyle: TextStyle(
               color: Colors.yellowAccent,
-            )
+            ),
           ),
         ),
       ),

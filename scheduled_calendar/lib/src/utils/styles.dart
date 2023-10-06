@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'enums.dart';
+
 class ScheduledCalendarDayStyle {
   /// Padding between date and circle border
   final EdgeInsets padding;
@@ -93,5 +95,38 @@ class ScheduledCalendarDayStyle {
       color: Color(0xFFEFD23C),
       shape: BoxShape.circle,
     ),
+  });
+}
+
+class ScheduleCalendarMonthNameStyle {
+  /// Text style of month name
+  final TextStyle monthNameTextStyle;
+
+  /// Select whether center month name or leave it above the start week. Defaults to 'false'
+  final bool centerMonthName;
+
+  /// Way of the month name displaying: full or short. Defaults to 'full'
+  final MonthNameDisplay monthNameDisplay;
+
+  /// Map of custom names for months
+  final Map<int, String> monthCustomNames;
+
+  /// Locale of month name
+  final String? monthNameLocale;
+
+  /// Select whether display year in month name or no. Defaults to 'false'
+  final bool displayYearInMonthName;
+
+  const ScheduleCalendarMonthNameStyle({
+    this.monthCustomNames = const {},
+    this.centerMonthName = false,
+    this.monthNameTextStyle = const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      color: Color(0xFFEFD23C),
+    ),
+    this.monthNameDisplay = MonthNameDisplay.full,
+    this.displayYearInMonthName = false,
+    this.monthNameLocale,
   });
 }

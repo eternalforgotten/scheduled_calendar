@@ -1,4 +1,4 @@
-import 'package:scheduled_calendar/utils/date_utils.dart';
+import 'package:scheduled_calendar/src/utils/date_utils.dart';
 
 class Month {
   final int month;
@@ -31,11 +31,4 @@ class Week {
   String toString() {
     return 'Week{firstDay: $firstDay, lastDay: $lastDay}';
   }
-}
-
-class Period {
-  final DateTime startTime;
-  final DateTime endTime;
-
-  Period(this.startTime, this.endTime,);
 }
