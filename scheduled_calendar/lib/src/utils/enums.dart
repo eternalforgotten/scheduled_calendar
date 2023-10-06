@@ -27,9 +27,3 @@ enum CalendarInteraction {
   ///Type when any calendar interaction is disabled. Set by default
   disabled,
 }
-
-/// enum for user's role
-enum Role {
-  performer,
-  client,
-}

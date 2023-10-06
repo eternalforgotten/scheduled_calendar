@@ -1,22 +1,20 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide DateUtils;
-import 'package:scheduled_calendar/utils/date_models.dart';
-import 'package:scheduled_calendar/utils/date_utils.dart';
-import 'package:scheduled_calendar/utils/enums.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
-import 'package:scheduled_calendar/utils/typedefs.dart';
-import 'package:scheduled_calendar/widgets/month_name_view.dart';
-import 'package:scheduled_calendar/widgets/week_view.dart';
-import 'package:scheduled_calendar/widgets/weeks_separator.dart';
+import 'package:scheduled_calendar/src/utils/date_models.dart';
+import 'package:scheduled_calendar/src/utils/date_utils.dart';
+import 'package:scheduled_calendar/src/utils/enums.dart';
+import 'package:scheduled_calendar/src/utils/styles.dart';
+import 'package:scheduled_calendar/src/utils/typedefs.dart';
+import 'package:scheduled_calendar/src/widgets/month_name_view.dart';
+import 'package:scheduled_calendar/src/widgets/week_view.dart';
+import 'package:scheduled_calendar/src/widgets/weeks_separator.dart';
 
 class MonthView extends StatelessWidget {
   const MonthView({
     super.key,
     required this.month,
-    this.centerMonthName = false,
     this.weeksSeparator = const WeeksSeparator(),
     required this.startWeekWithSunday,
-    this.monthNameBuilder,
     this.minDate,
     this.maxDate,
     this.focusedDate,
@@ -25,42 +23,26 @@ class MonthView extends StatelessWidget {
     this.focusedDateCardAnimationDuration,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
-    this.monthNameTextStyle = const TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.w600,
-      color: Color(0xFFEFD23C),
-    ),
-    this.monthNameDisplay = MonthNameDisplay.full,
-    this.displayYearInMonthName = false,
-    this.monthNameLocale,
+    required this.monthNameStyle,
     this.isCalendarMode = false,
-    this.monthCustomNames = const {},
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
-    required this.role,
     required this.interaction,
     required this.dayFooterBuilder,
   });
 
   final Month month;
-  final bool centerMonthName;
   final Widget weeksSeparator;
   final bool startWeekWithSunday;
-  final MonthNameBuilder? monthNameBuilder;
   final DateTime? minDate;
   final DateTime? maxDate;
   final DateTime? focusedDate;
   final DateBuilder? focusedDateCardBuilder;
   final Duration? focusedDateCardAnimationDuration;
   final Curve? focusedDateCardAnimationCurve;
-  final TextStyle monthNameTextStyle;
-  final MonthNameDisplay monthNameDisplay;
-  final bool displayYearInMonthName;
-  final String? monthNameLocale;
+  final ScheduleCalendarMonthNameStyle monthNameStyle;
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
-  final Map<int, String> monthCustomNames;
   final List<int> daysOff;
-  final Role role;
   final ValueChanged<DateTime?>? onDayPressed;
   final CalendarInteraction interaction;
   final DateBuilder? dayFooterBuilder;
@@ -71,13 +53,12 @@ class MonthView extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        /// display the default month header if none is provided
         Row(
-          mainAxisAlignment: centerMonthName
+          mainAxisAlignment: monthNameStyle.centerMonthName
               ? MainAxisAlignment.center
               : MainAxisAlignment.start,
           children: [
-            centerMonthName
+            monthNameStyle.centerMonthName
                 ? const SizedBox()
                 : weeksList.first.length < 7
                     ? Spacer(
@@ -85,16 +66,11 @@ class MonthView extends StatelessWidget {
                       )
                     : const SizedBox(),
             Flexible(
-              flex: centerMonthName ? 1 : weeksList.first.length,
-              child: monthNameBuilder?.call(context, month.month, month.year) ??
-                  MonthNameView(
-                    month,
-                    monthNameTextStyle: monthNameTextStyle,
-                    monthNameDisplay: monthNameDisplay,
-                    displayYear: displayYearInMonthName,
-                    nameLocale: monthNameLocale,
-                    monthCustomNames: monthCustomNames,
-                  ),
+              flex: monthNameStyle.centerMonthName ? 1 : weeksList.first.length,
+              child: MonthNameView(
+                month,
+                monthNameStyle: monthNameStyle,
+              ),
             ),
           ],
         ),
@@ -119,8 +95,7 @@ class MonthView extends StatelessWidget {
                     isFirstWeek: index == 0,
                     isLastWeek: index == weeksList.length - 1,
                     daysOff: daysOff,
-                    role: role,
-                    locale: monthNameLocale,
+                    locale: monthNameStyle.monthNameLocale,
                     dayFooterBuilder: dayFooterBuilder,
                   ),
                 )

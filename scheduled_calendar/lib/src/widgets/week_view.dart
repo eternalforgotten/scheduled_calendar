@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:scheduled_calendar/utils/date_utils.dart';
-import 'package:scheduled_calendar/utils/enums.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
-import 'package:scheduled_calendar/utils/typedefs.dart';
-import 'package:scheduled_calendar/widgets/day_view.dart';
-import 'package:scheduled_calendar/widgets/weeks_separator.dart';
+import 'package:scheduled_calendar/src/utils/date_utils.dart';
+import 'package:scheduled_calendar/src/utils/enums.dart';
+import 'package:scheduled_calendar/src/utils/styles.dart';
+import 'package:scheduled_calendar/src/utils/typedefs.dart';
+import 'package:scheduled_calendar/src/widgets/day_view.dart';
+import 'package:scheduled_calendar/src/widgets/weeks_separator.dart';
 
 class WeekView extends StatefulWidget {
   final List<DateTime> week;
@@ -20,7 +20,6 @@ class WeekView extends StatefulWidget {
   final bool isFirstWeek;
   final bool isLastWeek;
   final List<int> daysOff;
-  final Role role;
   final String? locale;
   final CalendarInteraction interaction;
   final DateBuilder? dayFooterBuilder;
@@ -39,7 +38,6 @@ class WeekView extends StatefulWidget {
     required this.isFirstWeek,
     required this.isLastWeek,
     required this.daysOff,
-    required this.role,
     this.locale,
     required this.interaction,
     required this.dayFooterBuilder,

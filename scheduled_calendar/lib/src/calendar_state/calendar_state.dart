@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:mobx/mobx.dart';
-import 'package:scheduled_calendar/utils/date_utils.dart';
+import 'package:scheduled_calendar/src/utils/date_utils.dart';
 
 part 'calendar_state.g.dart';
 

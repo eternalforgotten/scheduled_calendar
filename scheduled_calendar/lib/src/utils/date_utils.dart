@@ -1,4 +1,4 @@
-import 'package:scheduled_calendar/utils/date_models.dart';
+import 'package:scheduled_calendar/src/utils/date_models.dart';
 
 abstract class DateUtils {
   /// generates a [Month] object from the Nth index from the startdate

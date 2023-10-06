@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
-import 'package:scheduled_calendar/utils/date_utils.dart';
-import 'package:scheduled_calendar/utils/enums.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
-import 'package:scheduled_calendar/utils/typedefs.dart';
+import 'package:scheduled_calendar/src/calendar_state/calendar_state.dart';
+import 'package:scheduled_calendar/src/utils/date_utils.dart';
+import 'package:scheduled_calendar/src/utils/enums.dart';
+import 'package:scheduled_calendar/src/utils/styles.dart';
+import 'package:scheduled_calendar/src/utils/typedefs.dart';
 
 class DayView extends StatelessWidget {
   final DateTime day;
