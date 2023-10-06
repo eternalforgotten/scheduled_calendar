@@ -1,47 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:scheduled_calendar/utils/date_models.dart';
 import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
 import 'package:scheduled_calendar/utils/typedefs.dart';
-import 'package:scheduled_calendar/widgets/client_booking_card.dart';
 import 'package:scheduled_calendar/widgets/day_view.dart';
-import 'package:scheduled_calendar/widgets/performer_card.dart';
 import 'package:scheduled_calendar/widgets/weeks_separator.dart';
 
 class WeekView extends StatefulWidget {
   final List<DateTime> week;
-  final DateTime? selectedDate;
+  final DateTime? focusedDate;
   final Widget weeksSeparator;
   final DateCallback? onDayPressed;
-  final DateBuilder? selectedDateCardBuilder;
-  final Duration selectedDateCardAnimationDuration;
-  final Curve selectedDateCardAnimationCurve;
+  final DateBuilder? focusedDateCardBuilder;
+  final Duration focusedDateCardAnimationDuration;
+  final Curve focusedDateCardAnimationCurve;
   final ScheduledCalendarDayStyle dayStyle;
   final bool isCalendarMode;
-  final AppointmentBadgeStyle appointmentBadgeStyle;
   final bool startWeekWithSunday;
   final bool isFirstWeek;
   final bool isLastWeek;
   final List<int> daysOff;
   final Role role;
   final String? locale;
-  final ClientBookingCardStyle clientCardStyle;
-  final ValueChanged<DateTime> onClientCardButtonPressed;
   final CalendarInteraction interaction;
-  final PerformerCardStyle performerCardStyle;
-  final ValueChanged<List<Period>> onPerformerCardButtonPressed;
+  final DateBuilder? dayFooterBuilder;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
     super.key,
-    this.selectedDate,
+    this.focusedDate,
     this.weeksSeparator = const WeeksSeparator(),
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
     this.isCalendarMode = false,
-    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
-    this.selectedDateCardBuilder,
+    this.focusedDateCardBuilder,
     Duration? selectedDateCardAnimationDuration,
     Curve? selectedDateCardAnimationCurve,
     required this.isFirstWeek,
@@ -49,14 +41,11 @@ class WeekView extends StatefulWidget {
     required this.daysOff,
     required this.role,
     this.locale,
-    required this.clientCardStyle,
-    required this.onClientCardButtonPressed,
     required this.interaction,
-    required this.performerCardStyle,
-    required this.onPerformerCardButtonPressed,
-  })  : selectedDateCardAnimationCurve =
+    required this.dayFooterBuilder,
+  })  : focusedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
-        selectedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
+        focusedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
             const Duration(milliseconds: 400);
 
   @override
@@ -74,7 +63,7 @@ class _WeekViewState extends State<WeekView>
     super.initState();
     animationController = AnimationController(
       vsync: this,
-      duration: widget.selectedDateCardAnimationDuration,
+      duration: widget.focusedDateCardAnimationDuration,
     );
   }
 
@@ -82,8 +71,8 @@ class _WeekViewState extends State<WeekView>
   void didUpdateWidget(covariant WeekView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.interaction == CalendarInteraction.dateCard) {
-      final date = widget.selectedDate;
-      final oldDate = oldWidget.selectedDate;
+      final date = widget.focusedDate;
+      final oldDate = oldWidget.focusedDate;
       if (date != null) {
         final dateInWeek = date.isSameDayOrAfter(widget.week.first) &&
             date.isSameDayOrBefore(widget.week.last);
@@ -151,8 +140,9 @@ class _WeekViewState extends State<WeekView>
                       date,
                       interaction: widget.interaction,
                       onPressed: (date) {
-                        if (widget.interaction == CalendarInteraction.dateCard) {
-                          final newSelectedDate = widget.selectedDate;
+                        if (widget.interaction ==
+                            CalendarInteraction.dateCard) {
+                          final newSelectedDate = widget.focusedDate;
                           if (newSelectedDate != null &&
                               date.isSameDay(newSelectedDate)) {
                             widget.onDayPressed?.call(null);
@@ -167,18 +157,12 @@ class _WeekViewState extends State<WeekView>
                       isDayOff: widget.daysOff.any(
                         (day) => date.weekday == day,
                       ),
-                      isPerformerWorkDay: date.month == 3 &&
-                          (date.day == 1 ||
-                              date.day == 1 ||
-                              date.day == 2 ||
-                              date.day == 3 ||
-                              date.day == 4 ||
-                              date.day == 5 ||
-                              date.day == 6 ||
-                              date.day == 7 ||
-                              date.day == 8),
+                      isPerformerWorkDay: (date.day == 11 ||
+                          date.day == 15 ||
+                          date.day == 22 ||
+                          date.day == 8),
                       style: widget.dayStyle,
-                      appointmentBadgeStyle: widget.appointmentBadgeStyle,
+                      dayFooterBuilder: widget.dayFooterBuilder,
                     ),
                   ),
                 )
@@ -189,54 +173,20 @@ class _WeekViewState extends State<WeekView>
               ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-          child: widget.selectedDateCardBuilder != null
-              ? SizeTransition(
-                  sizeFactor: CurvedAnimation(
-                    curve: widget.selectedDateCardAnimationCurve,
-                    parent: animationController,
-                  ),
-                  child: widget.selectedDateCardBuilder!(
-                    context,
-                    dateToDisplay ?? DateTime.now(),
-                  ),
-                )
-              : widget.role == Role.client
-                  ? ClientBookingCard(
-                      dateToDisplay ?? DateTime.now(),
-                      timeSlots: [
-                        DateTime(2023, 10, 1, 22, 00),
-                        DateTime(2023, 10, 1, 22, 30),
-                        DateTime(2023, 10, 1, 23, 00),
-                        DateTime(2023, 10, 1, 23, 30),
-                        DateTime(2023, 10, 1, 22, 30),
-                        DateTime(2023, 10, 1, 22, 30),
-                      ],
-                      onClientCardButtonPressed: (time) =>
-                          widget.onClientCardButtonPressed(time),
-                      controller: animationController,
-                      locale: widget.locale,
-                      style: widget.clientCardStyle,
-                    )
-                  : PerformerCard(
-                      dateToDisplay ?? DateTime.now(),
-                      periods: [
-                        Period(
-                          DateTime(2023, 10, 1, 22, 00),
-                          DateTime(2023, 10, 1, 23, 00),
-                        ),
-                        Period(
-                          DateTime(2023, 10, 1, 22, 00),
-                          DateTime(2023, 10, 1, 23, 00),
-                        ),
-                      ],
-                      style: widget.performerCardStyle,
-                      onPerformerCardButtonPressed: (periods) =>
-                          widget.onPerformerCardButtonPressed(periods),
-                      controller: animationController,
-                    ),
-        ),
+        if (widget.focusedDateCardBuilder != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+            child: SizeTransition(
+              sizeFactor: CurvedAnimation(
+                curve: widget.focusedDateCardAnimationCurve,
+                parent: animationController,
+              ),
+              child: widget.focusedDateCardBuilder!(
+                context,
+                dateToDisplay ?? DateTime.now(),
+              ),
+            ),
+          ),
       ],
     );
   }

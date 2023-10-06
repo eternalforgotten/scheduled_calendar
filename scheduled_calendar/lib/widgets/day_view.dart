@@ -1,14 +1,16 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:scheduled_calendar/calendar_state/calendar_state.dart';
+import 'package:scheduled_calendar/utils/date_utils.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
 import 'package:scheduled_calendar/utils/styles.dart';
-import 'package:scheduled_calendar/widgets/badge_view.dart';
+import 'package:scheduled_calendar/utils/typedefs.dart';
 
 class DayView extends StatelessWidget {
   final DateTime day;
   final void Function(DateTime day)? onPressed;
   final bool isCalendarMode;
+  final DateBuilder? dayFooterBuilder;
 
   /// Is the day the calendar holiday
   final bool isDayOff;
@@ -16,8 +18,6 @@ class DayView extends StatelessWidget {
   /// Is the day the performer work day
   final bool isPerformerWorkDay;
 
-  /// Widget for displaying of the appointments number
-  final AppointmentBadgeStyle appointmentBadgeStyle;
   final ScheduledCalendarDayStyle style;
   final CalendarInteraction interaction;
   const DayView(
@@ -27,24 +27,32 @@ class DayView extends StatelessWidget {
     this.isCalendarMode = false,
     this.isDayOff = false,
     this.isPerformerWorkDay = false,
-    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.style = const ScheduledCalendarDayStyle(),
     required this.interaction,
+    required this.dayFooterBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
     final state = context.read<CalendarState>();
-    final selected = state.dateInSelectedList(day) != null;
-    BoxDecoration? dayDecoration;
+    final selectedInSelectionMode = state.dateInSelectedList(day) != null;
+    final focused =
+        state.focusedDate != null && state.focusedDate!.isSameDay(day);
+    final isToday = day.isSameDay(DateTime.now());
+    BoxDecoration? highlightedDayDecoration;
     TextStyle? textStyle;
     if (interaction == CalendarInteraction.selection) {
-      dayDecoration = selected
+      highlightedDayDecoration = selectedInSelectionMode
           ? style.selectionModeActiveDecoration
           : style.selectionModeInactiveDecoration;
-      textStyle = selected
+      textStyle = selectedInSelectionMode
           ? style.selectionModeActiveTextStyle
           : style.selectionModeInactiveTextStyle;
+    } else if (focused) {
+      highlightedDayDecoration = style.focusedDayDecoration;
+      textStyle = style.focusedDayTextStyle;
+    } else if (isToday) {
+      textStyle = style.currentDayTextStyle;
     }
     return GestureDetector(
       onTap: () => onPressed?.call(day),
@@ -56,10 +64,10 @@ class DayView extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.5),
-              decoration: dayDecoration ??
+              decoration: highlightedDayDecoration ??
                   (isPerformerWorkDay
                       ? style.performerWorkDayDecoration
-                      : null),
+                      : style.defaultWorkDayDecoration),
               child: Center(
                 child: Text(
                   day.day.toString(),
@@ -70,18 +78,10 @@ class DayView extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 5),
-            isCalendarMode
-                ? BadgeView(
-                    3,
-                    style: appointmentBadgeStyle,
-                  )
-                : Text(
-                    isPerformerWorkDay
-                        ? style.workDayInscription ?? ''
-                        : style.dayOffInscription ?? '',
-                    style: style.inscriptionTextStyle,
-                  ),
+            if (dayFooterBuilder != null) ...[
+              const SizedBox(height: 5),
+              dayFooterBuilder!(context, day),
+            ],
           ],
         ),
       ),

@@ -1,8 +1,10 @@
+import 'package:example/widgets/performer_card.dart';
+import 'package:example/widgets/schedule_inscription.dart';
 import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/helpers/selection_mode.dart';
 import 'package:scheduled_calendar/scheduled_calendar.dart';
 import 'package:scheduled_calendar/utils/enums.dart';
-import 'package:scheduled_calendar/widgets/schedule_inscription.dart';
+import 'package:scheduled_calendar/utils/styles.dart';
 
 void main() {
   runApp(const MyApp());
@@ -109,9 +111,32 @@ class _MyHomePageState extends State<MyHomePage> {
             11: 'Ноя.',
             12: 'Дек.',
           },
-          widgetBelowCalendar: ScheduleInscription(DateTime(2023, 9, 11)),
-          selectedDateCardAnimationCurve: Curves.easeInOutBack,
-          selectedDateCardAnimationDuration: const Duration(milliseconds: 300),
+          calendarFooter: ScheduleInscription(DateTime(2023, 9, 11)),
+          focusedDateCardAnimationCurve: Curves.easeInOutBack,
+          focusedDateCardAnimationDuration: const Duration(milliseconds: 300),
+          dayFooterBuilder: (_, date) => const Text(
+            'Вых',
+            style: TextStyle(fontSize: 12, color: Colors.white38),
+          ),
+          focusedDateCardBuilder: (_, date) => PerformerCard(
+            date,
+            periods: [],
+            onPerformerCardButtonPressed: (_) {},
+          ),
+          dayStyle: const ScheduledCalendarDayStyle(
+            focusedDayDecoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.fromBorderSide(
+                BorderSide(width: 1, color: Colors.red),
+              ),
+            ),
+            focusedDayTextStyle: TextStyle(
+              color: Colors.red,
+            ),
+            currentDayTextStyle: TextStyle(
+              color: Colors.yellowAccent,
+            )
+          ),
         ),
       ),
     );

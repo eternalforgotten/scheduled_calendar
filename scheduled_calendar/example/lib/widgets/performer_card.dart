@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:example/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:scheduled_calendar/utils/date_models.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
 
 class PerformerCard extends StatefulWidget {
   final DateTime date;
@@ -13,7 +13,6 @@ class PerformerCard extends StatefulWidget {
   final PerformerCardStyle style;
   final ValueChanged<List<Period>> onPerformerCardButtonPressed;
   final String? locale;
-  final AnimationController controller;
   const PerformerCard(
     this.date, {
     super.key,
@@ -21,7 +20,6 @@ class PerformerCard extends StatefulWidget {
     this.style = const PerformerCardStyle(),
     required this.onPerformerCardButtonPressed,
     this.locale,
-    required this.controller,
   });
 
   @override
@@ -45,71 +43,68 @@ class _PerformerCardState extends State<PerformerCard> {
       date.substring(0, 1).toUpperCase(),
     );
 
-    return SizeTransition(
-      sizeFactor: widget.controller,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
-        decoration: widget.style.cardDecoration,
-        child: Column(
-          children: [
-            Text(
-              date,
-              style: widget.style.dateTextStyle,
-            ),
-            Text(
-              widget.periods.isEmpty
-                  ? widget.style.emptyInstructionText
-                  : widget.style.instructionText,
-              style: widget.style.instructionTextStyle,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
-              child: Column(
-                children: [
-                  ...widget.periods
-                      .mapIndexed(
-                        (index, period) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                          child: _PeriodRow(
-                            period: period,
-                            index: index,
-                          ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
+      decoration: widget.style.cardDecoration,
+      child: Column(
+        children: [
+          Text(
+            date,
+            style: widget.style.dateTextStyle,
+          ),
+          Text(
+            widget.periods.isEmpty
+                ? widget.style.emptyInstructionText
+                : widget.style.instructionText,
+            style: widget.style.instructionTextStyle,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
+            child: Column(
+              children: [
+                ...widget.periods
+                    .mapIndexed(
+                      (index, period) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
                         ),
-                      )
-                      .toList(),
-                ],
-              ),
+                        child: _PeriodRow(
+                          period: period,
+                          index: index,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {},
-              style: widget.style.addButtonStyle,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  widget.style.addButtonIcon,
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.style.addButtonText,
-                    style: widget.style.addButtonTextStyle,
-                  ),
-                ],
-              ),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            style: widget.style.addButtonStyle,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                widget.style.addButtonIcon,
+                const SizedBox(width: 8),
+                Text(
+                  widget.style.addButtonText,
+                  style: widget.style.addButtonTextStyle,
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            TextButton(
-              style: widget.style.requestButtonStyle,
-              onPressed: () => widget.onPerformerCardButtonPressed([]),
-              child: Text(
-                widget.style.requestButtonText,
-                style: widget.style.requestButtonTextStyle,
-              ),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            style: widget.style.requestButtonStyle,
+            onPressed: () => widget.onPerformerCardButtonPressed([]),
+            child: Text(
+              widget.style.requestButtonText,
+              style: widget.style.requestButtonTextStyle,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -119,7 +114,6 @@ class _PeriodRow extends StatelessWidget {
   final Period period;
   final int index;
   const _PeriodRow({
-    super.key,
     required this.period,
     required this.index,
   });
@@ -169,7 +163,6 @@ class _PeriodRow extends StatelessWidget {
 class _TimeWidget extends StatelessWidget {
   final DateTime time;
   const _TimeWidget({
-    super.key,
     required this.time,
   });
 

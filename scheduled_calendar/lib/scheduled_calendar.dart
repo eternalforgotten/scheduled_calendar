@@ -22,7 +22,6 @@ class ScheduledCalendar extends StatefulWidget {
     this.maxDate,
     DateTime? initialDate,
     this.monthNameBuilder,
-    this.dayBuilder,
     this.addAutomaticKeepAlives = false,
     this.onMonthLoaded,
     this.onPaginationCompleted,
@@ -32,10 +31,10 @@ class ScheduledCalendar extends StatefulWidget {
     this.listPadding = const EdgeInsets.symmetric(horizontal: 16),
     this.startWeekWithSunday = false,
     this.onDayPressed,
-    this.selectedDateCardBuilder,
-    this.selectedDateCardAnimationDuration,
-    this.selectedDateCardAnimationCurve,
-    this.widgetBelowCalendar,
+    this.focusedDateCardBuilder,
+    this.focusedDateCardAnimationDuration,
+    this.focusedDateCardAnimationCurve,
+    this.calendarFooter,
     this.role = Role.performer,
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.weeksSeparator = const WeeksSeparator(),
@@ -48,19 +47,13 @@ class ScheduledCalendar extends StatefulWidget {
     this.monthNameDisplay = MonthNameDisplay.full,
     this.displayYearInMonthName = false,
     this.monthNameLocale,
-    this.appointmentBadgeStyle = const AppointmentBadgeStyle(),
     this.isCalendarMode = false,
     this.monthCustomNames = const {},
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
-    this.clientCardStyle = const ClientBookingCardStyle(),
-    this.onClientCardButtonPressed,
-    SelectionModeConfig? selectionModeConfig,
+    this.selectionModeConfig,
     this.interaction = CalendarInteraction.disabled,
-    this.performerCardStyle = const PerformerCardStyle(),
-    this.onPerformerCardButtonPressed,
-  })  : initialDate = initialDate ?? DateTime.now().removeTime(),
-        selectionModeConfig =
-            selectionModeConfig ?? const SelectionModeConfig();
+    this.dayFooterBuilder,
+  }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
   /// `DateTime.now()` will be used
@@ -80,12 +73,6 @@ class ScheduledCalendar extends StatefulWidget {
   /// * [int] year: 2021
   /// * [int] month: 1-12
   final MonthNameBuilder? monthNameBuilder;
-
-  /// a Builder used for day generation. a default [DateBuilder] is
-  /// used when no custom [DateBuilder] is provided.
-  /// * [context]
-  /// * [DateTime] date
-  final DateBuilder? dayBuilder;
 
   /// if the calendar should stay cached when the widget is no longer loaded.
   /// this can be used for maintaining the last state. defaults to `false`
@@ -114,7 +101,7 @@ class ScheduledCalendar extends StatefulWidget {
   final bool startWeekWithSunday;
 
   /// Date when the next schedule week will be available
-  final Widget? widgetBelowCalendar;
+  final Widget? calendarFooter;
 
   /// User role: performer or client
   final Role role;
@@ -147,42 +134,37 @@ class ScheduledCalendar extends StatefulWidget {
   /// Defaults to 'false'
   final bool isCalendarMode;
 
-  /// Appointments number badge style
-  final AppointmentBadgeStyle appointmentBadgeStyle;
-
   /// List of days that are calendar days off and have different text style in calendar
   final List<int> daysOff;
 
   ///Callback that will be called when [interaction] is set to [CalendarInteraction.action]
   final DateCallback? onDayPressed;
 
-  /// Style of the client booking card
-  final ClientBookingCardStyle clientCardStyle;
-
-  /// Callback for action with the time slot selected by client
-  final ValueChanged<DateTime>? onClientCardButtonPressed;
-
-  /// Style of the performer card
-  final PerformerCardStyle performerCardStyle;
-
-  /// Callback for action with the list of working periods created by performer
-  final ValueChanged<List<Period>>? onPerformerCardButtonPressed;
-
   ///Widget, used to display card when a day is tapped
-  final DateBuilder? selectedDateCardBuilder;
+  final DateBuilder? focusedDateCardBuilder;
 
-  final Duration? selectedDateCardAnimationDuration;
+  ///Animation duration of card appearing for
+  ///[CalendarInteraction.dateCard]
+  final Duration? focusedDateCardAnimationDuration;
 
-  final Curve? selectedDateCardAnimationCurve;
+  ///Animation curve of card appearing for
+  ///[CalendarInteraction.dateCard]
+  final Curve? focusedDateCardAnimationCurve;
 
   ///Interaction mode of the calendar. By default, [CalendarInteraction.disabled] is set.
+  ///For [CalendarInteraction.dateCard], provide [focusedDateCardBuilder]
+  ///to display a card below the week of focused day.
+  ///For [CalendarInteraction.action], provide [onDayPressed] callback
+  ///Otherwise, [ArgumentError] is thrown
   final CalendarInteraction interaction;
 
   ///Customizable config for selection mode.
-  ///To enter this mode, provide the new widget with [interaction]
+  ///To enter this mode, provide new widget with [interaction]
   ///set to [CalendarInteraction.selection].
-  ///To exit the mode, provide the new widget with different [interaction]
-  final SelectionModeConfig selectionModeConfig;
+  ///To exit the mode, provide new widget with different [interaction]
+  final SelectionModeConfig? selectionModeConfig;
+
+  final DateBuilder? dayFooterBuilder;
 
   @override
   _ScheduledCalendarState createState() => _ScheduledCalendarState();
@@ -204,7 +186,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
     final oldSelected = oldWidget.interaction == CalendarInteraction.selection;
     final newSelected = widget.interaction == CalendarInteraction.selection;
     if (oldSelected && !newSelected) {
-      widget.selectionModeConfig.onSelectionEnd?.call(state.selectedDates);
+      widget.selectionModeConfig?.onSelectionEnd?.call(state.selectedDates);
       state.clearDates();
     }
 
@@ -222,7 +204,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
       assert(date != null);
       state.onSelected(date!);
       setState(() {});
-    } else if (widget.interaction != CalendarInteraction.disabled) {
+    } else {
       if (widget.interaction == CalendarInteraction.action) {
         widget.onDayPressed!(date!);
       }
@@ -247,6 +229,13 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
         widget.interaction == CalendarInteraction.action) {
       throw ArgumentError(
         'Provide the onDayPressed callback for CalendarInteraction.action',
+      );
+    }
+
+    if (widget.focusedDateCardBuilder == null &&
+        widget.interaction == CalendarInteraction.dateCard) {
+      throw ArgumentError(
+        'Provide the focusedDateCardBuilder callback for CalendarInteraction.dateCard',
       );
     }
 
@@ -362,7 +351,7 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
       child: Observer(
         builder: (context) {
           final state = context.watch<CalendarState>();
-          final selectedDate = state.selectedDate;
+          final focusedDate = state.focusedDate;
           return IgnorePointer(
             ignoring: widget.interaction == CalendarInteraction.disabled,
             child: Scrollable(
@@ -386,18 +375,18 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                             itemBuilder:
                                 (BuildContext context, Month month, int index) {
                               return MonthView(
+                                dayFooterBuilder: widget.dayFooterBuilder,
                                 interaction: widget.interaction,
-                                selectedDateCardAnimationCurve:
-                                    widget.selectedDateCardAnimationCurve,
-                                selectedDateCardAnimationDuration:
-                                    widget.selectedDateCardAnimationDuration,
-                                selectedDateCardBuilder:
-                                    widget.selectedDateCardBuilder,
+                                focusedDateCardAnimationCurve:
+                                    widget.focusedDateCardAnimationCurve,
+                                focusedDateCardAnimationDuration:
+                                    widget.focusedDateCardAnimationDuration,
+                                focusedDateCardBuilder:
+                                    widget.focusedDateCardBuilder,
                                 month: month,
-                                selectedDate: selectedDate,
+                                focusedDate: focusedDate,
                                 monthNameBuilder: widget.monthNameBuilder,
                                 centerMonthName: false,
-                                dayBuilder: widget.dayBuilder,
                                 onDayPressed: (date) =>
                                     _onDayTapped(context, date),
                                 startWeekWithSunday: widget.startWeekWithSunday,
@@ -413,22 +402,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                                 displayYearInMonthName:
                                     widget.displayYearInMonthName,
                                 isCalendarMode: widget.isCalendarMode,
-                                appointmentBadgeStyle:
-                                    widget.appointmentBadgeStyle,
                                 monthCustomNames: widget.monthCustomNames,
                                 daysOff: widget.daysOff,
                                 role: widget.role,
-                                clientCardStyle: widget.clientCardStyle,
-                                onClientCardButtonPressed:
-                                    widget.onClientCardButtonPressed ??
-                                        (date) {},
-                                performerCardStyle: widget.performerCardStyle,
-                                onPerformerCardButtonPressed: widget
-                                            .onPerformerCardButtonPressed !=
-                                        null
-                                    ? (periods) => widget
-                                        .onPerformerCardButtonPressed!(periods)
-                                    : (periods) {},
                               );
                             },
                           ),
@@ -443,18 +419,18 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                           itemBuilder:
                               (BuildContext context, Month month, int index) {
                             return MonthView(
+                              dayFooterBuilder: widget.dayFooterBuilder,
                               interaction: widget.interaction,
-                              selectedDateCardAnimationCurve:
-                                  widget.selectedDateCardAnimationCurve,
-                              selectedDateCardAnimationDuration:
-                                  widget.selectedDateCardAnimationDuration,
-                              selectedDateCardBuilder:
-                                  widget.selectedDateCardBuilder,
-                              selectedDate: selectedDate,
+                              focusedDateCardAnimationCurve:
+                                  widget.focusedDateCardAnimationCurve,
+                              focusedDateCardAnimationDuration:
+                                  widget.focusedDateCardAnimationDuration,
+                              focusedDateCardBuilder:
+                                  widget.focusedDateCardBuilder,
+                              focusedDate: focusedDate,
                               month: month,
                               monthNameBuilder: widget.monthNameBuilder,
                               centerMonthName: false,
-                              dayBuilder: widget.dayBuilder,
                               onDayPressed: (date) =>
                                   _onDayTapped(context, date),
                               startWeekWithSunday: widget.startWeekWithSunday,
@@ -470,25 +446,9 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                               displayYearInMonthName:
                                   widget.displayYearInMonthName,
                               isCalendarMode: widget.isCalendarMode,
-                              appointmentBadgeStyle:
-                                  widget.appointmentBadgeStyle,
                               monthCustomNames: widget.monthCustomNames,
                               daysOff: widget.daysOff,
                               role: widget.role,
-                              clientCardStyle: widget.clientCardStyle,
-                              onClientCardButtonPressed: widget
-                                          .onClientCardButtonPressed !=
-                                      null
-                                  ? (date) =>
-                                      widget.onClientCardButtonPressed!(date)
-                                  : (date) {},
-                              performerCardStyle: widget.performerCardStyle,
-                              onPerformerCardButtonPressed:
-                                  widget.onPerformerCardButtonPressed != null
-                                      ? (periods) =>
-                                          widget.onPerformerCardButtonPressed!(
-                                              periods)
-                                      : (periods) {},
                             );
                           },
                         ),
@@ -499,14 +459,14 @@ class _ScheduledCalendarState extends State<ScheduledCalendar> {
                           widget.listPadding.left,
                           0,
                           widget.listPadding.right,
-                          widget.widgetBelowCalendar != null &&
+                          widget.calendarFooter != null &&
                                   !widget.isCalendarMode
                               ? 16
                               : 0),
                       sliver: SliverToBoxAdapter(
-                        child: widget.widgetBelowCalendar != null &&
+                        child: widget.calendarFooter != null &&
                                 !widget.isCalendarMode
-                            ? widget.widgetBelowCalendar
+                            ? widget.calendarFooter
                             : const SizedBox(),
                       ),
                     ),

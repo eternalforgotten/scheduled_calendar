@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:example/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:scheduled_calendar/utils/styles.dart';
 
 class ScheduleInscription extends StatefulWidget {
   final DateTime nextAvailableDate;
