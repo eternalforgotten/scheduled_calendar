@@ -50,6 +50,15 @@ import 'widgets/weeks_separator.dart';
 /// On the end of the selection mode (when widget with the new [interaction] is provided),
 /// [selectionModeConfig.onSelectionEnd] callback with the list of selected days will be called, if provided
 class ScheduledCalendar extends StatefulWidget {
+  ///Creates a [ScheduledCalendar].
+  ///
+  ///[initialDate] defaults to [DateTime.now] and must be equal or after [minDate] and equal or before [maxDate].
+  ///
+  ///Provide the [onDayPressed] callback for [CalendarInteraction.action].
+  ///
+  ///Provide the [focusedDateCardBuilder] callback for [CalendarInteraction.dateCard]
+  ///
+  ///Otherwise, [ArgumentError] is thrown
   ScheduledCalendar({
     super.key,
     this.minDate,
@@ -111,7 +120,7 @@ class ScheduledCalendar extends StatefulWidget {
   /// scroll controller for making programmable scroll interactions
   final ScrollController? scrollController;
 
-  /// Select start day of the week to be Sunday. Defaults to 'false'
+  /// Select start day of the week to be Sunday. Defaults to [false]
   final bool startWeekWithSunday;
 
   /// Date when the next schedule week will be available
@@ -124,7 +133,7 @@ class ScheduledCalendar extends StatefulWidget {
   final Widget weeksSeparator;
 
   /// If calender mode is, badge view with appointments number is displaying under the date.
-  /// Defaults to 'false'
+  /// Defaults to [false]
   final bool isCalendarMode;
 
   /// List of days that are calendar days off and have different text style in calendar
