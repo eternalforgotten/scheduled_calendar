@@ -1,4 +1,4 @@
-import 'package:scheduled_calendar/src/utils/date_models.dart';
+import 'date_models.dart';
 
 abstract class DateUtils {
   /// generates a [Month] object from the Nth index from the startdate
@@ -166,7 +166,7 @@ abstract class DateUtils {
         : mondayWeekDayList.indexOf(weekdayValueForFirstValidDay);
   }
 
-  /// This method returns the list of the weeks for month, where every week is the list of days
+  /// Returns the list of the weeks for month, where every week is the list of days
   static List<List<DateTime>> weeksList({
     required Month month,
   }) {

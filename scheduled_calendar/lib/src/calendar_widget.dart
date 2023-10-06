@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart' hide DateUtils;
-import 'package:flutter/rendering.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
-import 'package:scheduled_calendar/src/calendar_state/calendar_state.dart';
-import 'package:scheduled_calendar/src/utils/date_models.dart';
-import 'package:scheduled_calendar/src/utils/date_utils.dart';
-import 'package:scheduled_calendar/src/utils/enums.dart';
-import 'package:scheduled_calendar/src/helpers/selection_mode.dart';
-import 'package:scheduled_calendar/src/utils/styles.dart';
-import 'package:scheduled_calendar/src/utils/typedefs.dart';
-import 'package:scheduled_calendar/src/widgets/month_view.dart';
-import 'package:scheduled_calendar/src/widgets/weeks_separator.dart';
+
+import 'calendar_state/calendar_state.dart';
+import 'helpers/selection_mode.dart';
+import 'utils/date_models.dart';
+import 'utils/date_utils.dart';
+import 'utils/enums.dart';
+import 'utils/styles.dart';
+import 'utils/typedefs.dart';
+import 'widgets/month_view.dart';
+import 'widgets/weeks_separator.dart';
 
 ///Calendar, which allows to interact with calendar for scheduling purposes.
 ///For day pressing interaction, override [interaction] parameter.
@@ -350,7 +350,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
             child: Scrollable(
               controller: widget.scrollController,
               physics: widget.physics,
-              viewportBuilder: (BuildContext context, ViewportOffset position) {
+              viewportBuilder: (context, position) {
                 return Viewport(
                   offset: position,
                   center: downListKey,
