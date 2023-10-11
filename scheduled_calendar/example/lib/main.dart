@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [FloatingActionButton(onPressed: _toggle)],
       ),
       body: Center(
-        child: ScheduledCalendar(
+        child: HorizontalScheduledCalendar(
           selectionModeConfig: SelectionModeConfig(
             onSelectionEnd: (list) {},
           ),

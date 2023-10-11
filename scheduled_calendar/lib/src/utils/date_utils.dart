@@ -82,6 +82,34 @@ abstract class DateUtils {
     return Month(weeks);
   }
 
+  static List<DateTime> getWeek(
+    DateTime? minDate,
+    DateTime? maxDate,
+    int weekPage,
+    bool up,
+  ) {
+    // if no start date is provided use the current date
+    DateTime startDate = (minDate ?? DateTime.now()).removeTime();
+    DateTime dateTemp;
+    if (up) {
+      dateTemp = startDate.subtract(Duration(days: 7 * weekPage));
+    } else {
+      dateTemp = startDate.addDays(7 * weekPage);
+    }
+
+    List<DateTime> week = [];
+    while (week.length < 7) {
+      if (maxDate != null && dateTemp.isSameDayOrAfter(maxDate)) {
+        week.add(dateTemp);
+        break;
+      }
+      week.add(dateTemp);
+      dateTemp = dateTemp.nextDay;
+    }
+
+    return week;
+  }
+
   static int getWeekDay(DateTime date, bool startWeekWithSunday) {
     if (startWeekWithSunday) {
       return date.weekday == DateTime.sunday ? 1 : date.weekday + 1;

@@ -23,6 +23,7 @@ class WeekView extends StatefulWidget {
   final String? locale;
   final CalendarInteraction interaction;
   final DateBuilder? dayFooterBuilder;
+  final bool isHorizontalCalendar;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -41,6 +42,7 @@ class WeekView extends StatefulWidget {
     this.locale,
     required this.interaction,
     required this.dayFooterBuilder,
+    this.isHorizontalCalendar = false,
   })  : focusedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         focusedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -109,22 +111,23 @@ class _WeekViewState extends State<WeekView>
     final week = widget.week;
     return Column(
       children: [
-        Row(
-          children: [
-            if (isFirstWeek && week.length < 7)
-              Spacer(
-                flex: 7 - week.length,
+        if (!widget.isHorizontalCalendar)
+          Row(
+            children: [
+              if (isFirstWeek && week.length < 7)
+                Spacer(
+                  flex: 7 - week.length,
+                ),
+              Flexible(
+                flex: week.length,
+                child: widget.weeksSeparator,
               ),
-            Flexible(
-              flex: week.length,
-              child: widget.weeksSeparator,
-            ),
-            if (isLastWeek && week.length < 7)
-              Spacer(
-                flex: 7 - week.length,
-              ),
-          ],
-        ),
+              if (isLastWeek && week.length < 7)
+                Spacer(
+                  flex: 7 - week.length,
+                ),
+            ],
+          ),
         Row(
           children: [
             if (isFirstWeek && week.length < 7)
@@ -161,6 +164,7 @@ class _WeekViewState extends State<WeekView>
                           date.day == 8),
                       style: widget.dayStyle,
                       dayFooterBuilder: widget.dayFooterBuilder,
+                      isHorizontalCalendar: widget.isHorizontalCalendar,
                     ),
                   ),
                 )
