@@ -21,6 +21,7 @@ class DayView extends StatelessWidget {
 
   final ScheduledCalendarDayStyle style;
   final CalendarInteraction interaction;
+  final bool isHorizontalCalendar;
   const DayView(
     this.day, {
     super.key,
@@ -31,6 +32,7 @@ class DayView extends StatelessWidget {
     this.style = const ScheduledCalendarDayStyle(),
     required this.interaction,
     required this.dayFooterBuilder,
+    required this.isHorizontalCalendar,
   });
 
   @override
@@ -41,26 +43,36 @@ class DayView extends StatelessWidget {
         state.focusedDate != null && state.focusedDate!.isSameDay(day);
     final isToday = day.isSameDay(DateTime.now());
     BoxDecoration? highlightedDayDecoration;
+    BoxDecoration? horizontalHighlightedDayDecoration;
     TextStyle? textStyle;
-    if (interaction == CalendarInteraction.selection) {
-      highlightedDayDecoration = selectedInSelectionMode
-          ? style.selectionModeActiveDecoration
-          : style.selectionModeInactiveDecoration;
-      textStyle = selectedInSelectionMode
-          ? style.selectionModeActiveTextStyle
-          : style.selectionModeInactiveTextStyle;
-    } else if (focused) {
-      highlightedDayDecoration = style.focusedDayDecoration;
-      textStyle = style.focusedDayTextStyle;
-    } else if (isToday) {
-      textStyle = style.currentDayTextStyle;
+    if (isHorizontalCalendar) {
+      highlightedDayDecoration = const BoxDecoration();
+      if (focused) {
+        horizontalHighlightedDayDecoration =
+            style.horizontalFocusedDayDecoration;
+      }
+    } else {
+      if (interaction == CalendarInteraction.selection) {
+        highlightedDayDecoration = selectedInSelectionMode
+            ? style.selectionModeActiveDecoration
+            : style.selectionModeInactiveDecoration;
+        textStyle = selectedInSelectionMode
+            ? style.selectionModeActiveTextStyle
+            : style.selectionModeInactiveTextStyle;
+      } else if (focused) {
+        highlightedDayDecoration = style.focusedDayDecoration;
+        textStyle = style.focusedDayTextStyle;
+      } else if (isToday) {
+        textStyle = style.currentDayTextStyle;
+      }
     }
     return GestureDetector(
       onTap: () => onPressed?.call(day),
 
       //TODO: add decoration
       child: Container(
-        decoration: null,
+        decoration:
+            isHorizontalCalendar ? horizontalHighlightedDayDecoration : null,
         child: Column(
           children: [
             Container(
@@ -82,6 +94,7 @@ class DayView extends StatelessWidget {
             if (dayFooterBuilder != null) ...[
               const SizedBox(height: 5),
               dayFooterBuilder!(context, day),
+              const SizedBox(height: 3),
             ],
           ],
         ),

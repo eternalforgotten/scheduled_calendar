@@ -40,6 +40,9 @@ class ScheduledCalendarDayStyle {
   /// Background decoration of the active days in selection mode
   final BoxDecoration selectionModeActiveDecoration;
 
+  /// Background decoration of the focused, active day in horizontal calendar
+  final BoxDecoration horizontalFocusedDayDecoration;
+
   const ScheduledCalendarDayStyle({
     this.padding = const EdgeInsets.all(8),
     this.currentDayTextStyle = const TextStyle(),
@@ -94,6 +97,10 @@ class ScheduledCalendarDayStyle {
     this.selectionModeActiveDecoration = const BoxDecoration(
       color: Color(0xFFEFD23C),
       shape: BoxShape.circle,
+    ),
+    this.horizontalFocusedDayDecoration = const BoxDecoration(
+      color: Color(0xFF323137),
+      borderRadius: BorderRadius.all(Radius.circular(8)),
     ),
   });
 }
