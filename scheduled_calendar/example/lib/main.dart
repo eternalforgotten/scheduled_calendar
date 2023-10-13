@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:example/widgets/performer_card.dart';
 import 'package:example/widgets/schedule_inscription.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +61,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelection = false;
+  List<Period> periods = [];
 
   CalendarInteraction get interaction => isSelection
       ? CalendarInteraction.selection
@@ -118,11 +121,17 @@ class _MyHomePageState extends State<MyHomePage> {
             'Вых',
             style: TextStyle(fontSize: 12, color: Colors.white38),
           ),
-          focusedDateCardBuilder: (_, date) => PerformerCard(
-            date,
-            periods: const [],
-            onPerformerCardButtonPressed: (_) {},
-          ),
+          focusedDateCardBuilder: (_, date) {
+            return PerformerCard(
+              date,
+              initialPeriods: periods,
+              onPerformerCardButtonPressed: (per) {
+                for (var element in per) {
+                  log('${element.startTime} ${element.endTime}\n');
+                }
+              },
+            );
+          },
           dayStyle: const ScheduledCalendarDayStyle(
             focusedDayDecoration: BoxDecoration(
               shape: BoxShape.circle,
