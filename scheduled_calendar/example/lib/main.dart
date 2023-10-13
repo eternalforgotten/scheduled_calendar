@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:example/widgets/performer_card.dart';
 import 'package:example/widgets/schedule_inscription.dart';
 import 'package:flutter/material.dart';
@@ -129,27 +127,22 @@ class _MyHomePageState extends State<MyHomePage> {
             return PerformerCard(
               date,
               initialPeriods: periods,
-              onPerformerCardButtonPressed: (per) {
-                for (var element in per) {
-                  log('${element.startTime} ${element.endTime}\n');
-                }
-              },
+              onPerformerCardButtonPressed: (_) {},
             );
           },
           dayStyle: const ScheduledCalendarDayStyle(
-            currentDayTextStyle: TextStyle(
-              color: Colors.yellowAccent,
-            ),
-            weekdayCustomNames: {
-              1: 'Пн',
-              2: 'Вт',
-              3: 'Ср',
-              4: 'Чт',
-              5: 'Пт',
-              6: 'Сб',
-              7: 'Вс',
-            }
-          ),
+              currentDayTextStyle: TextStyle(
+                color: Colors.yellowAccent,
+              ),
+              weekdayCustomNames: {
+                1: 'Пн',
+                2: 'Вт',
+                3: 'Ср',
+                4: 'Чт',
+                5: 'Пт',
+                6: 'Сб',
+                7: 'Вс',
+              }),
         ),
       ),
     );

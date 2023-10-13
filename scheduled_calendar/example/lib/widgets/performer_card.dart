@@ -241,7 +241,6 @@ class _TimeWidget extends StatelessWidget {
 class Period {
   DateTime startTime;
   DateTime endTime;
-
   Period(
     this.startTime,
     this.endTime,
