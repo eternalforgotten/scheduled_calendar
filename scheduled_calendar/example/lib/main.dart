@@ -59,6 +59,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelection = false;
+  List<Period> periods = [];
 
   CalendarInteraction get interaction => isSelection
       ? CalendarInteraction.selection
@@ -122,25 +123,26 @@ class _MyHomePageState extends State<MyHomePage> {
             'Вых',
             style: TextStyle(fontSize: 12, color: Colors.white38),
           ),
-          focusedDateCardBuilder: (_, date) => PerformerCard(
-            date,
-            periods: const [],
-            onPerformerCardButtonPressed: (_) {},
-          ),
+          focusedDateCardBuilder: (_, date) {
+            return PerformerCard(
+              date,
+              initialPeriods: periods,
+              onPerformerCardButtonPressed: (_) {},
+            );
+          },
           dayStyle: const ScheduledCalendarDayStyle(
-            currentDayTextStyle: TextStyle(
-              color: Colors.yellowAccent,
-            ),
-            weekdayCustomNames: {
-              1: 'Пн',
-              2: 'Вт',
-              3: 'Ср',
-              4: 'Чт',
-              5: 'Пт',
-              6: 'Сб',
-              7: 'Вс',
-            }
-          ),
+              currentDayTextStyle: TextStyle(
+                color: Colors.yellowAccent,
+              ),
+              weekdayCustomNames: {
+                1: 'Пн',
+                2: 'Вт',
+                3: 'Ср',
+                4: 'Чт',
+                5: 'Пт',
+                6: 'Сб',
+                7: 'Вс',
+              }),
         ),
       ),
     );
