@@ -84,6 +84,7 @@ class HorizontalScheduledCalendar extends StatefulWidget {
     this.interaction = CalendarInteraction.disabled,
     this.dayFooterBuilder,
     this.monthNameStyle = const ScheduleCalendarMonthNameStyle(),
+    this.displayWeekdays = false,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -167,6 +168,8 @@ class HorizontalScheduledCalendar extends StatefulWidget {
   final SelectionModeConfig? selectionModeConfig;
 
   final DateBuilder? dayFooterBuilder;
+
+  final bool displayWeekdays;
 
   @override
   HorizontalScheduledCalendarState createState() =>
@@ -405,6 +408,7 @@ class HorizontalScheduledCalendarState
                                 locale: widget.monthNameStyle.monthNameLocale,
                                 dayFooterBuilder: widget.dayFooterBuilder,
                                 isHorizontalCalendar: true,
+                                displayWeekdays: widget.displayWeekdays,
                               ),
                             );
                           },

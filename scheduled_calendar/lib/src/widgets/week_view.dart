@@ -25,6 +25,7 @@ class WeekView extends StatefulWidget {
   final DateBuilder? dayFooterBuilder;
   final bool isHorizontalCalendar;
   final bool Function(DateTime)? isWorkDay;
+  final bool displayWeekdays;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -45,6 +46,7 @@ class WeekView extends StatefulWidget {
     required this.dayFooterBuilder,
     this.isHorizontalCalendar = false,
     this.isWorkDay,
+    required this.displayWeekdays,
   })  : focusedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         focusedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -164,6 +166,7 @@ class _WeekViewState extends State<WeekView>
                       style: widget.dayStyle,
                       dayFooterBuilder: widget.dayFooterBuilder,
                       isHorizontalCalendar: widget.isHorizontalCalendar,
+                      displayWeekdays: widget.displayWeekdays,
                     ),
                   ),
                 )

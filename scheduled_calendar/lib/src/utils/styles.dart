@@ -43,6 +43,15 @@ class ScheduledCalendarDayStyle {
   /// Background decoration of the focused, active day in horizontal calendar
   final BoxDecoration horizontalFocusedDayDecoration;
 
+  /// Text style of the weekday text
+  final TextStyle weekdayTextStyle;
+
+  /// Locale of weekday
+  final String? weekdayLocale;
+
+  /// Map of custom names for weekdays
+  final Map<int, String> weekdayCustomNames;
+
   const ScheduledCalendarDayStyle({
     this.padding = const EdgeInsets.all(8),
     this.currentDayTextStyle = const TextStyle(),
@@ -56,7 +65,11 @@ class ScheduledCalendarDayStyle {
       fontWeight: FontWeight.w700,
       color: Color(0xFF5C5B5F),
     ),
-    this.focusedDayTextStyle = const TextStyle(),
+    this.focusedDayTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: Color(0xFFEFD23C),
+    ),
     this.focusedDayDecoration = const BoxDecoration(),
     this.performerWorkDayDecoration = const BoxDecoration(
       border: Border.fromBorderSide(
@@ -102,6 +115,13 @@ class ScheduledCalendarDayStyle {
       color: Color(0xFF323137),
       borderRadius: BorderRadius.all(Radius.circular(8)),
     ),
+    this.weekdayTextStyle = const TextStyle(
+      color: Color(0xFF5C5B5F),
+      fontSize: 10.5,
+      height: 14.3 / 10.5,
+    ),
+    this.weekdayLocale, 
+    this.weekdayCustomNames = const {}, 
   });
 }
 

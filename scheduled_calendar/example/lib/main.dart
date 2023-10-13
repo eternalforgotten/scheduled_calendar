@@ -128,18 +128,18 @@ class _MyHomePageState extends State<MyHomePage> {
             onPerformerCardButtonPressed: (_) {},
           ),
           dayStyle: const ScheduledCalendarDayStyle(
-            focusedDayDecoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.fromBorderSide(
-                BorderSide(width: 1, color: Colors.red),
-              ),
-            ),
-            focusedDayTextStyle: TextStyle(
-              color: Colors.red,
-            ),
             currentDayTextStyle: TextStyle(
               color: Colors.yellowAccent,
             ),
+            weekdayCustomNames: {
+              1: 'Пн',
+              2: 'Вт',
+              3: 'Ср',
+              4: 'Чт',
+              5: 'Пт',
+              6: 'Сб',
+              7: 'Вс',
+            }
           ),
         ),
       ),

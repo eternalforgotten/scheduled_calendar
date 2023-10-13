@@ -85,6 +85,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.dayFooterBuilder,
     this.monthNameStyle = const ScheduleCalendarMonthNameStyle(),
     this.isWorkDay,
+    this.displayWeekdays = false,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -170,6 +171,8 @@ class ScheduledCalendar extends StatefulWidget {
   final DateBuilder? dayFooterBuilder;
 
   final bool Function(DateTime)? isWorkDay;
+
+  final bool displayWeekdays;
 
   @override
   ScheduledCalendarState createState() => ScheduledCalendarState();
@@ -403,6 +406,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                 monthNameStyle: widget.monthNameStyle,
                                 daysOff: widget.daysOff,
                                 isWorkDay: widget.isWorkDay,
+                                displayWeekdays: widget.displayWeekdays,
                               );
                             },
                           ),
@@ -440,6 +444,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                               monthNameStyle: widget.monthNameStyle,
                               daysOff: widget.daysOff,
                               isWorkDay: widget.isWorkDay,
+                              displayWeekdays: widget.displayWeekdays,
                             );
                           },
                         ),
