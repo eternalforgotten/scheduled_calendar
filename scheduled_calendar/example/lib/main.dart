@@ -86,7 +86,11 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [FloatingActionButton(onPressed: _toggle)],
       ),
       body: Center(
-        child: HorizontalScheduledCalendar(
+        child: ScheduledCalendar(
+          isWorkDay: (date) {
+            final condition = date.day == 8 || date.day == 17;
+            return condition;
+          },
           selectionModeConfig: SelectionModeConfig(
             onSelectionEnd: (list) {},
           ),
