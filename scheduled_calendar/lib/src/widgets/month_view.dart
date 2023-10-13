@@ -28,6 +28,8 @@ class MonthView extends StatelessWidget {
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
     required this.interaction,
     required this.dayFooterBuilder,
+    this.isWorkDay,
+    required this.displayWeekdays,
   });
 
   final Month month;
@@ -46,6 +48,8 @@ class MonthView extends StatelessWidget {
   final ValueChanged<DateTime?>? onDayPressed;
   final CalendarInteraction interaction;
   final DateBuilder? dayFooterBuilder;
+  final bool Function(DateTime)? isWorkDay;
+  final bool displayWeekdays;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +101,8 @@ class MonthView extends StatelessWidget {
                     daysOff: daysOff,
                     locale: monthNameStyle.monthNameLocale,
                     dayFooterBuilder: dayFooterBuilder,
+                    isWorkDay: isWorkDay,
+                    displayWeekdays: displayWeekdays,
                   ),
                 )
                 .toList(),

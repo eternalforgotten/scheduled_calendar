@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../calendar_state/calendar_state.dart';
@@ -7,7 +11,7 @@ import '../utils/enums.dart';
 import '../utils/styles.dart';
 import '../utils/typedefs.dart';
 
-class DayView extends StatelessWidget {
+class DayView extends StatefulWidget {
   final DateTime day;
   final void Function(DateTime day)? onPressed;
   final bool isCalendarMode;
@@ -21,6 +25,8 @@ class DayView extends StatelessWidget {
 
   final ScheduledCalendarDayStyle style;
   final CalendarInteraction interaction;
+  final bool isHorizontalCalendar;
+  final bool displayWeekdays;
   const DayView(
     this.day, {
     super.key,
@@ -31,57 +37,89 @@ class DayView extends StatelessWidget {
     this.style = const ScheduledCalendarDayStyle(),
     required this.interaction,
     required this.dayFooterBuilder,
+    required this.isHorizontalCalendar,
+    required this.displayWeekdays,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final state = context.read<CalendarState>();
-    final selectedInSelectionMode = state.dateInSelectedList(day) != null;
-    final focused =
-        state.focusedDate != null && state.focusedDate!.isSameDay(day);
-    final isToday = day.isSameDay(DateTime.now());
-    BoxDecoration? highlightedDayDecoration;
-    TextStyle? textStyle;
-    if (interaction == CalendarInteraction.selection) {
-      highlightedDayDecoration = selectedInSelectionMode
-          ? style.selectionModeActiveDecoration
-          : style.selectionModeInactiveDecoration;
-      textStyle = selectedInSelectionMode
-          ? style.selectionModeActiveTextStyle
-          : style.selectionModeInactiveTextStyle;
-    } else if (focused) {
-      highlightedDayDecoration = style.focusedDayDecoration;
-      textStyle = style.focusedDayTextStyle;
-    } else if (isToday) {
-      textStyle = style.currentDayTextStyle;
-    }
-    return GestureDetector(
-      onTap: () => onPressed?.call(day),
+  State<DayView> createState() => _DayViewState();
+}
 
-      //TODO: add decoration
+class _DayViewState extends State<DayView> {
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = widget.style.weekdayLocale ?? Platform.localeName;
+    final state = context.read<CalendarState>();
+    final selectedInSelectionMode =
+        state.dateInSelectedList(widget.day) != null;
+    final focused =
+        state.focusedDate != null && state.focusedDate!.isSameDay(widget.day);
+    final isToday = widget.day.isSameDay(DateTime.now());
+    BoxDecoration? highlightedDayDecoration;
+    BoxDecoration? horizontalHighlightedDayDecoration;
+    TextStyle? textStyle;
+    if (widget.isHorizontalCalendar) {
+      highlightedDayDecoration = const BoxDecoration();
+      if (focused) {
+        horizontalHighlightedDayDecoration =
+            widget.style.horizontalFocusedDayDecoration;
+      }
+    } else {
+      if (widget.interaction == CalendarInteraction.selection) {
+        highlightedDayDecoration = selectedInSelectionMode
+            ? widget.style.selectionModeActiveDecoration
+            : widget.style.selectionModeInactiveDecoration;
+        textStyle = selectedInSelectionMode
+            ? widget.style.selectionModeActiveTextStyle
+            : widget.style.selectionModeInactiveTextStyle;
+      } else if (focused) {
+        highlightedDayDecoration = widget.style.focusedDayDecoration;
+        textStyle = widget.style.focusedDayTextStyle;
+      } else if (isToday) {
+        textStyle = widget.style.currentDayTextStyle;
+      }
+    }
+    var weekdayName = widget.style.weekdayCustomNames[widget.day.weekday] ??
+        DateFormat('E', locale).format(widget.day);
+    return GestureDetector(
+      onTap: () => widget.onPressed?.call(widget.day),
       child: Container(
-        decoration: null,
+        decoration: widget.isHorizontalCalendar
+            ? horizontalHighlightedDayDecoration
+            : null,
         child: Column(
           children: [
+            if (widget.displayWeekdays)
+              Text(
+                weekdayName,
+                style: widget.style.weekdayTextStyle,
+              ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.5),
               decoration: highlightedDayDecoration ??
-                  (isPerformerWorkDay
-                      ? style.performerWorkDayDecoration
-                      : style.defaultWorkDayDecoration),
+                  (widget.isPerformerWorkDay
+                      ? widget.style.performerWorkDayDecoration
+                      : widget.style.defaultWorkDayDecoration),
               child: Center(
                 child: Text(
-                  day.day.toString(),
+                  widget.day.day.toString(),
                   style: textStyle ??
-                      (isDayOff
-                          ? style.dayOffTextStyle
-                          : style.workDayTextStyle),
+                      (widget.isDayOff
+                          ? widget.style.dayOffTextStyle
+                          : widget.style.workDayTextStyle),
                 ),
               ),
             ),
-            if (dayFooterBuilder != null) ...[
+            if (widget.dayFooterBuilder != null) ...[
               const SizedBox(height: 5),
-              dayFooterBuilder!(context, day),
+              widget.dayFooterBuilder!(context, widget.day),
+              const SizedBox(height: 3),
             ],
           ],
         ),

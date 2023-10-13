@@ -23,6 +23,9 @@ class WeekView extends StatefulWidget {
   final String? locale;
   final CalendarInteraction interaction;
   final DateBuilder? dayFooterBuilder;
+  final bool isHorizontalCalendar;
+  final bool Function(DateTime)? isWorkDay;
+  final bool displayWeekdays;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -41,6 +44,9 @@ class WeekView extends StatefulWidget {
     this.locale,
     required this.interaction,
     required this.dayFooterBuilder,
+    this.isHorizontalCalendar = false,
+    this.isWorkDay,
+    required this.displayWeekdays,
   })  : focusedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         focusedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -109,22 +115,23 @@ class _WeekViewState extends State<WeekView>
     final week = widget.week;
     return Column(
       children: [
-        Row(
-          children: [
-            if (isFirstWeek && week.length < 7)
-              Spacer(
-                flex: 7 - week.length,
+        if (!widget.isHorizontalCalendar)
+          Row(
+            children: [
+              if (isFirstWeek && week.length < 7)
+                Spacer(
+                  flex: 7 - week.length,
+                ),
+              Flexible(
+                flex: week.length,
+                child: widget.weeksSeparator,
               ),
-            Flexible(
-              flex: week.length,
-              child: widget.weeksSeparator,
-            ),
-            if (isLastWeek && week.length < 7)
-              Spacer(
-                flex: 7 - week.length,
-              ),
-          ],
-        ),
+              if (isLastWeek && week.length < 7)
+                Spacer(
+                  flex: 7 - week.length,
+                ),
+            ],
+          ),
         Row(
           children: [
             if (isFirstWeek && week.length < 7)
@@ -155,12 +162,11 @@ class _WeekViewState extends State<WeekView>
                       isDayOff: widget.daysOff.any(
                         (day) => date.weekday == day,
                       ),
-                      isPerformerWorkDay: (date.day == 11 ||
-                          date.day == 15 ||
-                          date.day == 22 ||
-                          date.day == 8),
+                      isPerformerWorkDay: widget.isWorkDay?.call(date) ?? false,
                       style: widget.dayStyle,
                       dayFooterBuilder: widget.dayFooterBuilder,
+                      isHorizontalCalendar: widget.isHorizontalCalendar,
+                      displayWeekdays: widget.displayWeekdays,
                     ),
                   ),
                 )

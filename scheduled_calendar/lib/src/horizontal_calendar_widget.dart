@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/src/widgets/week_view.dart';
 
 import 'calendar_state/calendar_state.dart';
 import 'helpers/selection_mode.dart';
@@ -10,7 +11,6 @@ import 'utils/date_utils.dart';
 import 'utils/enums.dart';
 import 'utils/styles.dart';
 import 'utils/typedefs.dart';
-import 'widgets/month_view.dart';
 import 'widgets/weeks_separator.dart';
 
 ///Calendar, which allows to interact with calendar for scheduling purposes.
@@ -49,8 +49,8 @@ import 'widgets/weeks_separator.dart';
 /// ```
 /// On the end of the selection mode (when widget with the new [interaction] is provided),
 /// [selectionModeConfig.onSelectionEnd] callback with the list of selected days will be called, if provided
-class ScheduledCalendar extends StatefulWidget {
-  ///Creates a [ScheduledCalendar].
+class HorizontalScheduledCalendar extends StatefulWidget {
+  ///Creates a [HorizontalScheduledCalendar].
   ///
   ///[initialDate] defaults to [DateTime.now] and must be equal or after [minDate] and equal or before [maxDate].
   ///
@@ -59,7 +59,7 @@ class ScheduledCalendar extends StatefulWidget {
   ///Provide the [focusedDateCardBuilder] callback for [CalendarInteraction.dateCard]
   ///
   ///Otherwise, [ArgumentError] is thrown
-  ScheduledCalendar({
+  HorizontalScheduledCalendar({
     super.key,
     this.minDate,
     this.maxDate,
@@ -84,7 +84,6 @@ class ScheduledCalendar extends StatefulWidget {
     this.interaction = CalendarInteraction.disabled,
     this.dayFooterBuilder,
     this.monthNameStyle = const ScheduleCalendarMonthNameStyle(),
-    this.isWorkDay,
     this.displayWeekdays = false,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
@@ -170,17 +169,17 @@ class ScheduledCalendar extends StatefulWidget {
 
   final DateBuilder? dayFooterBuilder;
 
-  final bool Function(DateTime)? isWorkDay;
-
   final bool displayWeekdays;
 
   @override
-  ScheduledCalendarState createState() => ScheduledCalendarState();
+  HorizontalScheduledCalendarState createState() =>
+      HorizontalScheduledCalendarState();
 }
 
-class ScheduledCalendarState extends State<ScheduledCalendar> {
-  late PagingController<int, Month> _pagingReplyUpController;
-  late PagingController<int, Month> _pagingReplyDownController;
+class HorizontalScheduledCalendarState
+    extends State<HorizontalScheduledCalendar> {
+  late PagingController<int, List<DateTime>> _pagingReplyUpController;
+  late PagingController<int, List<DateTime>> _pagingReplyDownController;
 
   final Key downListKey = UniqueKey();
   late bool hideUp;
@@ -188,7 +187,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
   BuildContext? realContext;
 
   @override
-  void didUpdateWidget(covariant ScheduledCalendar oldWidget) {
+  void didUpdateWidget(covariant HorizontalScheduledCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
     final state = realContext!.read<CalendarState>();
     final oldSelected = oldWidget.interaction == CalendarInteraction.selection;
@@ -250,14 +249,14 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
     hideUp = !(widget.minDate == null ||
         !widget.minDate!.isSameMonth(widget.initialDate));
 
-    _pagingReplyUpController = PagingController<int, Month>(
+    _pagingReplyUpController = PagingController<int, List<DateTime>>(
       firstPageKey: 0,
       invisibleItemsThreshold: widget.invisibleMonthsThreshold,
     );
     _pagingReplyUpController.addPageRequestListener(_fetchUpPage);
     _pagingReplyUpController.addStatusListener(paginationStatusUp);
 
-    _pagingReplyDownController = PagingController<int, Month>(
+    _pagingReplyDownController = PagingController<int, List<DateTime>>(
       firstPageKey: 0,
       invisibleItemsThreshold: widget.invisibleMonthsThreshold,
     );
@@ -281,21 +280,20 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
   /// from the start date
   void _fetchUpPage(int pageKey) async {
     try {
-      final month = DateUtils.getMonth(
+      final week = DateUtils.getWeek(
         DateTime(widget.initialDate.year, widget.initialDate.month - 1, 1),
         widget.minDate,
         pageKey,
         true,
-        startWeekWithSunday: widget.startWeekWithSunday,
       );
 
       WidgetsBinding.instance.addPostFrameCallback(
-        (_) => widget.onMonthLoaded?.call(month.year, month.month),
+        (_) => widget.onMonthLoaded?.call(week.first.year, week.first.month),
       );
 
-      final newItems = [month];
+      final newItems = [week];
       final isLastPage = widget.minDate != null &&
-          widget.minDate!.isSameDayOrAfter(month.weeks.first.firstDay);
+          widget.minDate!.isSameDayOrAfter(week.first);
 
       if (isLastPage) {
         return _pagingReplyUpController.appendLastPage(newItems);
@@ -310,7 +308,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
 
   void _fetchDownPage(int pageKey) async {
     try {
-      final month = DateUtils.getMonth(
+      final week = DateUtils.getWeek(
         widget.minDate ??
             DateTime(
               widget.initialDate.year,
@@ -320,16 +318,15 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
         widget.maxDate,
         pageKey,
         false,
-        startWeekWithSunday: widget.startWeekWithSunday,
       );
 
       WidgetsBinding.instance.addPostFrameCallback(
-        (_) => widget.onMonthLoaded?.call(month.year, month.month),
+        (_) => widget.onMonthLoaded?.call(week.first.year, week.first.month),
       );
 
-      final newItems = [month];
+      final newItems = [week];
       final isLastPage = widget.maxDate != null &&
-          widget.maxDate!.isSameDayOrBefore(month.weeks.last.lastDay);
+          widget.maxDate!.isSameDayOrBefore(week.last);
 
       if (isLastPage) {
         return _pagingReplyDownController.appendLastPage(newItems);
@@ -348,6 +345,14 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
         widget.listPadding.right, widget.listPadding.bottom);
   }
 
+  double _getWeekWidth(int daysCount) {
+    double dayWidth = (MediaQuery.of(context).size.width -
+            widget.listPadding.left -
+            widget.listPadding.right) /
+        7;
+    return dayWidth * daysCount;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Provider(
@@ -360,117 +365,59 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
         builder: (context) {
           final state = context.watch<CalendarState>();
           final focusedDate = state.focusedDate;
-          return IgnorePointer(
-            ignoring: widget.interaction == CalendarInteraction.disabled,
-            child: Scrollable(
+          return Scrollable(
               controller: widget.scrollController,
               physics: widget.physics,
+              axisDirection: AxisDirection.right,
               viewportBuilder: (context, position) {
                 return Viewport(
                   offset: position,
                   center: downListKey,
+                  axisDirection: AxisDirection.right,
                   slivers: [
-                    if (!hideUp)
-                      SliverPadding(
-                        padding: EdgeInsets.fromLTRB(
-                            widget.listPadding.left,
-                            widget.listPadding.top,
-                            widget.listPadding.right,
-                            0),
-                        sliver: PagedSliverList(
-                          pagingController: _pagingReplyUpController,
-                          builderDelegate: PagedChildBuilderDelegate<Month>(
-                            itemBuilder:
-                                (BuildContext context, Month month, int index) {
-                              return MonthView(
-                                dayFooterBuilder: widget.dayFooterBuilder,
-                                interaction: widget.interaction,
-                                focusedDateCardAnimationCurve:
-                                    widget.focusedDateCardAnimationCurve,
-                                focusedDateCardAnimationDuration:
-                                    widget.focusedDateCardAnimationDuration,
-                                focusedDateCardBuilder:
-                                    widget.focusedDateCardBuilder,
-                                month: month,
-                                focusedDate: focusedDate,
-                                onDayPressed: (date) =>
-                                    _onDayTapped(context, date),
-                                startWeekWithSunday: widget.startWeekWithSunday,
-                                weeksSeparator: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 20),
-                                  height: 1,
-                                  color: const Color(0xFF5C5B5F),
-                                ),
-                                dayStyle: widget.dayStyle,
-                                monthNameStyle: widget.monthNameStyle,
-                                daysOff: widget.daysOff,
-                                isWorkDay: widget.isWorkDay,
-                                displayWeekdays: widget.displayWeekdays,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
                     SliverPadding(
                       key: downListKey,
                       padding: _getDownListPadding(),
                       sliver: PagedSliverList(
                         pagingController: _pagingReplyDownController,
-                        builderDelegate: PagedChildBuilderDelegate<Month>(
-                          itemBuilder:
-                              (BuildContext context, Month month, int index) {
-                            return MonthView(
-                              dayFooterBuilder: widget.dayFooterBuilder,
-                              interaction: widget.interaction,
-                              focusedDateCardAnimationCurve:
-                                  widget.focusedDateCardAnimationCurve,
-                              focusedDateCardAnimationDuration:
-                                  widget.focusedDateCardAnimationDuration,
-                              focusedDateCardBuilder:
-                                  widget.focusedDateCardBuilder,
-                              focusedDate: focusedDate,
-                              month: month,
-                              onDayPressed: (date) =>
-                                  _onDayTapped(context, date),
-                              startWeekWithSunday: widget.startWeekWithSunday,
-                              weeksSeparator: Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                height: 1,
-                                color: const Color(0xFF5C5B5F),
+                        builderDelegate:
+                            PagedChildBuilderDelegate<List<DateTime>>(
+                          itemBuilder: (BuildContext context,
+                              List<DateTime> week, int index) {
+                            return SizedBox(
+                              width: _getWeekWidth(week.length),
+                              child: WeekView(
+                                week,
+                                startWeekWithSunday: widget.startWeekWithSunday,
+                                interaction: widget.interaction,
+                                weeksSeparator: widget.weeksSeparator,
+                                onDayPressed: (date) =>
+                                    _onDayTapped(context, date),
+                                focusedDate: focusedDate,
+                                dayStyle: widget.dayStyle,
+                                isCalendarMode: widget.isCalendarMode,
+                                focusedDateCardBuilder:
+                                    widget.focusedDateCardBuilder,
+                                selectedDateCardAnimationCurve:
+                                    widget.focusedDateCardAnimationCurve,
+                                selectedDateCardAnimationDuration:
+                                    widget.focusedDateCardAnimationDuration,
+                                isFirstWeek: index == 0,
+                                isLastWeek: false,
+                                daysOff: widget.daysOff,
+                                locale: widget.monthNameStyle.monthNameLocale,
+                                dayFooterBuilder: widget.dayFooterBuilder,
+                                isHorizontalCalendar: true,
+                                displayWeekdays: widget.displayWeekdays,
                               ),
-                              dayStyle: widget.dayStyle,
-                              monthNameStyle: widget.monthNameStyle,
-                              daysOff: widget.daysOff,
-                              isWorkDay: widget.isWorkDay,
-                              displayWeekdays: widget.displayWeekdays,
                             );
                           },
                         ),
                       ),
                     ),
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(
-                          widget.listPadding.left,
-                          0,
-                          widget.listPadding.right,
-                          widget.calendarFooter != null &&
-                                  !widget.isCalendarMode
-                              ? 16
-                              : 0),
-                      sliver: SliverToBoxAdapter(
-                        child: widget.calendarFooter != null &&
-                                !widget.isCalendarMode
-                            ? widget.calendarFooter
-                            : const SizedBox(),
-                      ),
-                    ),
                   ],
                 );
-              },
-            ),
-          );
+              });
         },
       ),
     );
