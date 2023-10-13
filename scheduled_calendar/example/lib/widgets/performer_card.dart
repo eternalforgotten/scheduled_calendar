@@ -133,6 +133,7 @@ class _PeriodRow extends StatefulWidget {
 
 class _PeriodRowState extends State<_PeriodRow> {
   late Period period = widget.initialPeriod;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -156,7 +157,7 @@ class _PeriodRowState extends State<_PeriodRow> {
           ),
           const SizedBox(width: 5),
           _TimeWidget(
-            time: widget.initialPeriod.startTime,
+            time: period.startTime,
             onTap: () => showTimePicker(
               context: context,
               initialTime: TimeOfDay.fromDateTime(period.startTime),
@@ -165,6 +166,9 @@ class _PeriodRowState extends State<_PeriodRow> {
                 () {
                   period.startTime = period.startTime
                       .copyWith(hour: value?.hour, minute: value?.minute);
+                  if (period.startTime.isAfter(period.endTime)) {
+                    period.endTime = period.startTime;
+                  }
                   widget.onPeriodPicked(period);
                 },
               ),
@@ -178,7 +182,7 @@ class _PeriodRowState extends State<_PeriodRow> {
           ),
           const SizedBox(width: 5),
           _TimeWidget(
-            time: widget.initialPeriod.endTime,
+            time: period.endTime,
             onTap: () => showTimePicker(
               context: context,
               initialTime: TimeOfDay.fromDateTime(period.endTime),
@@ -187,6 +191,9 @@ class _PeriodRowState extends State<_PeriodRow> {
                 () {
                   period.endTime = period.endTime
                       .copyWith(hour: value?.hour, minute: value?.minute);
+                  if (period.endTime.isBefore(period.startTime)) {
+                    period.startTime = period.endTime;
+                  }
                   widget.onPeriodPicked(period);
                 },
               ),
