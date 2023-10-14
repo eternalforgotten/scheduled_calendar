@@ -147,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   focusedDateCardBuilder: (_, date) => PerformerCard(
                     date,
-                    initialPeriods: const [],
+                    initialPeriods: periods,
                     onPerformerCardButtonPressed: (_) {},
                   ),
                   dayStyle: const ScheduledCalendarDayStyle(
