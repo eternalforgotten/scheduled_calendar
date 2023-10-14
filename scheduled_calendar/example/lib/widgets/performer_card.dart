@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:example/styles.dart';
 import 'package:flutter/material.dart';
@@ -8,14 +7,14 @@ import 'package:intl/intl.dart';
 
 class PerformerCard extends StatefulWidget {
   final DateTime date;
-  final List<Period> periods;
+  final List<Period> initialPeriods;
   final PerformerCardStyle style;
   final ValueChanged<List<Period>> onPerformerCardButtonPressed;
   final String? locale;
   const PerformerCard(
     this.date, {
     super.key,
-    required this.periods,
+    required this.initialPeriods,
     this.style = const PerformerCardStyle(),
     required this.onPerformerCardButtonPressed,
     this.locale,
@@ -26,6 +25,7 @@ class PerformerCard extends StatefulWidget {
 }
 
 class _PerformerCardState extends State<PerformerCard> {
+  late List<Period> periods = widget.initialPeriods;
   @override
   void initState() {
     super.initState();
@@ -53,7 +53,7 @@ class _PerformerCardState extends State<PerformerCard> {
             style: widget.style.dateTextStyle,
           ),
           Text(
-            widget.periods.isEmpty
+            widget.initialPeriods.isEmpty
                 ? widget.style.emptyInstructionText
                 : widget.style.instructionText,
             style: widget.style.instructionTextStyle,
@@ -62,7 +62,7 @@ class _PerformerCardState extends State<PerformerCard> {
             padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
             child: Column(
               children: [
-                ...widget.periods
+                ...widget.initialPeriods
                     .mapIndexed(
                       (index, period) => Padding(
                         padding: const EdgeInsets.symmetric(
@@ -70,8 +70,12 @@ class _PerformerCardState extends State<PerformerCard> {
                           vertical: 4,
                         ),
                         child: _PeriodRow(
-                          period: period,
+                          initialPeriod: period,
                           index: index,
+                          onPeriodPicked: (Period period) =>
+                              setState(() => periods[index] = period),
+                          onPeriodDelete: (Period preiod) =>
+                              setState(() => periods.removeAt(index)),
                         ),
                       ),
                     )
@@ -80,7 +84,9 @@ class _PerformerCardState extends State<PerformerCard> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () => setState(
+              () => periods.add(Period(DateTime.now(), DateTime.now())),
+            ),
             style: widget.style.addButtonStyle,
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -97,7 +103,7 @@ class _PerformerCardState extends State<PerformerCard> {
           const SizedBox(height: 8),
           TextButton(
             style: widget.style.requestButtonStyle,
-            onPressed: () => widget.onPerformerCardButtonPressed([]),
+            onPressed: () => widget.onPerformerCardButtonPressed(periods),
             child: Text(
               widget.style.requestButtonText,
               style: widget.style.requestButtonTextStyle,
@@ -109,13 +115,24 @@ class _PerformerCardState extends State<PerformerCard> {
   }
 }
 
-class _PeriodRow extends StatelessWidget {
-  final Period period;
+class _PeriodRow extends StatefulWidget {
+  final Period initialPeriod;
   final int index;
+  final void Function(Period period) onPeriodPicked;
+  final void Function(Period preiod) onPeriodDelete;
   const _PeriodRow({
-    required this.period,
+    required this.initialPeriod,
     required this.index,
+    required this.onPeriodPicked,
+    required this.onPeriodDelete,
   });
+
+  @override
+  State<_PeriodRow> createState() => _PeriodRowState();
+}
+
+class _PeriodRowState extends State<_PeriodRow> {
+  late Period period = widget.initialPeriod;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +146,7 @@ class _PeriodRow extends StatelessWidget {
             width: 23,
             child: Center(
               child: Text(
-                (index + 1).toString(),
+                (widget.index + 1).toString(),
                 style: const TextStyle(
                   fontSize: 18,
                   color: Color(0xFF5C5B5F),
@@ -139,7 +156,24 @@ class _PeriodRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 5),
-          _TimeWidget(time: period.startTime),
+          _TimeWidget(
+            time: period.startTime,
+            onTap: () => showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.fromDateTime(period.startTime),
+            ).then(
+              (value) => setState(
+                () {
+                  period.startTime = period.startTime
+                      .copyWith(hour: value?.hour, minute: value?.minute);
+                  if (period.startTime.isAfter(period.endTime)) {
+                    period.endTime = period.startTime;
+                  }
+                  widget.onPeriodPicked(period);
+                },
+              ),
+            ),
+          ),
           const SizedBox(width: 5),
           Container(
             width: 10,
@@ -147,11 +181,31 @@ class _PeriodRow extends StatelessWidget {
             color: const Color(0xFF5C5B5F),
           ),
           const SizedBox(width: 5),
-          _TimeWidget(time: period.endTime),
+          _TimeWidget(
+            time: period.endTime,
+            onTap: () => showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.fromDateTime(period.endTime),
+            ).then(
+              (value) => setState(
+                () {
+                  period.endTime = period.endTime
+                      .copyWith(hour: value?.hour, minute: value?.minute);
+                  if (period.endTime.isBefore(period.startTime)) {
+                    period.startTime = period.endTime;
+                  }
+                  widget.onPeriodPicked(period);
+                },
+              ),
+            ),
+          ),
           const SizedBox(width: 10),
-          const Icon(
-            Icons.delete_outline,
-            color: Color(0xFFFF5454),
+          GestureDetector(
+            onTap: () => widget.onPeriodDelete(period),
+            child: const Icon(
+              Icons.delete_outline,
+              color: Color(0xFFFF5454),
+            ),
           ),
         ],
       ),
@@ -161,13 +215,16 @@ class _PeriodRow extends StatelessWidget {
 
 class _TimeWidget extends StatelessWidget {
   final DateTime time;
+  final VoidCallback onTap;
   const _TimeWidget({
     required this.time,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13.5),
         decoration: const BoxDecoration(
@@ -189,8 +246,10 @@ class _TimeWidget extends StatelessWidget {
 }
 
 class Period {
-  final DateTime startTime;
-  final DateTime endTime;
-
-  Period(this.startTime, this.endTime,);
+  DateTime startTime;
+  DateTime endTime;
+  Period(
+    this.startTime,
+    this.endTime,
+  );
 }

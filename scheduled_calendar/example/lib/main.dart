@@ -60,6 +60,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelection = false;
+  List<Period> periods = [];
 
   CalendarInteraction get interaction => isSelection
       ? CalendarInteraction.selection
@@ -146,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   focusedDateCardBuilder: (_, date) => PerformerCard(
                     date,
-                    periods: const [],
+                    initialPeriods: const [],
                     onPerformerCardButtonPressed: (_) {},
                   ),
                   dayStyle: const ScheduledCalendarDayStyle(
