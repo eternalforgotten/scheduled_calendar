@@ -244,14 +244,14 @@ class AppointmentCardStyle {
   });
 }
 
-class NoEntriesCardStyle {
+class NoAppointmentsCardStyle {
   final String title;
   final String description;
   final TextStyle titleTextStyle;
   final TextStyle descriptionTextStyle;
   final Widget icon;
 
-  const NoEntriesCardStyle({
+  const NoAppointmentsCardStyle({
     this.title = 'Записей нет',
     this.description = 'Вы не записаны ни на один сеанс \nна этот день',
     this.titleTextStyle = const TextStyle(

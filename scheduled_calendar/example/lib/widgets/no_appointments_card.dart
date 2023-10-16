@@ -1,11 +1,11 @@
 import 'package:example/styles.dart';
 import 'package:flutter/widgets.dart';
 
-class NoEntriesCard extends StatelessWidget {
-  final NoEntriesCardStyle style;
-  const NoEntriesCard({
+class NoAppointmentsCard extends StatelessWidget {
+  final NoAppointmentsCardStyle style;
+  const NoAppointmentsCard({
     Key? key,
-    this.style = const NoEntriesCardStyle(),
+    this.style = const NoAppointmentsCardStyle(),
   }) : super(key: key);
 
   @override
