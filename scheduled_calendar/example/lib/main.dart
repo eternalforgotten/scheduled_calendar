@@ -1,4 +1,3 @@
-import 'package:example/widgets/no_entries_card.dart';
 import 'package:example/widgets/performer_card.dart';
 import 'package:example/widgets/schedule_inscription.dart';
 import 'package:flutter/material.dart';
@@ -87,75 +86,68 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         actions: [FloatingActionButton(onPressed: _toggle)],
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Expanded(
-              child: ScheduledCalendar(
-                isWorkDay: (date) {
-                  final condition = date.day == 8 || date.day == 17;
-                  return condition;
-                },
-                selectionModeConfig: SelectionModeConfig(
-                  onSelectionEnd: (list) {},
-                ),
-                interaction: interaction,
-                minDate: DateTime(2023, 9, 7),
-                maxDate: DateTime(2023, 11, 16),
-                initialDate: DateTime(2023, 9, 9),
-                monthNameStyle: const ScheduleCalendarMonthNameStyle(
-                  centerMonthName: true,
-                  monthCustomNames: {
-                    1: 'Янв.',
-                    2: 'Фев.',
-                    3: 'Мар.',
-                    4: 'Апр.',
-                    5: 'Май',
-                    6: 'Июн.',
-                    7: 'Июл.',
-                    8: 'Авг.',
-                    9: 'Сен.',
-                    10: 'Окт.',
-                    11: 'Ноя.',
-                    12: 'Дек.',
-                  },
-                ),
-                calendarFooter: ScheduleInscription(DateTime(2023, 9, 11)),
-                focusedDateCardAnimationCurve: Curves.easeInOutBack,
-                focusedDateCardAnimationDuration:
-                    const Duration(milliseconds: 300),
-                dayFooterBuilder: (_, date) => const Text(
-                  'Вых',
-                  style: TextStyle(fontSize: 12, color: Colors.white38),
-                ),
-                focusedDateCardBuilder: (_, date) {
-                  return PerformerCard(
-                    date,
-                    initialPeriods: periods,
-                    onPerformerCardButtonPressed: (_) {},
-                  );
-                },
-                dayStyle: const ScheduledCalendarDayStyle(
-                  currentDayTextStyle: TextStyle(
-                    color: Colors.yellowAccent,
-                  ),
-                  weekdayCustomNames: {
-                    1: 'Пн',
-                    2: 'Вт',
-                    3: 'Ср',
-                    4: 'Чт',
-                    5: 'Пт',
-                    6: 'Сб',
-                    7: 'Вс',
-                  },
-                ),
-              ),
+      body: Column(
+        children: [
+          ScheduledCalendar(
+            isWorkDay: (date) {
+              final condition = date.day == 8 || date.day == 17;
+              return condition;
+            },
+            selectionModeConfig: SelectionModeConfig(
+              onSelectionEnd: (list) {},
             ),
-            const SizedBox(height: 20),
-            const NoEntriesCard(),
-            const SizedBox(height: 20),
-          ],
-        ),
+            interaction: interaction,
+            minDate: DateTime(2023, 9, 7),
+            maxDate: DateTime(2023, 11, 16),
+            initialDate: DateTime(2023, 9, 9),
+            monthNameStyle: const ScheduleCalendarMonthNameStyle(
+              centerMonthName: true,
+              monthCustomNames: {
+                1: 'Янв.',
+                2: 'Фев.',
+                3: 'Мар.',
+                4: 'Апр.',
+                5: 'Май',
+                6: 'Июн.',
+                7: 'Июл.',
+                8: 'Авг.',
+                9: 'Сен.',
+                10: 'Окт.',
+                11: 'Ноя.',
+                12: 'Дек.',
+              },
+            ),
+            calendarFooter: ScheduleInscription(DateTime(2023, 9, 11)),
+            focusedDateCardAnimationCurve: Curves.easeInOutBack,
+            focusedDateCardAnimationDuration:
+                const Duration(milliseconds: 300),
+            dayFooterBuilder: (_, date) => const Text(
+              'Вых',
+              style: TextStyle(fontSize: 12, color: Colors.white38),
+            ),
+            focusedDateCardBuilder: (_, date) {
+              return PerformerCard(
+                date,
+                initialPeriods: periods,
+                onPerformerCardButtonPressed: (_) {},
+              );
+            },
+            dayStyle: const ScheduledCalendarDayStyle(
+              currentDayTextStyle: TextStyle(
+                color: Colors.yellowAccent,
+              ),
+              weekdayCustomNames: {
+                1: 'Пн',
+                2: 'Вт',
+                3: 'Ср',
+                4: 'Чт',
+                5: 'Пт',
+                6: 'Сб',
+                7: 'Вс',
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

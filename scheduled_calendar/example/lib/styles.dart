@@ -188,6 +188,62 @@ class ScheduleInscriptionStyle {
   });
 }
 
+class AppointmentCardStyle {
+  final TextStyle titleTextStyle;
+  final TextStyle descriptionTextStyle;
+  final TextStyle priceTextStyle;
+  final TextStyle timeStyle;
+  final Decoration timeDecoration;
+  final Decoration cardDecoration;
+  final double width;
+  final double height;
+  final double timeCardWidth;
+  final double timeCardHeight;
+  final EdgeInsets padding;
+  final TextStyle dateTimeStyle;
+
+  const AppointmentCardStyle({
+    this.titleTextStyle = const TextStyle(
+      color: Color(0xFFF6F5F8),
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+    ),
+    this.descriptionTextStyle = const TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFFACACAC),
+    ),
+    this.priceTextStyle = const TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFFF6F5F8),
+    ),
+    this.timeStyle = const TextStyle(
+      fontSize: 10,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFF0A0A0A),
+    ),
+    this.timeDecoration = const BoxDecoration(
+      color: Color(0xFFEFD23C),
+      borderRadius: BorderRadius.all(Radius.circular(20)),
+    ),
+    this.cardDecoration = const BoxDecoration(
+      color: Color(0xFF323137),
+      borderRadius: BorderRadius.all(Radius.circular(15)),
+    ),
+    this.width = 289,
+    this.height = 126,
+    this.timeCardWidth = 58,
+    this.timeCardHeight = 20,
+    this.padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    this.dateTimeStyle = const TextStyle(
+      color: Colors.white,
+      fontSize: 13,
+      fontWeight: FontWeight.w400,
+    ),
+  });
+}
+
 class NoEntriesCardStyle {
   final String title;
   final String description;
