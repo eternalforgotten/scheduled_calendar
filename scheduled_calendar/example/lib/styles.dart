@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class PerformerCardStyle {
   final BoxDecoration cardDecoration;
@@ -185,5 +186,27 @@ class ScheduleInscriptionStyle {
     this.dateTextStyle = const TextStyle(
       color: Color(0xFFEFD23C),
     ),
+  });
+}
+
+class ClueStyle {
+  final double width;
+  final double height;
+  final TextStyle titleTextStyle;
+  final TextStyle descriptionTextStyle;
+  final Color backgroundColor;
+  final double? arrowLeftPadding;
+  final TooltipPosition cluePosition;
+
+  const ClueStyle({
+    this.width = 259,
+    this.height = 101,
+    this.titleTextStyle = const TextStyle(
+        fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFFF6F5F8)),
+    this.descriptionTextStyle = const TextStyle(
+        fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFFF6F5F8)),
+    this.backgroundColor = const Color(0xFF064EFF),
+    this.cluePosition = TooltipPosition.bottom,
+    this.arrowLeftPadding = 259 / 2,
   });
 }

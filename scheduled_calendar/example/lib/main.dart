@@ -1,7 +1,10 @@
+import 'package:example/styles.dart';
+import 'package:example/widgets/clue.dart';
 import 'package:example/widgets/performer_card.dart';
 import 'package:example/widgets/schedule_inscription.dart';
 import 'package:flutter/material.dart';
 import 'package:scheduled_calendar/scheduled_calendar.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +37,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ShowCaseWidget(
+        builder: Builder(
+            builder: (context) =>
+                const MyHomePage(title: 'Flutter Demo Home Page')),
+      ),
     );
   }
 }
@@ -58,12 +65,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final GlobalKey<State<StatefulWidget>> _one = GlobalKey();
+  final GlobalKey<State<StatefulWidget>> _two = GlobalKey();
   bool isSelection = false;
   List<Period> periods = [];
 
   CalendarInteraction get interaction => isSelection
       ? CalendarInteraction.selection
       : CalendarInteraction.dateCard;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => ShowCaseWidget.of(context).startShowCase([_one, _two]));
+    super.initState();
+  }
 
   void _toggle() {
     setState(() {
@@ -87,62 +103,93 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [FloatingActionButton(onPressed: _toggle)],
       ),
       body: Center(
-        child: ScheduledCalendar(
-          isWorkDay: (date) {
-            final condition = date.day == 8 || date.day == 17;
-            return condition;
-          },
-          selectionModeConfig: SelectionModeConfig(
-            onSelectionEnd: (list) {},
-          ),
-          interaction: interaction,
-          minDate: DateTime(2023, 9, 7),
-          maxDate: DateTime(2023, 11, 16),
-          initialDate: DateTime(2023, 9, 9),
-          monthNameStyle: const ScheduleCalendarMonthNameStyle(
-            centerMonthName: true,
-            monthCustomNames: {
-              1: 'Янв.',
-              2: 'Фев.',
-              3: 'Мар.',
-              4: 'Апр.',
-              5: 'Май',
-              6: 'Июн.',
-              7: 'Июл.',
-              8: 'Авг.',
-              9: 'Сен.',
-              10: 'Окт.',
-              11: 'Ноя.',
-              12: 'Дек.',
-            },
-          ),
-          calendarFooter: ScheduleInscription(DateTime(2023, 9, 11)),
-          focusedDateCardAnimationCurve: Curves.easeInOutBack,
-          focusedDateCardAnimationDuration: const Duration(milliseconds: 300),
-          dayFooterBuilder: (_, date) => const Text(
-            'Вых',
-            style: TextStyle(fontSize: 12, color: Colors.white38),
-          ),
-          focusedDateCardBuilder: (_, date) {
-            return PerformerCard(
-              date,
-              initialPeriods: periods,
-              onPerformerCardButtonPressed: (_) {},
-            );
-          },
-          dayStyle: const ScheduledCalendarDayStyle(
-              currentDayTextStyle: TextStyle(
-                color: Colors.yellowAccent,
+        child: Column(
+          children: [
+            Clue(
+              cluePadding: const EdgeInsets.only(left: 60),
+              title: "Назначить время",
+              description:
+                  "Нажмите “Назначит время” чтобы определить рабочие часы в выделенные дни",
+              showCasekey: _one,
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text("BUTTON"),
               ),
-              weekdayCustomNames: {
-                1: 'Пн',
-                2: 'Вт',
-                3: 'Ср',
-                4: 'Чт',
-                5: 'Пт',
-                6: 'Сб',
-                7: 'Вс',
-              }),
+            ),
+            Expanded(
+              child: ScheduledCalendar(
+                isWorkDay: (date) {
+                  final condition = date.day == 8 || date.day == 17;
+                  return condition;
+                },
+                selectionModeConfig: SelectionModeConfig(
+                  onSelectionEnd: (list) {},
+                ),
+                interaction: interaction,
+                minDate: DateTime(2023, 9, 7),
+                maxDate: DateTime(2023, 11, 16),
+                initialDate: DateTime(2023, 9, 9),
+                monthNameStyle: const ScheduleCalendarMonthNameStyle(
+                  centerMonthName: true,
+                  monthCustomNames: {
+                    1: 'Янв.',
+                    2: 'Фев.',
+                    3: 'Мар.',
+                    4: 'Апр.',
+                    5: 'Май',
+                    6: 'Июн.',
+                    7: 'Июл.',
+                    8: 'Авг.',
+                    9: 'Сен.',
+                    10: 'Окт.',
+                    11: 'Ноя.',
+                    12: 'Дек.',
+                  },
+                ),
+                calendarFooter: ScheduleInscription(DateTime(2023, 9, 11)),
+                focusedDateCardAnimationCurve: Curves.easeInOutBack,
+                focusedDateCardAnimationDuration:
+                    const Duration(milliseconds: 300),
+                dayFooterBuilder: (_, date) => const Text(
+                  'Вых',
+                  style: TextStyle(fontSize: 12, color: Colors.white38),
+                ),
+                focusedDateCardBuilder: (_, date) {
+                  return PerformerCard(
+                    date,
+                    initialPeriods: periods,
+                    onPerformerCardButtonPressed: (_) {},
+                  );
+                },
+                dayStyle: const ScheduledCalendarDayStyle(
+                  currentDayTextStyle: TextStyle(
+                    color: Colors.yellowAccent,
+                  ),
+                  weekdayCustomNames: {
+                    1: 'Пн',
+                    2: 'Вт',
+                    3: 'Ср',
+                    4: 'Чт',
+                    5: 'Пт',
+                    6: 'Сб',
+                    7: 'Вс',
+                  },
+                ),
+              ),
+            ),
+            Clue(
+              clueStyle: const ClueStyle(cluePosition: TooltipPosition.top),
+              cluePadding: const EdgeInsets.only(left: 60),
+              title: "Назначить время",
+              description:
+                  "Нажмите “Назначит время” чтобы определить рабочие часы в выделенные дни",
+              showCasekey: _two,
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text("BUTTON"),
+              ),
+            ),
+          ],
         ),
       ),
     );
