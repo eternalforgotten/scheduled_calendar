@@ -23,14 +23,14 @@ class Clue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Showcase.withWidget(
-      tooltipPosition: clueStyle.cluePosition,
+      tooltipPosition: clueStyle.toolTipPosition,
       key: showCasekey,
       height: clueStyle.height,
       width: clueStyle.width,
       disableMovingAnimation: true,
       container: Padding(
         padding: cluePadding.copyWith(
-          top: clueStyle.cluePosition == TooltipPosition.top
+          top: clueStyle.toolTipPosition == TooltipPosition.top
               ? cluePadding.top
               : cluePadding.top + 15,
         ),
@@ -38,9 +38,10 @@ class Clue extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             Positioned(
-              top: clueStyle.cluePosition == TooltipPosition.top ? null : -14,
+              top:
+                  clueStyle.toolTipPosition == TooltipPosition.top ? null : -14,
               bottom:
-                  clueStyle.cluePosition == TooltipPosition.top ? -14 : null,
+                  clueStyle.toolTipPosition == TooltipPosition.top ? -14 : null,
               left: clueStyle.arrowLeftPadding != null
                   ? clueStyle.arrowLeftPadding! - 8
                   : null,
@@ -49,7 +50,7 @@ class Clue extends StatelessWidget {
                   strokeColor: clueStyle.backgroundColor,
                   strokeWidth: 10,
                   paintingStyle: PaintingStyle.fill,
-                  isUpArrow: clueStyle.cluePosition != TooltipPosition.top,
+                  isUpArrow: clueStyle.toolTipPosition != TooltipPosition.top,
                 ),
                 child: const SizedBox(
                   height: 15,
@@ -62,7 +63,7 @@ class Clue extends StatelessWidget {
               height: clueStyle.height,
               width: clueStyle.width,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                borderRadius: const BorderRadius.all(Radius.circular(16)),
                 color: clueStyle.backgroundColor,
               ),
               child: Column(

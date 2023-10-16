@@ -196,7 +196,7 @@ class ClueStyle {
   final TextStyle descriptionTextStyle;
   final Color backgroundColor;
   final double? arrowLeftPadding;
-  final TooltipPosition cluePosition;
+  final TooltipPosition toolTipPosition;
 
   const ClueStyle({
     this.width = 259,
@@ -206,7 +206,7 @@ class ClueStyle {
     this.descriptionTextStyle = const TextStyle(
         fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFFF6F5F8)),
     this.backgroundColor = const Color(0xFF064EFF),
-    this.cluePosition = TooltipPosition.bottom,
+    this.toolTipPosition = TooltipPosition.bottom,
     this.arrowLeftPadding = 259 / 2,
   });
 }
