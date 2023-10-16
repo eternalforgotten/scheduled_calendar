@@ -243,3 +243,31 @@ class AppointmentCardStyle {
     ),
   });
 }
+
+class NoEntriesCardStyle {
+  final String title;
+  final String description;
+  final TextStyle titleTextStyle;
+  final TextStyle descriptionTextStyle;
+  final Widget icon;
+
+  const NoEntriesCardStyle({
+    this.title = 'Записей нет',
+    this.description = 'Вы не записаны ни на один сеанс \nна этот день',
+    this.titleTextStyle = const TextStyle(
+      fontSize: 17,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFFF6F5F8),
+    ),
+    this.descriptionTextStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFFF6F5F8),
+    ),
+    this.icon = const Icon(
+      Icons.calendar_today,
+      size: 84,
+      color: Color(0xFF323137),
+    ),
+  });
+}
