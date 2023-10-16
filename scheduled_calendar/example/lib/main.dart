@@ -117,8 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         calendarFooter: ScheduleInscription(DateTime(2023, 9, 11)),
         focusedDateCardAnimationCurve: Curves.easeInOutBack,
-        focusedDateCardAnimationDuration:
-            const Duration(milliseconds: 300),
+        focusedDateCardAnimationDuration: const Duration(milliseconds: 300),
         dayFooterBuilder: (_, date) => const Text(
           'Вых',
           style: TextStyle(fontSize: 12, color: Colors.white38),
