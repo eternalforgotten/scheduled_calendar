@@ -27,6 +27,7 @@ class WeekView extends StatefulWidget {
   final bool Function(DateTime)? isWorkDay;
   final bool displayWeekdays;
   final double dayFooterPadding;
+  final Widget firstWeekSeparator;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -49,6 +50,7 @@ class WeekView extends StatefulWidget {
     this.isWorkDay,
     required this.displayWeekdays,
     required this.dayFooterPadding,
+    required this.firstWeekSeparator,
   })  : focusedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         focusedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -126,7 +128,7 @@ class _WeekViewState extends State<WeekView>
                 ),
               Flexible(
                 flex: week.length,
-                child: widget.weeksSeparator,
+                child: widget.firstWeekSeparator,
               ),
               if (isLastWeek && week.length < 7)
                 Spacer(

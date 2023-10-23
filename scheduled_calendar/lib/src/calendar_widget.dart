@@ -87,6 +87,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.isWorkDay,
     this.displayWeekdays = false,
     this.dayFooterPadding = 5,
+    this.firstWeekSeparator,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -176,6 +177,8 @@ class ScheduledCalendar extends StatefulWidget {
   final bool Function(DateTime)? isWorkDay;
 
   final bool displayWeekdays;
+
+  final Widget? firstWeekSeparator;
 
   @override
   ScheduledCalendarState createState() => ScheduledCalendarState();
@@ -406,6 +409,8 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                 isWorkDay: widget.isWorkDay,
                                 displayWeekdays: widget.displayWeekdays,
                                 dayFooterPadding: widget.dayFooterPadding,
+                                firstWeekSeparator: widget.firstWeekSeparator ??
+                                    widget.weeksSeparator,
                               );
                             },
                           ),
@@ -440,6 +445,8 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                               isWorkDay: widget.isWorkDay,
                               displayWeekdays: widget.displayWeekdays,
                               dayFooterPadding: widget.dayFooterPadding,
+                              firstWeekSeparator: widget.firstWeekSeparator ??
+                                  widget.weeksSeparator,
                             );
                           },
                         ),
