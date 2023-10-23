@@ -30,6 +30,7 @@ class MonthView extends StatelessWidget {
     required this.dayFooterBuilder,
     this.isWorkDay,
     required this.displayWeekdays,
+    required this.dayFooterPadding,
   });
 
   final Month month;
@@ -50,6 +51,7 @@ class MonthView extends StatelessWidget {
   final DateBuilder? dayFooterBuilder;
   final bool Function(DateTime)? isWorkDay;
   final bool displayWeekdays;
+  final double dayFooterPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +105,7 @@ class MonthView extends StatelessWidget {
                     dayFooterBuilder: dayFooterBuilder,
                     isWorkDay: isWorkDay,
                     displayWeekdays: displayWeekdays,
+                    dayFooterPadding: dayFooterPadding,
                   ),
                 )
                 .toList(),

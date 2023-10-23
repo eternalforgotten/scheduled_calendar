@@ -27,6 +27,7 @@ class DayView extends StatefulWidget {
   final CalendarInteraction interaction;
   final bool isHorizontalCalendar;
   final bool displayWeekdays;
+  final double dayFooterPadding;
   const DayView(
     this.day, {
     super.key,
@@ -39,6 +40,7 @@ class DayView extends StatefulWidget {
     required this.dayFooterBuilder,
     required this.isHorizontalCalendar,
     required this.displayWeekdays,
+    required this.dayFooterPadding,
   });
 
   @override
@@ -117,9 +119,8 @@ class _DayViewState extends State<DayView> {
               ),
             ),
             if (widget.dayFooterBuilder != null) ...[
-              const SizedBox(height: 5),
+              SizedBox(height: widget.dayFooterPadding),
               widget.dayFooterBuilder!(context, widget.day),
-              const SizedBox(height: 3),
             ],
           ],
         ),
