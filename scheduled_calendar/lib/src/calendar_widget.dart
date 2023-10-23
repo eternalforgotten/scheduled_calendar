@@ -396,12 +396,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                 onDayPressed: (date) =>
                                     _onDayTapped(context, date),
                                 startWeekWithSunday: widget.startWeekWithSunday,
-                                weeksSeparator: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 20),
-                                  height: 1,
-                                  color: const Color(0xFF5C5B5F),
-                                ),
+                                weeksSeparator: widget.weeksSeparator,
                                 dayStyle: widget.dayStyle,
                                 monthNameStyle: widget.monthNameStyle,
                                 daysOff: widget.daysOff,
@@ -434,12 +429,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                               onDayPressed: (date) =>
                                   _onDayTapped(context, date),
                               startWeekWithSunday: widget.startWeekWithSunday,
-                              weeksSeparator: Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                height: 1,
-                                color: const Color(0xFF5C5B5F),
-                              ),
+                              weeksSeparator: widget.weeksSeparator,
                               dayStyle: widget.dayStyle,
                               monthNameStyle: widget.monthNameStyle,
                               daysOff: widget.daysOff,
