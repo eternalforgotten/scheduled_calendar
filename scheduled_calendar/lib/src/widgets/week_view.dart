@@ -128,7 +128,7 @@ class _WeekViewState extends State<WeekView>
                 ),
               Flexible(
                 flex: week.length,
-                child: widget.firstWeekSeparator,
+                child: isFirstWeek ? widget.firstWeekSeparator : widget.weeksSeparator,
               ),
               if (isLastWeek && week.length < 7)
                 Spacer(
