@@ -101,7 +101,7 @@ class _DayViewState extends State<DayView> {
                 style: widget.style.weekdayTextStyle,
               ),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 8.5),
+              padding: widget.style.padding,
               decoration: highlightedDayDecoration ??
                   (widget.isPerformerWorkDay
                       ? widget.style.performerWorkDayDecoration
