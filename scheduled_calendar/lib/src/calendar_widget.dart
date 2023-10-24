@@ -366,29 +366,29 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
         builder: (context) {
           final state = context.watch<CalendarState>();
           final focusedDate = state.focusedDate;
-          return IgnorePointer(
-            ignoring: widget.interaction == CalendarInteraction.disabled,
-            child: Scrollable(
-              controller: widget.scrollController,
-              physics: widget.physics,
-              viewportBuilder: (context, position) {
-                return Viewport(
-                  offset: position,
-                  center: downListKey,
-                  slivers: [
-                    if (!hideUp)
-                      SliverPadding(
-                        padding: EdgeInsets.fromLTRB(
-                            widget.listPadding.left,
-                            widget.listPadding.top,
-                            widget.listPadding.right,
-                            0),
-                        sliver: PagedSliverList(
-                          pagingController: _pagingReplyUpController,
-                          builderDelegate: PagedChildBuilderDelegate<Month>(
-                            itemBuilder:
-                                (BuildContext context, Month month, int index) {
-                              return MonthView(
+          return Scrollable(
+            controller: widget.scrollController,
+            physics: widget.physics,
+            viewportBuilder: (context, position) {
+              return Viewport(
+                offset: position,
+                center: downListKey,
+                slivers: [
+                  if (!hideUp)
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                          widget.listPadding.left,
+                          widget.listPadding.top,
+                          widget.listPadding.right,
+                          0),
+                      sliver: PagedSliverList(
+                        pagingController: _pagingReplyUpController,
+                        builderDelegate: PagedChildBuilderDelegate<Month>(
+                          itemBuilder:
+                              (BuildContext context, Month month, int index) {
+                            return IgnorePointer(
+                              ignoring: widget.interaction == CalendarInteraction.disabled,
+                              child: MonthView(
                                 dayFooterBuilder: widget.dayFooterBuilder,
                                 interaction: widget.interaction,
                                 focusedDateCardAnimationCurve:
@@ -411,20 +411,23 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                 dayFooterPadding: widget.dayFooterPadding,
                                 firstWeekSeparator: widget.firstWeekSeparator ??
                                     widget.weeksSeparator,
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    SliverPadding(
-                      key: downListKey,
-                      padding: _getDownListPadding(),
-                      sliver: PagedSliverList(
-                        pagingController: _pagingReplyDownController,
-                        builderDelegate: PagedChildBuilderDelegate<Month>(
-                          itemBuilder:
-                              (BuildContext context, Month month, int index) {
-                            return MonthView(
+                    ),
+                  SliverPadding(
+                    key: downListKey,
+                    padding: _getDownListPadding(),
+                    sliver: PagedSliverList(
+                      pagingController: _pagingReplyDownController,
+                      builderDelegate: PagedChildBuilderDelegate<Month>(
+                        itemBuilder:
+                            (BuildContext context, Month month, int index) {
+                          return IgnorePointer(
+                            ignoring: widget.interaction == CalendarInteraction.disabled,
+                            child: MonthView(
                               dayFooterBuilder: widget.dayFooterBuilder,
                               interaction: widget.interaction,
                               focusedDateCardAnimationCurve:
@@ -447,31 +450,31 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                               dayFooterPadding: widget.dayFooterPadding,
                               firstWeekSeparator: widget.firstWeekSeparator ??
                                   widget.weeksSeparator,
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(
-                          widget.listPadding.left,
-                          0,
-                          widget.listPadding.right,
-                          widget.calendarFooter != null &&
-                                  !widget.isCalendarMode
-                              ? 16
-                              : 0),
-                      sliver: SliverToBoxAdapter(
-                        child: widget.calendarFooter != null &&
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                        widget.listPadding.left,
+                        0,
+                        widget.listPadding.right,
+                        widget.calendarFooter != null &&
                                 !widget.isCalendarMode
-                            ? widget.calendarFooter
-                            : const SizedBox(),
-                      ),
+                            ? 16
+                            : 0),
+                    sliver: SliverToBoxAdapter(
+                      child: widget.calendarFooter != null &&
+                              !widget.isCalendarMode
+                          ? widget.calendarFooter
+                          : const SizedBox(),
                     ),
-                  ],
-                );
-              },
-            ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
