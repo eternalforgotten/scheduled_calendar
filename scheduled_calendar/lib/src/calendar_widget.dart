@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide DateUtils;
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -199,12 +200,17 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
     final state = realContext!.read<CalendarState>();
     final oldSelected = oldWidget.interaction == CalendarInteraction.selection;
     final newSelected = widget.interaction == CalendarInteraction.selection;
-    if (oldSelected && !newSelected) {
-      widget.selectionModeConfig?.onSelectionEnd?.call(state.selectedDates);
+    if (newSelected) {
       state.clearDates();
     }
+    if (oldSelected && !newSelected) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        widget.selectionModeConfig?.onSelectionEnd?.call(state.selectedDates);
+      });
+    }
 
-    if (widget.minDate != oldWidget.minDate) {
+    if (widget.minDate != oldWidget.minDate ||
+        widget.maxDate != oldWidget.maxDate) {
       _pagingReplyUpController.refresh();
 
       hideUp = !(widget.minDate == null ||
@@ -376,18 +382,16 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                 slivers: [
                   if (!hideUp)
                     SliverPadding(
-                      padding: EdgeInsets.fromLTRB(
-                          widget.listPadding.left,
-                          widget.listPadding.top,
-                          widget.listPadding.right,
-                          0),
+                      padding: EdgeInsets.fromLTRB(widget.listPadding.left,
+                          widget.listPadding.top, widget.listPadding.right, 0),
                       sliver: PagedSliverList(
                         pagingController: _pagingReplyUpController,
                         builderDelegate: PagedChildBuilderDelegate<Month>(
                           itemBuilder:
                               (BuildContext context, Month month, int index) {
                             return IgnorePointer(
-                              ignoring: widget.interaction == CalendarInteraction.disabled,
+                              ignoring: widget.interaction ==
+                                  CalendarInteraction.disabled,
                               child: MonthView(
                                 dayFooterBuilder: widget.dayFooterBuilder,
                                 interaction: widget.interaction,
@@ -426,7 +430,8 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                         itemBuilder:
                             (BuildContext context, Month month, int index) {
                           return IgnorePointer(
-                            ignoring: widget.interaction == CalendarInteraction.disabled,
+                            ignoring: widget.interaction ==
+                                CalendarInteraction.disabled,
                             child: MonthView(
                               dayFooterBuilder: widget.dayFooterBuilder,
                               interaction: widget.interaction,
@@ -461,8 +466,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                         widget.listPadding.left,
                         0,
                         widget.listPadding.right,
-                        widget.calendarFooter != null &&
-                                !widget.isCalendarMode
+                        widget.calendarFooter != null && !widget.isCalendarMode
                             ? 16
                             : 0),
                     sliver: SliverToBoxAdapter(
