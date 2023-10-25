@@ -48,9 +48,13 @@ class _MonthNameViewState extends State<MonthNameView> {
             1,
           ),
         );
-    return Text(
-      date,
-      style: monthNameStyle.monthNameTextStyle,
+    return Padding(
+      padding:
+          EdgeInsets.fromLTRB(monthNameStyle.monthNamePadding ?? 0, 0, 0, 0),
+      child: Text(
+        date,
+        style: monthNameStyle.monthNameTextStyle,
+      ),
     );
   }
 }

@@ -81,7 +81,9 @@ class _DayViewState extends State<DayView> {
             ? widget.style.selectionModeActiveTextStyle
             : widget.style.selectionModeInactiveTextStyle;
       } else if (focused) {
-        highlightedDayDecoration = widget.style.focusedDayDecoration;
+        highlightedDayDecoration = widget.isPerformerWorkDay
+            ? widget.style.performerWorkDayDecoration
+            : widget.style.focusedDayDecoration;
         textStyle = widget.style.focusedDayTextStyle;
       } else if (isToday) {
         textStyle = widget.style.currentDayTextStyle;

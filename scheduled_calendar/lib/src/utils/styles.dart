@@ -144,6 +144,9 @@ class ScheduleCalendarMonthNameStyle {
   /// Select whether display year in month name or no. Defaults to [false]
   final bool displayYearInMonthName;
 
+  /// Left padding around month name
+  final double? monthNamePadding;
+
   const ScheduleCalendarMonthNameStyle({
     this.monthCustomNames = const {},
     this.centerMonthName = false,
@@ -155,5 +158,6 @@ class ScheduleCalendarMonthNameStyle {
     this.monthNameDisplay = MonthNameDisplay.full,
     this.displayYearInMonthName = false,
     this.monthNameLocale,
+    this.monthNamePadding,
   });
 }
