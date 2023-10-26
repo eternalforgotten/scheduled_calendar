@@ -17,7 +17,6 @@ class MonthView extends StatelessWidget {
     required this.startWeekWithSunday,
     this.minDate,
     this.maxDate,
-    this.focusedDate,
     this.focusedDateCardBuilder,
     this.focusedDateCardAnimationCurve,
     this.focusedDateCardAnimationDuration,
@@ -39,7 +38,6 @@ class MonthView extends StatelessWidget {
   final bool startWeekWithSunday;
   final DateTime? minDate;
   final DateTime? maxDate;
-  final DateTime? focusedDate;
   final DateBuilder? focusedDateCardBuilder;
   final Duration? focusedDateCardAnimationDuration;
   final Curve? focusedDateCardAnimationCurve;
@@ -92,7 +90,6 @@ class MonthView extends StatelessWidget {
                     interaction: interaction,
                     weeksSeparator: weeksSeparator,
                     onDayPressed: onDayPressed,
-                    focusedDate: focusedDate,
                     dayStyle: dayStyle,
                     isCalendarMode: isCalendarMode,
                     focusedDateCardBuilder: focusedDateCardBuilder,

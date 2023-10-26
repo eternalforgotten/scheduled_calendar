@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/src/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/src/utils/date_utils.dart';
 import 'package:scheduled_calendar/src/utils/enums.dart';
 import 'package:scheduled_calendar/src/utils/styles.dart';
@@ -8,7 +10,6 @@ import 'package:scheduled_calendar/src/widgets/weeks_separator.dart';
 
 class WeekView extends StatefulWidget {
   final List<DateTime> week;
-  final DateTime? focusedDate;
   final Widget weeksSeparator;
   final DateCallback? onDayPressed;
   final DateBuilder? focusedDateCardBuilder;
@@ -32,7 +33,6 @@ class WeekView extends StatefulWidget {
     this.week, {
     this.startWeekWithSunday = false,
     super.key,
-    this.focusedDate,
     this.weeksSeparator = const WeeksSeparator(),
     this.dayStyle = const ScheduledCalendarDayStyle(),
     this.onDayPressed,
@@ -65,10 +65,12 @@ class _WeekViewState extends State<WeekView>
   bool expanded = false;
   DateTime? dateToDisplay;
   late AnimationController animationController;
+  late CalendarState state;
 
   @override
   void initState() {
     super.initState();
+    state = context.read<CalendarState>();
     animationController = AnimationController(
       vsync: this,
       duration: widget.focusedDateCardAnimationDuration,
@@ -79,23 +81,21 @@ class _WeekViewState extends State<WeekView>
   void didUpdateWidget(covariant WeekView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.interaction == CalendarInteraction.dateCard) {
-      final date = widget.focusedDate;
-      final oldDate = oldWidget.focusedDate;
-      if (date != null) {
-        final dateInWeek = date.isSameDayOrAfter(widget.week.first) &&
-            date.isSameDayOrBefore(widget.week.last);
+      final focusedDate = state.focusedDate;
+      if (focusedDate != null) {
+        final dateInWeek = focusedDate.isSameDayOrAfter(widget.week.first) &&
+            focusedDate.isSameDayOrBefore(widget.week.last);
         if (dateInWeek) {
-          dateToDisplay = date;
+          dateToDisplay = focusedDate;
           _expand();
-        } else {
-          dateToDisplay = oldDate;
+        }
+        else {
+          dateToDisplay = state.previousFocusedDate;
           _collapse();
         }
       } else {
-        if (oldDate != null) {
-          dateToDisplay = oldDate;
-          _collapse();
-        }
+        dateToDisplay = state.previousFocusedDate;
+        _collapse();
       }
     }
   }
@@ -128,7 +128,9 @@ class _WeekViewState extends State<WeekView>
                 ),
               Flexible(
                 flex: week.length,
-                child: isFirstWeek ? widget.firstWeekSeparator : widget.weeksSeparator,
+                child: isFirstWeek
+                    ? widget.firstWeekSeparator
+                    : widget.weeksSeparator,
               ),
               if (isLastWeek && week.length < 7)
                 Spacer(
@@ -151,7 +153,7 @@ class _WeekViewState extends State<WeekView>
                       onPressed: (date) {
                         if (widget.interaction ==
                             CalendarInteraction.dateCard) {
-                          final newSelectedDate = widget.focusedDate;
+                          final newSelectedDate = state.focusedDate;
                           if (newSelectedDate != null &&
                               date.isSameDay(newSelectedDate)) {
                             widget.onDayPressed?.call(null);

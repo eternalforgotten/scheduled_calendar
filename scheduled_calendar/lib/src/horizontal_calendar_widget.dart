@@ -369,8 +369,7 @@ class HorizontalScheduledCalendarState
       },
       child: Observer(
         builder: (context) {
-          final state = context.watch<CalendarState>();
-          final focusedDate = state.focusedDate;
+          context.watch<CalendarState>().focusedDate;
           return Scrollable(
               controller: widget.scrollController,
               physics: widget.physics,
@@ -399,7 +398,6 @@ class HorizontalScheduledCalendarState
                                 weeksSeparator: widget.weeksSeparator,
                                 onDayPressed: (date) =>
                                     _onDayTapped(context, date),
-                                focusedDate: focusedDate,
                                 dayStyle: widget.dayStyle,
                                 isCalendarMode: widget.isCalendarMode,
                                 focusedDateCardBuilder:

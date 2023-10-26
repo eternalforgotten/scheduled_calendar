@@ -10,8 +10,11 @@ abstract class CalendarStateBase with Store {
   @observable
   DateTime? focusedDate;
 
+  DateTime? previousFocusedDate;
+
   @action
   void setDate(DateTime? date) {
+    previousFocusedDate = focusedDate;
     focusedDate = date;
   }
 

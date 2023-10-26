@@ -386,8 +386,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
       },
       child: Observer(
         builder: (context) {
-          final state = context.watch<CalendarState>();
-          final focusedDate = state.focusedDate;
+          context.watch<CalendarState>().focusedDate;
           return Scrollable(
             controller: widget.scrollController,
             physics: widget.physics,
@@ -418,7 +417,6 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                 focusedDateCardBuilder:
                                     widget.focusedDateCardBuilder,
                                 month: month,
-                                focusedDate: focusedDate,
                                 onDayPressed: (date) =>
                                     _onDayTapped(context, date),
                                 startWeekWithSunday: widget.startWeekWithSunday,
@@ -457,7 +455,6 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                   widget.focusedDateCardAnimationDuration,
                               focusedDateCardBuilder:
                                   widget.focusedDateCardBuilder,
-                              focusedDate: focusedDate,
                               month: month,
                               onDayPressed: (date) =>
                                   _onDayTapped(context, date),
