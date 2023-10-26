@@ -28,6 +28,28 @@ abstract class CalendarStateBase with Store {
     }
   }
 
+  @action
+  void selectAll(DateTime minDate, DateTime maxDate) {
+    var tempDate = minDate;
+    while (tempDate.isSameDayOrBefore(maxDate)) {
+      if (dateInSelectedList(tempDate) == null) {
+        selectedDates.add(tempDate);
+      }
+      tempDate = tempDate.nextDay;
+    }
+  }
+
+  @action
+  void deselectAll(DateTime minDate, DateTime maxDate) {
+    var tempDate = minDate;
+    while (tempDate.isSameDayOrBefore(maxDate)) {
+      if (dateInSelectedList(tempDate) != null) {
+        selectedDates.remove(tempDate);
+      }
+      tempDate = tempDate.nextDay;
+    }
+  }
+
   DateTime? dateInSelectedList(DateTime date) {
     return selectedDates.firstWhereOrNull((element) => element.isSameDay(date));
   }

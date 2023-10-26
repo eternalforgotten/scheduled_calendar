@@ -81,7 +81,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.weeksSeparator = const WeeksSeparator(),
     this.isCalendarMode = false,
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
-    this.selectionModeConfig,
+    this.selectionModeConfig = const SelectionModeConfig(),
     this.interaction = CalendarInteraction.disabled,
     this.dayFooterBuilder,
     this.monthNameStyle = const ScheduleCalendarMonthNameStyle(),
@@ -169,7 +169,7 @@ class ScheduledCalendar extends StatefulWidget {
   ///To enter this mode, provide new widget with [interaction]
   ///set to [CalendarInteraction.selection].
   ///To exit the mode, provide new widget with different [interaction]
-  final SelectionModeConfig? selectionModeConfig;
+  final SelectionModeConfig selectionModeConfig;
 
   final DateBuilder? dayFooterBuilder;
 
@@ -200,14 +200,6 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
     final state = realContext!.read<CalendarState>();
     final oldSelected = oldWidget.interaction == CalendarInteraction.selection;
     final newSelected = widget.interaction == CalendarInteraction.selection;
-    if (newSelected) {
-      state.clearDates();
-    }
-    if (oldSelected && !newSelected) {
-      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-        widget.selectionModeConfig?.onSelectionEnd?.call(state.selectedDates);
-      });
-    }
 
     if (widget.minDate != oldWidget.minDate ||
         widget.maxDate != oldWidget.maxDate) {
@@ -215,6 +207,30 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
 
       hideUp = !(widget.minDate == null ||
           !widget.minDate!.isSameMonth(widget.initialDate));
+    }
+
+    if (!oldSelected && newSelected) {
+      state.clearDates();
+    }
+
+    if (oldSelected && !newSelected) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        widget.selectionModeConfig.onSelectionEnd?.call(state.selectedDates);
+      });
+    }
+
+    if (oldSelected && newSelected) {
+      final oldSelectedAll = oldWidget.selectionModeConfig.selectedAll;
+      final newSelectedAll = widget.selectionModeConfig.selectedAll;
+      final minDate = widget.minDate;
+      final maxDate = widget.maxDate;
+      if (minDate == null || maxDate == null) return;
+      if (!oldSelectedAll && newSelectedAll) {
+        state.selectAll(minDate, maxDate);
+      }
+      if (oldSelectedAll && !newSelectedAll) {
+        state.deselectAll(minDate, maxDate);
+      }
     }
   }
 

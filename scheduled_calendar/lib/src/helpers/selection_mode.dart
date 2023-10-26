@@ -4,6 +4,7 @@
 ///on the end of the mode
 class SelectionModeConfig {
   final void Function(List<DateTime>)? onSelectionEnd;
+  final bool selectedAll;
 
-  const SelectionModeConfig({this.onSelectionEnd});
+  const SelectionModeConfig({this.onSelectionEnd, this.selectedAll = false});
 }

@@ -71,6 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  bool _selectedAll = false;
+
+  void _selectAll() {
+    setState(() {
+      _selectedAll = !_selectedAll;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +92,10 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.white,
           ),
         ),
-        actions: [FloatingActionButton(onPressed: _toggle)],
+        actions: [
+          FloatingActionButton(onPressed: _selectAll),
+          FloatingActionButton(onPressed: _toggle),
+        ],
       ),
       body: ScheduledCalendar(
         isWorkDay: (date) {
@@ -93,10 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         selectionModeConfig: SelectionModeConfig(
           onSelectionEnd: (list) {},
+          selectedAll: _selectedAll,
         ),
         interaction: interaction,
         minDate: DateTime(2023, 9, 7),
-        maxDate: DateTime(2023, 11, 16),
+        maxDate: DateTime(2023, 9, 16),
         initialDate: DateTime(2023, 9, 9),
         monthNameStyle: const ScheduleCalendarMonthNameStyle(
           centerMonthName: true,

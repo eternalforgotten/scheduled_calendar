@@ -67,6 +67,28 @@ mixin _$CalendarState on CalendarStateBase, Store {
   }
 
   @override
+  void selectAll(DateTime minDate, DateTime maxDate) {
+    final _$actionInfo = _$CalendarStateBaseActionController.startAction(
+        name: 'CalendarStateBase.selectAll');
+    try {
+      return super.selectAll(minDate, maxDate);
+    } finally {
+      _$CalendarStateBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void deselectAll(DateTime minDate, DateTime maxDate) {
+    final _$actionInfo = _$CalendarStateBaseActionController.startAction(
+        name: 'CalendarStateBase.deselectAll');
+    try {
+      return super.deselectAll(minDate, maxDate);
+    } finally {
+      _$CalendarStateBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void clearDates() {
     final _$actionInfo = _$CalendarStateBaseActionController.startAction(
         name: 'CalendarStateBase.clearDates');
