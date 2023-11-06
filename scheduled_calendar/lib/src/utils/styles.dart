@@ -43,6 +43,9 @@ class ScheduledCalendarDayStyle {
   /// Background decoration of the focused, active day in horizontal calendar
   final BoxDecoration horizontalFocusedDayDecoration;
 
+  /// Text style of the focused day weekday
+  final TextStyle horizontalFocusedWeekdayTextStyle;
+
   /// Text style of the weekday text
   final TextStyle weekdayTextStyle;
 
@@ -115,6 +118,7 @@ class ScheduledCalendarDayStyle {
       color: Color(0xFF323137),
       borderRadius: BorderRadius.all(Radius.circular(8)),
     ),
+    this.horizontalFocusedWeekdayTextStyle = const TextStyle(), 
     this.weekdayTextStyle = const TextStyle(
       color: Color(0xFF5C5B5F),
       fontSize: 10.5,

@@ -29,6 +29,7 @@ class WeekView extends StatefulWidget {
   final bool displayWeekdays;
   final double dayFooterPadding;
   final Widget firstWeekSeparator;
+  final double weekdayPadding;
   const WeekView(
     this.week, {
     this.startWeekWithSunday = false,
@@ -51,6 +52,7 @@ class WeekView extends StatefulWidget {
     required this.displayWeekdays,
     required this.dayFooterPadding,
     required this.firstWeekSeparator,
+    this.weekdayPadding = 3,
   })  : focusedDateCardAnimationCurve =
             selectedDateCardAnimationCurve ?? Curves.linear,
         focusedDateCardAnimationDuration = selectedDateCardAnimationDuration ??
@@ -88,8 +90,7 @@ class _WeekViewState extends State<WeekView>
         if (dateInWeek) {
           dateToDisplay = focusedDate;
           _expand();
-        }
-        else {
+        } else {
           dateToDisplay = state.previousFocusedDate;
           _collapse();
         }
@@ -174,6 +175,7 @@ class _WeekViewState extends State<WeekView>
                       isHorizontalCalendar: widget.isHorizontalCalendar,
                       displayWeekdays: widget.displayWeekdays,
                       dayFooterPadding: widget.dayFooterPadding,
+                      weekdayPadding: widget.weekdayPadding,
                     ),
                   ),
                 )

@@ -87,6 +87,7 @@ class HorizontalScheduledCalendar extends StatefulWidget {
     this.displayWeekdays = false,
     required this.dayFooterPadding,
     required this.firstWeekSeparator,
+    this.weekdayPadding = 3,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -176,6 +177,8 @@ class HorizontalScheduledCalendar extends StatefulWidget {
   final double dayFooterPadding;
 
   final Widget? firstWeekSeparator;
+
+  final double weekdayPadding;
 
   @override
   HorizontalScheduledCalendarState createState() =>
@@ -416,6 +419,7 @@ class HorizontalScheduledCalendarState
                                 dayFooterPadding: widget.dayFooterPadding,
                                 firstWeekSeparator: widget.firstWeekSeparator ??
                                     widget.weeksSeparator,
+                                weekdayPadding: widget.weekdayPadding,
                               ),
                             );
                           },

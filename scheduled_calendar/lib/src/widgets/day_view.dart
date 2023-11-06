@@ -28,6 +28,7 @@ class DayView extends StatefulWidget {
   final bool isHorizontalCalendar;
   final bool displayWeekdays;
   final double dayFooterPadding;
+  final double weekdayPadding;
   const DayView(
     this.day, {
     super.key,
@@ -41,6 +42,7 @@ class DayView extends StatefulWidget {
     required this.isHorizontalCalendar,
     required this.displayWeekdays,
     required this.dayFooterPadding,
+    required this.weekdayPadding,
   });
 
   @override
@@ -94,6 +96,9 @@ class _DayViewState extends State<DayView> {
     return GestureDetector(
       onTap: () => widget.onPressed?.call(widget.day),
       child: Container(
+        padding: widget.isHorizontalCalendar
+            ? EdgeInsets.only(top: widget.weekdayPadding)
+            : null,
         decoration: widget.isHorizontalCalendar
             ? horizontalHighlightedDayDecoration
             : null,
@@ -102,7 +107,11 @@ class _DayViewState extends State<DayView> {
             if (widget.displayWeekdays)
               Text(
                 weekdayName,
-                style: widget.style.weekdayTextStyle,
+                style: !widget.isHorizontalCalendar
+                    ? widget.style.weekdayTextStyle
+                    : focused
+                        ? widget.style.horizontalFocusedWeekdayTextStyle
+                        : widget.style.weekdayTextStyle,
               ),
             Container(
               padding: widget.style.padding,
