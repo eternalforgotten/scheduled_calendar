@@ -1,10 +1,13 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide DateUtils;
+import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/src/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/src/utils/date_models.dart';
 import 'package:scheduled_calendar/src/utils/date_utils.dart';
 import 'package:scheduled_calendar/src/utils/enums.dart';
 import 'package:scheduled_calendar/src/utils/styles.dart';
 import 'package:scheduled_calendar/src/utils/typedefs.dart';
+import 'package:scheduled_calendar/src/widgets/hero_animation.dart';
 import 'package:scheduled_calendar/src/widgets/month_name_view.dart';
 import 'package:scheduled_calendar/src/widgets/week_view.dart';
 import 'package:scheduled_calendar/src/widgets/weeks_separator.dart';
@@ -56,6 +59,8 @@ class MonthView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final weeksList = DateUtils.weeksList(month: month);
+    final state = context.watch<CalendarState>();
+    final focusedDate = state.focusedDate;
 
     return Column(
       children: <Widget>[
@@ -84,28 +89,35 @@ class MonthView extends StatelessWidget {
           children: [
             ...weeksList
                 .mapIndexed(
-                  (index, week) => WeekView(
-                    week,
-                    startWeekWithSunday: startWeekWithSunday,
-                    interaction: interaction,
-                    weeksSeparator: weeksSeparator,
-                    onDayPressed: onDayPressed,
-                    dayStyle: dayStyle,
-                    isCalendarMode: isCalendarMode,
-                    focusedDateCardBuilder: focusedDateCardBuilder,
-                    selectedDateCardAnimationCurve:
-                        focusedDateCardAnimationCurve,
-                    selectedDateCardAnimationDuration:
-                        focusedDateCardAnimationDuration,
-                    isFirstWeek: index == 0,
-                    isLastWeek: index == weeksList.length - 1,
-                    daysOff: daysOff,
-                    locale: monthNameStyle.monthNameLocale,
-                    dayFooterBuilder: dayFooterBuilder,
-                    isWorkDay: isWorkDay,
-                    displayWeekdays: displayWeekdays,
-                    dayFooterPadding: dayFooterPadding,
-                    firstWeekSeparator: firstWeekSeparator,
+                  (index, week) => HeroAnimation(
+                    isHorizontalCalendar: false,
+                    tag: week.contains(focusedDate) ? week.toString() : week,
+                    child: Provider.value(
+                      value: state,
+                      child: WeekView(
+                        week,
+                        startWeekWithSunday: startWeekWithSunday,
+                        interaction: interaction,
+                        weeksSeparator: weeksSeparator,
+                        onDayPressed: onDayPressed,
+                        dayStyle: dayStyle,
+                        isCalendarMode: isCalendarMode,
+                        focusedDateCardBuilder: focusedDateCardBuilder,
+                        selectedDateCardAnimationCurve:
+                            focusedDateCardAnimationCurve,
+                        selectedDateCardAnimationDuration:
+                            focusedDateCardAnimationDuration,
+                        isFirstWeek: index == 0,
+                        isLastWeek: index == weeksList.length - 1,
+                        daysOff: daysOff,
+                        locale: monthNameStyle.monthNameLocale,
+                        dayFooterBuilder: dayFooterBuilder,
+                        isWorkDay: isWorkDay,
+                        displayWeekdays: displayWeekdays,
+                        dayFooterPadding: dayFooterPadding,
+                        firstWeekSeparator: firstWeekSeparator,
+                      ),
+                    ),
                   ),
                 )
                 .toList(),

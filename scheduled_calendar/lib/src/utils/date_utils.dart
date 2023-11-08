@@ -82,34 +82,6 @@ abstract class DateUtils {
     return Month(weeks);
   }
 
-  static List<DateTime> getWeek(
-    DateTime? minDate,
-    DateTime? maxDate,
-    int weekPage,
-    bool up,
-  ) {
-    // if no start date is provided use the current date
-    DateTime startDate = (minDate ?? DateTime.now()).removeTime();
-    DateTime dateTemp;
-    if (up) {
-      dateTemp = startDate.subtract(Duration(days: 7 * weekPage));
-    } else {
-      dateTemp = startDate.addDays(7 * weekPage);
-    }
-
-    List<DateTime> week = [];
-    while (week.length < 7) {
-      if (maxDate != null && dateTemp.isSameDayOrAfter(maxDate)) {
-        week.add(dateTemp);
-        break;
-      }
-      week.add(dateTemp);
-      dateTemp = dateTemp.nextDay;
-    }
-
-    return week;
-  }
-
   static int getWeekDay(DateTime date, bool startWeekWithSunday) {
     if (startWeekWithSunday) {
       return date.weekday == DateTime.sunday ? 1 : date.weekday + 1;
@@ -240,5 +212,23 @@ extension DateUtilsExtensions on DateTime {
       millisecond,
       microsecond,
     );
+  }
+
+  int differenceInMonths(DateTime dateTime) {
+    if (year == dateTime.year) {
+      return (month - dateTime.month + 1).abs();
+    }
+
+    int result = 0;
+    DateTime minDate =
+        isBefore(dateTime) || isSameDay(dateTime) ? this : dateTime;
+    DateTime maxDate = isAfter(dateTime) ? this : dateTime;
+
+    int yearDifference = maxDate.year - minDate.year;
+    if (yearDifference > 1) result += (12 - minDate.month); // First year
+    // Full years between first and last
+    result += (yearDifference - 1).abs() * 12;
+    result += maxDate.month; // Last year
+    return result + 1;
   }
 }

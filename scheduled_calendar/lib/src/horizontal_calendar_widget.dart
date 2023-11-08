@@ -1,11 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/src/widgets/hero_animation.dart';
 import 'package:scheduled_calendar/src/widgets/week_view.dart';
 
 import 'calendar_state/calendar_state.dart';
-import 'helpers/selection_mode.dart';
 import 'utils/date_models.dart';
 import 'utils/date_utils.dart';
 import 'utils/enums.dart';
@@ -21,34 +22,6 @@ import 'widgets/weeks_separator.dart';
 ///
 ///For [CalendarInteraction.action], callback [onDayPressed] will be called,
 ///which has to be provided in that case.
-///
-///[CalendarInteraction.selection] differs from abovementioned types.
-///It's purpose is to select a group of days, for further interaction.
-///This interaction mode should not be passed directly, but to enter this mode
-///provide the new widget with [interaction] set to [CalendarInteraction.selection]
-///(for example, via [setState]).
-///
-///The example below shows the possible correct usage of [CalendarInteraction.selection]
-///
-/// ```dart
-/// bool isSelection = false;
-
-///CalendarInteraction get interaction => isSelection
-///    ? CalendarInteraction.selection
-///    : CalendarInteraction.dateCard;
-
-/// void _toggle() {
-///  setState(() {
-///    isSelection = !isSelection;
-///  });
-///}
-///...
-///ScheduledCalendar(
-///   interaction: interaction
-///)
-/// ```
-/// On the end of the selection mode (when widget with the new [interaction] is provided),
-/// [selectionModeConfig.onSelectionEnd] callback with the list of selected days will be called, if provided
 class HorizontalScheduledCalendar extends StatefulWidget {
   ///Creates a [HorizontalScheduledCalendar].
   ///
@@ -68,7 +41,7 @@ class HorizontalScheduledCalendar extends StatefulWidget {
     this.onPaginationCompleted,
     this.invisibleMonthsThreshold = 1,
     this.physics,
-    this.scrollController,
+    ScrollController? scrollController,
     this.listPadding = const EdgeInsets.symmetric(horizontal: 16),
     this.startWeekWithSunday = false,
     this.onDayPressed,
@@ -80,15 +53,16 @@ class HorizontalScheduledCalendar extends StatefulWidget {
     this.weeksSeparator = const WeeksSeparator(),
     this.isCalendarMode = false,
     this.daysOff = const [DateTime.saturday, DateTime.sunday],
-    this.selectionModeConfig,
     this.interaction = CalendarInteraction.disabled,
     this.dayFooterBuilder,
     this.monthNameStyle = const ScheduleCalendarMonthNameStyle(),
+    this.focusedDate,
     this.displayWeekdays = false,
     required this.dayFooterPadding,
     required this.firstWeekSeparator,
     this.weekdayPadding = 3,
-  }) : initialDate = initialDate ?? DateTime.now().removeTime();
+  })  : initialDate = initialDate ?? DateTime.now().removeTime(),
+        scrollController = scrollController ?? ScrollController();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
   /// `DateTime.now()` will be used
@@ -164,12 +138,6 @@ class HorizontalScheduledCalendar extends StatefulWidget {
   ///Otherwise, [ArgumentError] is thrown
   final CalendarInteraction interaction;
 
-  ///Customizable config for selection mode.
-  ///To enter this mode, provide new widget with [interaction]
-  ///set to [CalendarInteraction.selection].
-  ///To exit the mode, provide new widget with different [interaction]
-  final SelectionModeConfig? selectionModeConfig;
-
   final DateBuilder? dayFooterBuilder;
 
   final bool displayWeekdays;
@@ -180,31 +148,30 @@ class HorizontalScheduledCalendar extends StatefulWidget {
 
   final double weekdayPadding;
 
+  final DateTime? focusedDate;
+
   @override
   HorizontalScheduledCalendarState createState() =>
       HorizontalScheduledCalendarState();
 }
 
 class HorizontalScheduledCalendarState
-    extends State<HorizontalScheduledCalendar> {
-  late PagingController<int, List<DateTime>> _pagingReplyUpController;
-  late PagingController<int, List<DateTime>> _pagingReplyDownController;
+    extends State<HorizontalScheduledCalendar> with TickerProviderStateMixin {
+  late PagingController<int, Month> _pagingReplyUpController;
+  late PagingController<int, Month> _pagingReplyDownController;
 
   final Key downListKey = UniqueKey();
   late bool hideUp;
 
   BuildContext? realContext;
+  late final List<Month> months;
+  late bool scrollControllerAnimated;
+  late final AnimationController animationController;
+  late final Animation<double> animation;
 
   @override
   void didUpdateWidget(covariant HorizontalScheduledCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final state = realContext!.read<CalendarState>();
-    final oldSelected = oldWidget.interaction == CalendarInteraction.selection;
-    final newSelected = widget.interaction == CalendarInteraction.selection;
-    if (oldSelected && !newSelected) {
-      widget.selectionModeConfig?.onSelectionEnd?.call(state.selectedDates);
-      state.clearDates();
-    }
 
     if (widget.minDate != oldWidget.minDate) {
       _pagingReplyUpController.refresh();
@@ -216,16 +183,11 @@ class HorizontalScheduledCalendarState
 
   void _onDayTapped(BuildContext context, DateTime? date) {
     final state = context.read<CalendarState>();
-    if (widget.interaction == CalendarInteraction.selection) {
-      assert(date != null);
-      state.onSelected(date!);
-      setState(() {});
-    } else {
-      if (widget.interaction == CalendarInteraction.action) {
-        widget.onDayPressed!(date!);
-      }
-      state.setDate(date);
+
+    if (widget.interaction == CalendarInteraction.action) {
+      widget.onDayPressed!(date!);
     }
+    state.setDate(date);
   }
 
   @override
@@ -258,19 +220,40 @@ class HorizontalScheduledCalendarState
     hideUp = !(widget.minDate == null ||
         !widget.minDate!.isSameMonth(widget.initialDate));
 
-    _pagingReplyUpController = PagingController<int, List<DateTime>>(
+    _pagingReplyUpController = PagingController<int, Month>(
       firstPageKey: 0,
       invisibleItemsThreshold: widget.invisibleMonthsThreshold,
     );
     _pagingReplyUpController.addPageRequestListener(_fetchUpPage);
     _pagingReplyUpController.addStatusListener(paginationStatusUp);
 
-    _pagingReplyDownController = PagingController<int, List<DateTime>>(
-      firstPageKey: 0,
+    int monthDifference = widget.focusedDate
+            ?.differenceInMonths(widget.minDate ?? widget.initialDate) ??
+        0;
+    _pagingReplyDownController = PagingController<int, Month>(
+      firstPageKey: monthDifference,
       invisibleItemsThreshold: widget.invisibleMonthsThreshold,
     );
+    months = [];
+    for (int i = 0; i < monthDifference; i++) {
+      _fetchDownPage(i, addToList: true);
+    }
+
     _pagingReplyDownController.addPageRequestListener(_fetchDownPage);
     _pagingReplyDownController.addStatusListener(paginationStatusDown);
+
+    scrollControllerAnimated = false;
+
+    animationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    animation = CurvedAnimation(
+      parent: animationController,
+      curve: Curves.easeIn,
+    );
+    Future.delayed(const Duration(seconds: 2))
+        .then((value) => animationController.animateTo(1));
   }
 
   void paginationStatusUp(PagingStatus state) {
@@ -289,20 +272,21 @@ class HorizontalScheduledCalendarState
   /// from the start date
   void _fetchUpPage(int pageKey) async {
     try {
-      final week = DateUtils.getWeek(
+      final month = DateUtils.getMonth(
         DateTime(widget.initialDate.year, widget.initialDate.month - 1, 1),
         widget.minDate,
         pageKey,
         true,
+        startWeekWithSunday: widget.startWeekWithSunday,
       );
 
       WidgetsBinding.instance.addPostFrameCallback(
-        (_) => widget.onMonthLoaded?.call(week.first.year, week.first.month),
+        (_) => widget.onMonthLoaded?.call(month.year, month.month),
       );
 
-      final newItems = [week];
+      final newItems = [month];
       final isLastPage = widget.minDate != null &&
-          widget.minDate!.isSameDayOrAfter(week.first);
+          widget.minDate!.isSameDayOrAfter(month.weeks.first.firstDay);
 
       if (isLastPage) {
         return _pagingReplyUpController.appendLastPage(newItems);
@@ -315,9 +299,9 @@ class HorizontalScheduledCalendarState
     }
   }
 
-  void _fetchDownPage(int pageKey) async {
+  void _fetchDownPage(int pageKey, {bool addToList = false}) async {
     try {
-      final week = DateUtils.getWeek(
+      final month = DateUtils.getMonth(
         widget.minDate ??
             DateTime(
               widget.initialDate.year,
@@ -327,39 +311,68 @@ class HorizontalScheduledCalendarState
         widget.maxDate,
         pageKey,
         false,
+        startWeekWithSunday: widget.startWeekWithSunday,
       );
 
       WidgetsBinding.instance.addPostFrameCallback(
-        (_) => widget.onMonthLoaded?.call(week.first.year, week.first.month),
+        (_) => widget.onMonthLoaded?.call(month.year, month.month),
       );
 
-      final newItems = [week];
+      final newItems = [month];
       final isLastPage = widget.maxDate != null &&
-          widget.maxDate!.isSameDayOrBefore(week.last);
+          widget.maxDate!.isSameDayOrBefore(month.weeks.last.lastDay);
 
-      if (isLastPage) {
-        return _pagingReplyDownController.appendLastPage(newItems);
+      if (addToList) {
+        months.add(month);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        _pagingReplyDownController.appendPage(newItems, nextPageKey);
+
+        if (isLastPage) {
+          return _pagingReplyDownController.appendLastPage(newItems);
+        }
       }
-
-      final nextPageKey = pageKey + newItems.length;
-      _pagingReplyDownController.appendPage(newItems, nextPageKey);
     } catch (_) {
       _pagingReplyDownController.error;
     }
   }
 
-  EdgeInsets _getDownListPadding() {
+  EdgeInsets _getPagedDownListPadding() {
     final double paddingTop = hideUp ? widget.listPadding.top : 0;
-    return EdgeInsets.fromLTRB(widget.listPadding.left, paddingTop,
-        widget.listPadding.right, widget.listPadding.bottom);
+    return EdgeInsets.fromLTRB(
+      widget.focusedDate != null ? 0 : widget.listPadding.left,
+      paddingTop,
+      widget.listPadding.right,
+      widget.listPadding.bottom,
+    );
   }
 
-  double _getWeekWidth(int daysCount) {
+  EdgeInsets _getDownListPadding() {
+    final double paddingTop = hideUp ? widget.listPadding.top : 0;
+    return EdgeInsets.fromLTRB(
+      widget.listPadding.left,
+      paddingTop,
+      _pagingReplyDownController.nextPageKey != null
+          ? 0
+          : widget.listPadding.right,
+      widget.listPadding.bottom,
+    );
+  }
+
+  double _getDayWidth() {
     double dayWidth = (MediaQuery.of(context).size.width -
             widget.listPadding.left -
             widget.listPadding.right) /
         7;
-    return dayWidth * daysCount;
+    return dayWidth;
+  }
+
+  double _getControllerShift() {
+    int dayDiff = widget.focusedDate!
+        .difference(widget.minDate ?? widget.initialDate)
+        .inDays;
+    double dayWidth = _getDayWidth();
+    return dayWidth * (dayDiff - widget.focusedDate!.weekday + 1);
   }
 
   @override
@@ -368,67 +381,184 @@ class HorizontalScheduledCalendarState
       create: (_) => CalendarState(),
       builder: (context, child) {
         realContext = context;
+        context.watch<CalendarState>().setDate(widget.focusedDate);
         return child!;
       },
       child: Observer(
         builder: (context) {
-          context.watch<CalendarState>().focusedDate;
-          return Scrollable(
-              controller: widget.scrollController,
-              physics: widget.physics,
-              axisDirection: AxisDirection.right,
-              viewportBuilder: (context, position) {
-                return Viewport(
-                  offset: position,
-                  center: downListKey,
-                  axisDirection: AxisDirection.right,
-                  slivers: [
-                    SliverPadding(
-                      key: downListKey,
-                      padding: _getDownListPadding(),
-                      sliver: PagedSliverList(
-                        pagingController: _pagingReplyDownController,
-                        builderDelegate:
-                            PagedChildBuilderDelegate<List<DateTime>>(
-                          itemBuilder: (BuildContext context,
-                              List<DateTime> week, int index) {
-                            return SizedBox(
-                              width: _getWeekWidth(week.length),
-                              child: WeekView(
-                                week,
-                                startWeekWithSunday: widget.startWeekWithSunday,
-                                interaction: widget.interaction,
-                                weeksSeparator: widget.weeksSeparator,
-                                onDayPressed: (date) =>
-                                    _onDayTapped(context, date),
-                                dayStyle: widget.dayStyle,
-                                isCalendarMode: widget.isCalendarMode,
-                                focusedDateCardBuilder:
-                                    widget.focusedDateCardBuilder,
-                                selectedDateCardAnimationCurve:
-                                    widget.focusedDateCardAnimationCurve,
-                                selectedDateCardAnimationDuration:
-                                    widget.focusedDateCardAnimationDuration,
-                                isFirstWeek: index == 0,
-                                isLastWeek: false,
-                                daysOff: widget.daysOff,
-                                locale: widget.monthNameStyle.monthNameLocale,
-                                dayFooterBuilder: widget.dayFooterBuilder,
-                                isHorizontalCalendar: true,
-                                displayWeekdays: widget.displayWeekdays,
-                                dayFooterPadding: widget.dayFooterPadding,
-                                firstWeekSeparator: widget.firstWeekSeparator ??
-                                    widget.weeksSeparator,
-                                weekdayPadding: widget.weekdayPadding,
+          final state = context.watch<CalendarState>();
+          state.focusedDate;
+          return Column(
+            children: [
+              Expanded(
+                child: Scrollable(
+                    key: downListKey,
+                    controller: widget.scrollController,
+                    physics: widget.physics,
+                    axisDirection: AxisDirection.right,
+                    viewportBuilder: (context, position) {
+                      if (!scrollControllerAnimated &&
+                          widget.focusedDate != null) {
+                        widget.scrollController?.animateTo(
+                          _getControllerShift(),
+                          duration: const Duration(milliseconds: 1),
+                          curve: Curves.linear,
+                        );
+                        scrollControllerAnimated = true;
+                      }
+                      return Viewport(
+                        offset: position,
+                        axisDirection: AxisDirection.right,
+                        slivers: [
+                          // Need for animation to work correctly
+                          if (widget.focusedDate != null)
+                            SliverPadding(
+                              padding: _getDownListPadding(),
+                              sliver: SliverToBoxAdapter(
+                                child: Row(
+                                  children: [
+                                    ...List.generate(months.length, (index) {
+                                      final weeksList = DateUtils.weeksList(
+                                          month: months[index]);
+                                      return Row(
+                                        children: [
+                                          ...weeksList.mapIndexed(
+                                            (index, week) => HeroAnimation(
+                                              isHorizontalCalendar: true,
+                                              tag: week.toString(),
+                                              child: Provider.value(
+                                                value: state,
+                                                child: SizedBox(
+                                                  width: _getDayWidth() *
+                                                      week.length,
+                                                  child: WeekView(
+                                                    week,
+                                                    startWeekWithSunday: widget
+                                                        .startWeekWithSunday,
+                                                    interaction:
+                                                        widget.interaction,
+                                                    weeksSeparator:
+                                                        widget.weeksSeparator,
+                                                    onDayPressed: (date) =>
+                                                        _onDayTapped(
+                                                            context, date),
+                                                    dayStyle: widget.dayStyle,
+                                                    isCalendarMode:
+                                                        widget.isCalendarMode,
+                                                    focusedDateCardBuilder: widget
+                                                        .focusedDateCardBuilder,
+                                                    selectedDateCardAnimationCurve:
+                                                        widget
+                                                            .focusedDateCardAnimationCurve,
+                                                    selectedDateCardAnimationDuration:
+                                                        widget
+                                                            .focusedDateCardAnimationDuration,
+                                                    isFirstWeek: false,
+                                                    isLastWeek: false,
+                                                    daysOff: widget.daysOff,
+                                                    locale: widget
+                                                        .monthNameStyle
+                                                        .monthNameLocale,
+                                                    dayFooterBuilder:
+                                                        widget.dayFooterBuilder,
+                                                    isHorizontalCalendar: true,
+                                                    displayWeekdays:
+                                                        widget.displayWeekdays,
+                                                    dayFooterPadding:
+                                                        widget.dayFooterPadding,
+                                                    firstWeekSeparator: widget
+                                                            .firstWeekSeparator ??
+                                                        widget.weeksSeparator,
+                                                    weekdayPadding:
+                                                        widget.weekdayPadding,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                  ],
+                                ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              });
+                            ),
+                          if (_pagingReplyDownController.nextPageKey != null)
+                            SliverPadding(
+                              key: downListKey,
+                              padding: _getPagedDownListPadding(),
+                              sliver: PagedSliverList(
+                                pagingController: _pagingReplyDownController,
+                                builderDelegate:
+                                    PagedChildBuilderDelegate<Month>(
+                                  itemBuilder: (BuildContext context,
+                                      Month month, int index) {
+                                    final weeksList =
+                                        DateUtils.weeksList(month: month);
+                                    return Row(
+                                      children: [
+                                        ...weeksList.mapIndexed(
+                                          (index, week) => SizedBox(
+                                            width: _getDayWidth() * week.length,
+                                            child: WeekView(
+                                              week,
+                                              startWeekWithSunday:
+                                                  widget.startWeekWithSunday,
+                                              interaction: widget.interaction,
+                                              weeksSeparator:
+                                                  widget.weeksSeparator,
+                                              onDayPressed: (date) =>
+                                                  _onDayTapped(context, date),
+                                              dayStyle: widget.dayStyle,
+                                              isCalendarMode:
+                                                  widget.isCalendarMode,
+                                              focusedDateCardBuilder:
+                                                  widget.focusedDateCardBuilder,
+                                              selectedDateCardAnimationCurve: widget
+                                                  .focusedDateCardAnimationCurve,
+                                              selectedDateCardAnimationDuration:
+                                                  widget
+                                                      .focusedDateCardAnimationDuration,
+                                              isFirstWeek: false,
+                                              isLastWeek: false,
+                                              daysOff: widget.daysOff,
+                                              locale: widget.monthNameStyle
+                                                  .monthNameLocale,
+                                              dayFooterBuilder:
+                                                  widget.dayFooterBuilder,
+                                              isHorizontalCalendar: true,
+                                              displayWeekdays:
+                                                  widget.displayWeekdays,
+                                              dayFooterPadding:
+                                                  widget.dayFooterPadding,
+                                              firstWeekSeparator:
+                                                  widget.firstWeekSeparator ??
+                                                      widget.weeksSeparator,
+                                              weekdayPadding:
+                                                  widget.weekdayPadding,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }),
+              ),
+              Expanded(
+                child: FadeTransition(
+                  opacity: animation,
+                  child: Container(
+                    color: Colors.amber,
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
@@ -438,6 +568,7 @@ class HorizontalScheduledCalendarState
   void dispose() {
     _pagingReplyUpController.dispose();
     _pagingReplyDownController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 }

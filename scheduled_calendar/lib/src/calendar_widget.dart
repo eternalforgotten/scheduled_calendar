@@ -89,6 +89,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.displayWeekdays = false,
     this.dayFooterPadding = 5,
     this.firstWeekSeparator,
+    this.onCalendarModeChanged,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -181,6 +182,8 @@ class ScheduledCalendar extends StatefulWidget {
 
   final Widget? firstWeekSeparator;
 
+  final DateCallback? onCalendarModeChanged;
+
   @override
   ScheduledCalendarState createState() => ScheduledCalendarState();
 }
@@ -245,6 +248,9 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
         widget.onDayPressed!(date!);
       }
       state.setDate(date);
+    }
+    if (widget.onCalendarModeChanged != null) {
+      widget.onCalendarModeChanged!(date);
     }
   }
 
