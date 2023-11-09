@@ -89,7 +89,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.displayWeekdays = false,
     this.dayFooterPadding = 5,
     this.firstWeekSeparator,
-    this.onCalendarModeChanged,
+    this.changeModeOnTap = false,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -182,7 +182,9 @@ class ScheduledCalendar extends StatefulWidget {
 
   final Widget? firstWeekSeparator;
 
-  final DateCallback? onCalendarModeChanged;
+  ///Need to change the calendar mode. If true, then the style 
+  ///of the focused day will be removed some time after clicking on the day
+  final bool changeModeOnTap;
 
   @override
   ScheduledCalendarState createState() => ScheduledCalendarState();
@@ -248,9 +250,11 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
         widget.onDayPressed!(date!);
       }
       state.setDate(date);
-    }
-    if (widget.onCalendarModeChanged != null) {
-      widget.onCalendarModeChanged!(date);
+      if (widget.changeModeOnTap) {
+        Future.delayed(const Duration(seconds: 2)).then(
+          (value) => state.setDate(null),
+        );
+      }
     }
   }
 

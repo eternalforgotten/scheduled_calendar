@@ -87,40 +87,38 @@ class MonthView extends StatelessWidget {
         ),
         Column(
           children: [
-            ...weeksList
-                .mapIndexed(
-                  (index, week) => HeroAnimation(
-                    isHorizontalCalendar: false,
-                    tag: week.contains(focusedDate) ? week.toString() : week,
-                    child: Provider.value(
-                      value: state,
-                      child: WeekView(
-                        week,
-                        startWeekWithSunday: startWeekWithSunday,
-                        interaction: interaction,
-                        weeksSeparator: weeksSeparator,
-                        onDayPressed: onDayPressed,
-                        dayStyle: dayStyle,
-                        isCalendarMode: isCalendarMode,
-                        focusedDateCardBuilder: focusedDateCardBuilder,
-                        selectedDateCardAnimationCurve:
-                            focusedDateCardAnimationCurve,
-                        selectedDateCardAnimationDuration:
-                            focusedDateCardAnimationDuration,
-                        isFirstWeek: index == 0,
-                        isLastWeek: index == weeksList.length - 1,
-                        daysOff: daysOff,
-                        locale: monthNameStyle.monthNameLocale,
-                        dayFooterBuilder: dayFooterBuilder,
-                        isWorkDay: isWorkDay,
-                        displayWeekdays: displayWeekdays,
-                        dayFooterPadding: dayFooterPadding,
-                        firstWeekSeparator: firstWeekSeparator,
-                      ),
-                    ),
+            ...weeksList.mapIndexed((index, week) {
+              return HeroAnimation(
+                isHorizontalCalendar: false,
+                tag: week.contains(focusedDate) ? week.toString() : week,
+                child: Provider.value(
+                  value: state,
+                  child: WeekView(
+                    week,
+                    startWeekWithSunday: startWeekWithSunday,
+                    interaction: interaction,
+                    weeksSeparator: weeksSeparator,
+                    onDayPressed: onDayPressed,
+                    dayStyle: dayStyle,
+                    isCalendarMode: isCalendarMode,
+                    focusedDateCardBuilder: focusedDateCardBuilder,
+                    selectedDateCardAnimationCurve:
+                        focusedDateCardAnimationCurve,
+                    selectedDateCardAnimationDuration:
+                        focusedDateCardAnimationDuration,
+                    isFirstWeek: index == 0,
+                    isLastWeek: index == weeksList.length - 1,
+                    daysOff: daysOff,
+                    locale: monthNameStyle.monthNameLocale,
+                    dayFooterBuilder: dayFooterBuilder,
+                    isWorkDay: isWorkDay,
+                    displayWeekdays: displayWeekdays,
+                    dayFooterPadding: dayFooterPadding,
+                    firstWeekSeparator: firstWeekSeparator,
                   ),
-                )
-                .toList(),
+                ),
+              );
+            }).toList(),
           ],
         ),
         const SizedBox(height: 20),

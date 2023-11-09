@@ -56,13 +56,14 @@ class HorizontalScheduledCalendar extends StatefulWidget {
     this.interaction = CalendarInteraction.disabled,
     this.dayFooterBuilder,
     this.monthNameStyle = const ScheduleCalendarMonthNameStyle(),
-    this.focusedDate,
+    DateTime? focusedDate,
     this.displayWeekdays = false,
     required this.dayFooterPadding,
     required this.firstWeekSeparator,
     this.weekdayPadding = 3,
   })  : initialDate = initialDate ?? DateTime.now().removeTime(),
-        scrollController = scrollController ?? ScrollController();
+        scrollController = scrollController ?? ScrollController(),
+        focusedDate = focusedDate ?? initialDate;
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
   /// `DateTime.now()` will be used
@@ -148,6 +149,7 @@ class HorizontalScheduledCalendar extends StatefulWidget {
 
   final double weekdayPadding;
 
+  ///The day to be focused in the horizontal calendar
   final DateTime? focusedDate;
 
   @override
@@ -164,10 +166,9 @@ class HorizontalScheduledCalendarState
   late bool hideUp;
 
   BuildContext? realContext;
+
   late final List<Month> months;
   late bool scrollControllerAnimated;
-  late final AnimationController animationController;
-  late final Animation<double> animation;
 
   @override
   void didUpdateWidget(covariant HorizontalScheduledCalendar oldWidget) {
@@ -243,17 +244,6 @@ class HorizontalScheduledCalendarState
     _pagingReplyDownController.addStatusListener(paginationStatusDown);
 
     scrollControllerAnimated = false;
-
-    animationController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-    animation = CurvedAnimation(
-      parent: animationController,
-      curve: Curves.easeIn,
-    );
-    Future.delayed(const Duration(seconds: 2))
-        .then((value) => animationController.animateTo(1));
   }
 
   void paginationStatusUp(PagingStatus state) {
@@ -381,20 +371,22 @@ class HorizontalScheduledCalendarState
       create: (_) => CalendarState(),
       builder: (context, child) {
         realContext = context;
-        context.watch<CalendarState>().setDate(widget.focusedDate);
+        context.watch<CalendarState>().setDate(
+            context.watch<CalendarState>().focusedDate ?? widget.focusedDate);
         return child!;
       },
       child: Observer(
         builder: (context) {
-          final state = context.watch<CalendarState>();
-          state.focusedDate;
+          context.watch<CalendarState>().focusedDate;
           return Scrollable(
               key: downListKey,
               controller: widget.scrollController,
               physics: widget.physics,
               axisDirection: AxisDirection.right,
               viewportBuilder: (context, position) {
-                if (!scrollControllerAnimated && widget.focusedDate != null) {
+                if (mounted &&
+                    !scrollControllerAnimated &&
+                    widget.focusedDate != null) {
                   widget.scrollController?.animateTo(
                     _getControllerShift(),
                     duration: const Duration(milliseconds: 1),
@@ -418,12 +410,12 @@ class HorizontalScheduledCalendarState
                                     DateUtils.weeksList(month: months[index]);
                                 return Row(
                                   children: [
-                                    ...weeksList.mapIndexed(
-                                      (index, week) => HeroAnimation(
+                                    ...weeksList.mapIndexed((index, week) {
+                                      return HeroAnimation(
                                         isHorizontalCalendar: true,
                                         tag: week.toString(),
                                         child: Provider.value(
-                                          value: state,
+                                          value: context.watch<CalendarState>(),
                                           child: SizedBox(
                                             width: _getDayWidth() * week.length,
                                             child: WeekView(
@@ -465,8 +457,8 @@ class HorizontalScheduledCalendarState
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    }),
                                   ],
                                 );
                               }),
@@ -542,7 +534,6 @@ class HorizontalScheduledCalendarState
   void dispose() {
     _pagingReplyUpController.dispose();
     _pagingReplyDownController.dispose();
-    animationController.dispose();
     super.dispose();
   }
 }

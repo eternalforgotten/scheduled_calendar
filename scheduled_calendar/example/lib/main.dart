@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
             7: 'Вс',
           },
         ),
-        onCalendarModeChanged: (date) {
+        onDayPressed: (date) {
           _changeCalendarMode(date: date);
         },
       ),
