@@ -203,4 +203,10 @@ class _WeekViewState extends State<WeekView>
       ],
     );
   }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:example/horizontal_calendar_page.dart';
 import 'package:example/widgets/performer_card.dart';
 import 'package:example/widgets/schedule_inscription.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +80,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _changeCalendarMode({DateTime? date}) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => FadeTransition(
+          opacity: date != null ? animation : const AlwaysStoppedAnimation(1),
+          child: HorizontalCalendarPage(focusedDate: date),
+        ),
+        // If a date is selected, there should be a slow transition between pages
+        transitionDuration: date != null
+            ? const Duration(seconds: 2)
+            : const Duration(milliseconds: 300),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +110,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         actions: [
           FloatingActionButton(onPressed: _selectAll),
-          FloatingActionButton(onPressed: _toggle),
+          FloatingActionButton(heroTag: 'toggle', onPressed: _toggle),
+          FloatingActionButton(
+            heroTag: 'mode',
+            onPressed: () {
+              _changeCalendarMode();
+            },
+            backgroundColor: Colors.amber,
+          ),
         ],
       ),
       body: ScheduledCalendar(
@@ -155,6 +178,9 @@ class _MyHomePageState extends State<MyHomePage> {
             7: 'Вс',
           },
         ),
+        onDayPressed: (date) {
+          _changeCalendarMode(date: date);
+        },
       ),
     );
   }

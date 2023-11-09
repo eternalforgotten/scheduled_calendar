@@ -57,7 +57,7 @@ class ScheduledCalendarDayStyle {
 
   const ScheduledCalendarDayStyle({
     this.padding = const EdgeInsets.all(8),
-    this.currentDayTextStyle = const TextStyle(),
+    this.currentDayTextStyle,
     this.workDayTextStyle = const TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w700,
