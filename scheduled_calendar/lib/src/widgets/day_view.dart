@@ -89,9 +89,9 @@ class _DayViewState extends State<DayView> {
         textStyle = widget.style.focusedDayTextStyle;
       } else if (isToday) {
         textStyle = widget.style.currentDayTextStyle ??
-            (selectedInSelectionMode
-                ? widget.style.selectionModeActiveTextStyle
-                : widget.style.selectionModeInactiveTextStyle);
+            (widget.isDayOff
+                ? widget.style.dayOffTextStyle
+                : widget.style.workDayTextStyle);
       }
     }
     var weekdayName = widget.style.weekdayCustomNames[widget.day.weekday] ??
