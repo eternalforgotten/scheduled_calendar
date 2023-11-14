@@ -29,7 +29,7 @@ class ScheduledCalendarDayStyle {
   final BoxDecoration defaultWorkDayDecoration;
 
   /// Text style of the inactive days in selection mode
-  final TextStyle selectionModeInactiveTextStyle;
+  final TextStyle? selectionModeInactiveTextStyle;
 
   /// Background decoration of inactive days in selection mode
   final BoxDecoration selectionModeInactiveDecoration;
@@ -91,11 +91,7 @@ class ScheduledCalendarDayStyle {
       ),
       shape: BoxShape.circle,
     ),
-    this.selectionModeInactiveTextStyle = const TextStyle(
-      fontSize: 13,
-      fontWeight: FontWeight.w700,
-      color: Colors.white,
-    ),
+    this.selectionModeInactiveTextStyle,
     this.selectionModeInactiveDecoration = const BoxDecoration(
       border: Border.fromBorderSide(
         BorderSide(
