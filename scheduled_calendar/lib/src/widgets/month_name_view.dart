@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -30,7 +28,7 @@ class _MonthNameViewState extends State<MonthNameView> {
   @override
   Widget build(BuildContext context) {
     final monthNameStyle = widget.monthNameStyle;
-    final locale = monthNameStyle.monthNameLocale ?? Platform.localeName;
+    final locale = monthNameStyle.monthNameLocale ?? Localizations.localeOf(context).toString();
     var date = monthNameStyle.monthCustomNames[widget.month.month] ??
         DateFormat(
           (monthNameStyle.monthNameDisplay == MonthNameDisplay.full

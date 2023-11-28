@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:example/styles.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +33,7 @@ class _PerformerCardState extends State<PerformerCard> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = widget.locale ?? Platform.localeName;
+    final locale = widget.locale ?? Localizations.localeOf(context).toString();
     var date = DateFormat('EEEE, d MMMM', locale).format(widget.date);
     date = date = date.replaceRange(
       0,
