@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/widgets.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -58,7 +56,7 @@ class _DayViewState extends State<DayView> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = widget.style.weekdayLocale ?? Platform.localeName;
+    final locale = widget.style.weekdayLocale ?? Localizations.localeOf(context).toString();
     final state = context.read<CalendarState>();
     final selectedInSelectionMode =
         state.dateInSelectedList(widget.day) != null;

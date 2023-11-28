@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:example/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -29,7 +27,7 @@ class _ScheduleInscriptionState extends State<ScheduleInscription> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = widget.locale ?? Platform.localeName;
+    final locale = widget.locale ?? Localizations.localeOf(context).toString();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: RichText(
