@@ -130,11 +130,11 @@ class _MyHomePageState extends State<MyHomePage> {
           selectedAll: _selectedAll,
         ),
         interaction: interaction,
-        minDate: DateTime(2023, 9, 7),
-        maxDate: DateTime(2023, 9, 16),
-        initialDate: DateTime(2023, 9, 9),
+        minDate: DateTime(2023, 11, 29),
+        maxDate: DateTime(2024, 2, 2),
+        initialDate: DateTime(2023, 11, 29),
         monthNameStyle: const ScheduleCalendarMonthNameStyle(
-          centerMonthName: true,
+          centerMonthName: false,
           monthCustomNames: {
             1: 'Янв.',
             2: 'Фев.',

@@ -71,9 +71,10 @@ class MonthView extends StatelessWidget {
           children: [
             monthNameStyle.centerMonthName
                 ? const SizedBox()
-                : weeksList.first.length < 7
+                : weeksList.first.length < 7 &&
+                        weeksList.first.first.weekday != 1
                     ? Spacer(
-                        flex: 7 - weeksList.first.length,
+                        flex: weeksList.first.first.weekday - 1,
                       )
                     : const SizedBox(),
             Flexible(
@@ -83,6 +84,14 @@ class MonthView extends StatelessWidget {
                 monthNameStyle: monthNameStyle,
               ),
             ),
+            monthNameStyle.centerMonthName
+                ? const SizedBox()
+                : weeksList.first.length < 7 &&
+                        weeksList.first.last.weekday != 7
+                    ? Spacer(
+                        flex: 7 - weeksList.first.last.weekday,
+                      )
+                    : const SizedBox(),
           ],
         ),
         Column(

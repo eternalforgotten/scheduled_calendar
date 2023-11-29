@@ -123,9 +123,13 @@ class _WeekViewState extends State<WeekView>
         if (!widget.isHorizontalCalendar)
           Row(
             children: [
-              if (isFirstWeek && week.length < 7)
+              if (isFirstWeek && !isLastWeek && week.length < 7)
                 Spacer(
                   flex: 7 - week.length,
+                ),
+              if (isFirstWeek && isLastWeek && week.length < 7)
+                Spacer(
+                  flex: week.first.weekday - 1,
                 ),
               Flexible(
                 flex: week.length,
@@ -133,7 +137,11 @@ class _WeekViewState extends State<WeekView>
                     ? widget.firstWeekSeparator
                     : widget.weeksSeparator,
               ),
-              if (isLastWeek && week.length < 7)
+              if (isFirstWeek && isLastWeek && week.length < 7)
+                Spacer(
+                  flex: 7 - week.last.weekday,
+                ),
+              if (isLastWeek && !isFirstWeek && week.length < 7)
                 Spacer(
                   flex: 7 - week.length,
                 ),
@@ -141,11 +149,15 @@ class _WeekViewState extends State<WeekView>
           ),
         Row(
           children: [
-            if (isFirstWeek && week.length < 7)
+            if (isFirstWeek && !isLastWeek && week.length < 7)
               Spacer(
                 flex: 7 - week.length,
               ),
-            ...widget.week
+            if (isFirstWeek && isLastWeek && week.length < 7)
+              Spacer(
+                flex: week.first.weekday - 1,
+              ),
+            ...week
                 .map(
                   (date) => Flexible(
                     child: DayView(
@@ -180,7 +192,11 @@ class _WeekViewState extends State<WeekView>
                   ),
                 )
                 .toList(),
-            if (isLastWeek && week.length < 7)
+            if (isFirstWeek && isLastWeek && week.length < 7)
+              Spacer(
+                flex: 7 - week.last.weekday,
+              ),
+            if (isLastWeek && !isFirstWeek && week.length < 7)
               Spacer(
                 flex: 7 - week.length,
               ),
