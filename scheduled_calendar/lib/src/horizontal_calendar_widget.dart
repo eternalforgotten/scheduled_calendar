@@ -61,6 +61,7 @@ class HorizontalScheduledCalendar extends StatefulWidget {
     required this.dayFooterPadding,
     required this.firstWeekSeparator,
     this.weekdayPadding = 3,
+    this.contentWidth,
   })  : initialDate = initialDate ?? DateTime.now().removeTime(),
         scrollController = scrollController ?? ScrollController(),
         focusedDate = focusedDate ?? initialDate;
@@ -151,6 +152,9 @@ class HorizontalScheduledCalendar extends StatefulWidget {
 
   ///The day to be focused in the horizontal calendar
   final DateTime? focusedDate;
+
+  /// Width of the content inside horizontal calendar if it is not equal to screen width
+  final double? contentWidth;
 
   @override
   HorizontalScheduledCalendarState createState() =>
@@ -350,10 +354,11 @@ class HorizontalScheduledCalendarState
   }
 
   double _getDayWidth() {
-    double dayWidth = (MediaQuery.of(context).size.width -
-            widget.listPadding.left -
-            widget.listPadding.right) /
-        7;
+    double dayWidth =
+        ((widget.contentWidth ?? MediaQuery.of(context).size.width) -
+                widget.listPadding.left -
+                widget.listPadding.right) /
+            7;
     return dayWidth;
   }
 
