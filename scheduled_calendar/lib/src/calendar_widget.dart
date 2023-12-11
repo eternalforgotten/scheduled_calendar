@@ -400,24 +400,21 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
       child: Observer(
         builder: (context) {
           context.watch<CalendarState>().focusedDate;
-          return SizedBox(
-            width: widget.calendarWidth,
-            child: Scrollable(
-              controller: widget.scrollController,
-              physics: widget.physics,
-              viewportBuilder: (context, position) {
-                return Viewport(
-                  offset: position,
-                  center: downListKey,
-                  slivers: [
-                    if (!hideUp)
-                      SliverPadding(
-                        padding: EdgeInsets.fromLTRB(
-                            widget.listPadding.left,
-                            widget.listPadding.top,
-                            widget.listPadding.right,
-                            0),
-                        sliver: PagedSliverList(
+          return Scrollable(
+            controller: widget.scrollController,
+            physics: widget.physics,
+            viewportBuilder: (context, position) {
+              return Viewport(
+                offset: position,
+                center: downListKey,
+                slivers: [
+                  if (!hideUp)
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(widget.listPadding.left,
+                          widget.listPadding.top, widget.listPadding.right, 0),
+                      sliver: SizedBox(
+                        width: widget.calendarWidth,
+                        child: PagedSliverList(
                           pagingController: _pagingReplyUpController,
                           builderDelegate: PagedChildBuilderDelegate<Month>(
                             itemBuilder:
@@ -455,10 +452,13 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                           ),
                         ),
                       ),
-                    SliverPadding(
-                      key: downListKey,
-                      padding: _getDownListPadding(),
-                      sliver: PagedSliverList(
+                    ),
+                  SliverPadding(
+                    key: downListKey,
+                    padding: _getDownListPadding(),
+                    sliver: SizedBox(
+                      width: widget.calendarWidth,
+                      child: PagedSliverList(
                         pagingController: _pagingReplyDownController,
                         builderDelegate: PagedChildBuilderDelegate<Month>(
                           itemBuilder:
@@ -494,26 +494,25 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                         ),
                       ),
                     ),
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(
-                          widget.listPadding.left,
-                          0,
-                          widget.listPadding.right,
-                          widget.calendarFooter != null &&
-                                  !widget.isCalendarMode
-                              ? 16
-                              : 0),
-                      sliver: SliverToBoxAdapter(
-                        child: widget.calendarFooter != null &&
-                                !widget.isCalendarMode
-                            ? widget.calendarFooter
-                            : const SizedBox(),
-                      ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                        widget.listPadding.left,
+                        0,
+                        widget.listPadding.right,
+                        widget.calendarFooter != null && !widget.isCalendarMode
+                            ? 16
+                            : 0),
+                    sliver: SliverToBoxAdapter(
+                      child: widget.calendarFooter != null &&
+                              !widget.isCalendarMode
+                          ? widget.calendarFooter
+                          : const SizedBox(),
                     ),
-                  ],
-                );
-              },
-            ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
