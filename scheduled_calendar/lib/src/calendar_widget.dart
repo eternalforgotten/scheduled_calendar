@@ -90,6 +90,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.dayFooterPadding = 5,
     this.firstWeekSeparator,
     this.changeModeOnTap = false,
+    this.calendarWidth,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -182,9 +183,11 @@ class ScheduledCalendar extends StatefulWidget {
 
   final Widget? firstWeekSeparator;
 
-  ///Need to change the calendar mode. If true, then the style 
+  ///Need to change the calendar mode. If true, then the style
   ///of the focused day will be removed some time after clicking on the day
   final bool changeModeOnTap;
+
+  final double? calendarWidth;
 
   @override
   ScheduledCalendarState createState() => ScheduledCalendarState();
@@ -397,20 +400,66 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
       child: Observer(
         builder: (context) {
           context.watch<CalendarState>().focusedDate;
-          return Scrollable(
-            controller: widget.scrollController,
-            physics: widget.physics,
-            viewportBuilder: (context, position) {
-              return Viewport(
-                offset: position,
-                center: downListKey,
-                slivers: [
-                  if (!hideUp)
+          return SizedBox(
+            width: widget.calendarWidth,
+            child: Scrollable(
+              controller: widget.scrollController,
+              physics: widget.physics,
+              viewportBuilder: (context, position) {
+                return Viewport(
+                  offset: position,
+                  center: downListKey,
+                  slivers: [
+                    if (!hideUp)
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(
+                            widget.listPadding.left,
+                            widget.listPadding.top,
+                            widget.listPadding.right,
+                            0),
+                        sliver: PagedSliverList(
+                          pagingController: _pagingReplyUpController,
+                          builderDelegate: PagedChildBuilderDelegate<Month>(
+                            itemBuilder:
+                                (BuildContext context, Month month, int index) {
+                              return IgnorePointer(
+                                ignoring: widget.interaction ==
+                                    CalendarInteraction.disabled,
+                                child: MonthView(
+                                  dayFooterBuilder: widget.dayFooterBuilder,
+                                  interaction: widget.interaction,
+                                  focusedDateCardAnimationCurve:
+                                      widget.focusedDateCardAnimationCurve,
+                                  focusedDateCardAnimationDuration:
+                                      widget.focusedDateCardAnimationDuration,
+                                  focusedDateCardBuilder:
+                                      widget.focusedDateCardBuilder,
+                                  month: month,
+                                  onDayPressed: (date) =>
+                                      _onDayTapped(context, date),
+                                  startWeekWithSunday:
+                                      widget.startWeekWithSunday,
+                                  weeksSeparator: widget.weeksSeparator,
+                                  dayStyle: widget.dayStyle,
+                                  monthNameStyle: widget.monthNameStyle,
+                                  daysOff: widget.daysOff,
+                                  isWorkDay: widget.isWorkDay,
+                                  displayWeekdays: widget.displayWeekdays,
+                                  dayFooterPadding: widget.dayFooterPadding,
+                                  firstWeekSeparator:
+                                      widget.firstWeekSeparator ??
+                                          widget.weeksSeparator,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     SliverPadding(
-                      padding: EdgeInsets.fromLTRB(widget.listPadding.left,
-                          widget.listPadding.top, widget.listPadding.right, 0),
+                      key: downListKey,
+                      padding: _getDownListPadding(),
                       sliver: PagedSliverList(
-                        pagingController: _pagingReplyUpController,
+                        pagingController: _pagingReplyDownController,
                         builderDelegate: PagedChildBuilderDelegate<Month>(
                           itemBuilder:
                               (BuildContext context, Month month, int index) {
@@ -445,63 +494,26 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                         ),
                       ),
                     ),
-                  SliverPadding(
-                    key: downListKey,
-                    padding: _getDownListPadding(),
-                    sliver: PagedSliverList(
-                      pagingController: _pagingReplyDownController,
-                      builderDelegate: PagedChildBuilderDelegate<Month>(
-                        itemBuilder:
-                            (BuildContext context, Month month, int index) {
-                          return IgnorePointer(
-                            ignoring: widget.interaction ==
-                                CalendarInteraction.disabled,
-                            child: MonthView(
-                              dayFooterBuilder: widget.dayFooterBuilder,
-                              interaction: widget.interaction,
-                              focusedDateCardAnimationCurve:
-                                  widget.focusedDateCardAnimationCurve,
-                              focusedDateCardAnimationDuration:
-                                  widget.focusedDateCardAnimationDuration,
-                              focusedDateCardBuilder:
-                                  widget.focusedDateCardBuilder,
-                              month: month,
-                              onDayPressed: (date) =>
-                                  _onDayTapped(context, date),
-                              startWeekWithSunday: widget.startWeekWithSunday,
-                              weeksSeparator: widget.weeksSeparator,
-                              dayStyle: widget.dayStyle,
-                              monthNameStyle: widget.monthNameStyle,
-                              daysOff: widget.daysOff,
-                              isWorkDay: widget.isWorkDay,
-                              displayWeekdays: widget.displayWeekdays,
-                              dayFooterPadding: widget.dayFooterPadding,
-                              firstWeekSeparator: widget.firstWeekSeparator ??
-                                  widget.weeksSeparator,
-                            ),
-                          );
-                        },
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                          widget.listPadding.left,
+                          0,
+                          widget.listPadding.right,
+                          widget.calendarFooter != null &&
+                                  !widget.isCalendarMode
+                              ? 16
+                              : 0),
+                      sliver: SliverToBoxAdapter(
+                        child: widget.calendarFooter != null &&
+                                !widget.isCalendarMode
+                            ? widget.calendarFooter
+                            : const SizedBox(),
                       ),
                     ),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                        widget.listPadding.left,
-                        0,
-                        widget.listPadding.right,
-                        widget.calendarFooter != null && !widget.isCalendarMode
-                            ? 16
-                            : 0),
-                    sliver: SliverToBoxAdapter(
-                      child: widget.calendarFooter != null &&
-                              !widget.isCalendarMode
-                          ? widget.calendarFooter
-                          : const SizedBox(),
-                    ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           );
         },
       ),
