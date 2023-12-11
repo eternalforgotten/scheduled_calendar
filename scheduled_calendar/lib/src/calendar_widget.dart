@@ -412,90 +412,80 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                     SliverPadding(
                       padding: EdgeInsets.fromLTRB(widget.listPadding.left,
                           widget.listPadding.top, widget.listPadding.right, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: SizedBox(
-                          width: widget.calendarWidth,
-                          child: PagedSliverList(
-                            pagingController: _pagingReplyUpController,
-                            builderDelegate: PagedChildBuilderDelegate<Month>(
-                              itemBuilder:
-                                  (BuildContext context, Month month, int index) {
-                                return IgnorePointer(
-                                  ignoring: widget.interaction ==
-                                      CalendarInteraction.disabled,
-                                  child: MonthView(
-                                    dayFooterBuilder: widget.dayFooterBuilder,
-                                    interaction: widget.interaction,
-                                    focusedDateCardAnimationCurve:
-                                        widget.focusedDateCardAnimationCurve,
-                                    focusedDateCardAnimationDuration:
-                                        widget.focusedDateCardAnimationDuration,
-                                    focusedDateCardBuilder:
-                                        widget.focusedDateCardBuilder,
-                                    month: month,
-                                    onDayPressed: (date) =>
-                                        _onDayTapped(context, date),
-                                    startWeekWithSunday:
-                                        widget.startWeekWithSunday,
-                                    weeksSeparator: widget.weeksSeparator,
-                                    dayStyle: widget.dayStyle,
-                                    monthNameStyle: widget.monthNameStyle,
-                                    daysOff: widget.daysOff,
-                                    isWorkDay: widget.isWorkDay,
-                                    displayWeekdays: widget.displayWeekdays,
-                                    dayFooterPadding: widget.dayFooterPadding,
-                                    firstWeekSeparator:
-                                        widget.firstWeekSeparator ??
-                                            widget.weeksSeparator,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                      sliver: PagedSliverList(
+                        pagingController: _pagingReplyUpController,
+                        builderDelegate: PagedChildBuilderDelegate<Month>(
+                          itemBuilder:
+                              (BuildContext context, Month month, int index) {
+                            return IgnorePointer(
+                              ignoring: widget.interaction ==
+                                  CalendarInteraction.disabled,
+                              child: MonthView(
+                                dayFooterBuilder: widget.dayFooterBuilder,
+                                interaction: widget.interaction,
+                                focusedDateCardAnimationCurve:
+                                    widget.focusedDateCardAnimationCurve,
+                                focusedDateCardAnimationDuration:
+                                    widget.focusedDateCardAnimationDuration,
+                                focusedDateCardBuilder:
+                                    widget.focusedDateCardBuilder,
+                                month: month,
+                                onDayPressed: (date) =>
+                                    _onDayTapped(context, date),
+                                startWeekWithSunday:
+                                    widget.startWeekWithSunday,
+                                weeksSeparator: widget.weeksSeparator,
+                                dayStyle: widget.dayStyle,
+                                monthNameStyle: widget.monthNameStyle,
+                                daysOff: widget.daysOff,
+                                isWorkDay: widget.isWorkDay,
+                                displayWeekdays: widget.displayWeekdays,
+                                dayFooterPadding: widget.dayFooterPadding,
+                                firstWeekSeparator:
+                                    widget.firstWeekSeparator ??
+                                        widget.weeksSeparator,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
                   SliverPadding(
                     key: downListKey,
                     padding: _getDownListPadding(),
-                    sliver: SliverToBoxAdapter(
-                      child: SizedBox(
-                        width: widget.calendarWidth,
-                        child: PagedSliverList(
-                          pagingController: _pagingReplyDownController,
-                          builderDelegate: PagedChildBuilderDelegate<Month>(
-                            itemBuilder:
-                                (BuildContext context, Month month, int index) {
-                              return IgnorePointer(
-                                ignoring: widget.interaction ==
-                                    CalendarInteraction.disabled,
-                                child: MonthView(
-                                  dayFooterBuilder: widget.dayFooterBuilder,
-                                  interaction: widget.interaction,
-                                  focusedDateCardAnimationCurve:
-                                      widget.focusedDateCardAnimationCurve,
-                                  focusedDateCardAnimationDuration:
-                                      widget.focusedDateCardAnimationDuration,
-                                  focusedDateCardBuilder:
-                                      widget.focusedDateCardBuilder,
-                                  month: month,
-                                  onDayPressed: (date) =>
-                                      _onDayTapped(context, date),
-                                  startWeekWithSunday: widget.startWeekWithSunday,
-                                  weeksSeparator: widget.weeksSeparator,
-                                  dayStyle: widget.dayStyle,
-                                  monthNameStyle: widget.monthNameStyle,
-                                  daysOff: widget.daysOff,
-                                  isWorkDay: widget.isWorkDay,
-                                  displayWeekdays: widget.displayWeekdays,
-                                  dayFooterPadding: widget.dayFooterPadding,
-                                  firstWeekSeparator: widget.firstWeekSeparator ??
-                                      widget.weeksSeparator,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                    sliver: PagedSliverList(
+                      pagingController: _pagingReplyDownController,
+                      builderDelegate: PagedChildBuilderDelegate<Month>(
+                        itemBuilder:
+                            (BuildContext context, Month month, int index) {
+                          return IgnorePointer(
+                            ignoring: widget.interaction ==
+                                CalendarInteraction.disabled,
+                            child: MonthView(
+                              dayFooterBuilder: widget.dayFooterBuilder,
+                              interaction: widget.interaction,
+                              focusedDateCardAnimationCurve:
+                                  widget.focusedDateCardAnimationCurve,
+                              focusedDateCardAnimationDuration:
+                                  widget.focusedDateCardAnimationDuration,
+                              focusedDateCardBuilder:
+                                  widget.focusedDateCardBuilder,
+                              month: month,
+                              onDayPressed: (date) =>
+                                  _onDayTapped(context, date),
+                              startWeekWithSunday: widget.startWeekWithSunday,
+                              weeksSeparator: widget.weeksSeparator,
+                              dayStyle: widget.dayStyle,
+                              monthNameStyle: widget.monthNameStyle,
+                              daysOff: widget.daysOff,
+                              isWorkDay: widget.isWorkDay,
+                              displayWeekdays: widget.displayWeekdays,
+                              dayFooterPadding: widget.dayFooterPadding,
+                              firstWeekSeparator: widget.firstWeekSeparator ??
+                                  widget.weeksSeparator,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
