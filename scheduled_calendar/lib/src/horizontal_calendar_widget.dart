@@ -62,6 +62,7 @@ class HorizontalScheduledCalendar extends StatefulWidget {
     required this.firstWeekSeparator,
     this.weekdayPadding = 3,
     this.contentWidth,
+    this.scrollBehavior,
   })  : initialDate = initialDate ?? DateTime.now().removeTime(),
         scrollController = scrollController ?? ScrollController(),
         focusedDate = focusedDate ?? initialDate;
@@ -155,6 +156,8 @@ class HorizontalScheduledCalendar extends StatefulWidget {
 
   /// Width of the content inside horizontal calendar if it is not equal to screen width
   final double? contentWidth;
+
+  final ScrollBehavior? scrollBehavior;
 
   @override
   HorizontalScheduledCalendarState createState() =>
@@ -384,6 +387,7 @@ class HorizontalScheduledCalendarState
         builder: (context) {
           context.watch<CalendarState>().focusedDate;
           return Scrollable(
+              scrollBehavior: widget.scrollBehavior,
               key: downListKey,
               controller: widget.scrollController,
               physics: widget.physics,

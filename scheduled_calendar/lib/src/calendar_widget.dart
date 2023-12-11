@@ -91,6 +91,7 @@ class ScheduledCalendar extends StatefulWidget {
     this.firstWeekSeparator,
     this.changeModeOnTap = false,
     this.calendarWidth,
+    this.scrollBehavior,
   }) : initialDate = initialDate ?? DateTime.now().removeTime();
 
   /// the [DateTime] to start the calendar from, if no [startDate] is provided
@@ -188,6 +189,8 @@ class ScheduledCalendar extends StatefulWidget {
   final bool changeModeOnTap;
 
   final double? calendarWidth;
+
+  final ScrollBehavior? scrollBehavior;
 
   @override
   ScheduledCalendarState createState() => ScheduledCalendarState();
@@ -401,6 +404,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
         builder: (context) {
           context.watch<CalendarState>().focusedDate;
           return Scrollable(
+            scrollBehavior: widget.scrollBehavior,
             controller: widget.scrollController,
             physics: widget.physics,
             viewportBuilder: (context, position) {
@@ -432,8 +436,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                 month: month,
                                 onDayPressed: (date) =>
                                     _onDayTapped(context, date),
-                                startWeekWithSunday:
-                                    widget.startWeekWithSunday,
+                                startWeekWithSunday: widget.startWeekWithSunday,
                                 weeksSeparator: widget.weeksSeparator,
                                 dayStyle: widget.dayStyle,
                                 monthNameStyle: widget.monthNameStyle,
@@ -441,9 +444,8 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
                                 isWorkDay: widget.isWorkDay,
                                 displayWeekdays: widget.displayWeekdays,
                                 dayFooterPadding: widget.dayFooterPadding,
-                                firstWeekSeparator:
-                                    widget.firstWeekSeparator ??
-                                        widget.weeksSeparator,
+                                firstWeekSeparator: widget.firstWeekSeparator ??
+                                    widget.weeksSeparator,
                               ),
                             );
                           },
