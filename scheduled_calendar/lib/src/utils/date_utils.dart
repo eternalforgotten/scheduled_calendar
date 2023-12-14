@@ -214,9 +214,11 @@ extension DateUtilsExtensions on DateTime {
     );
   }
 
-  int differenceInMonths(DateTime dateTime) {
+  int differenceInMonths(DateTime dateTime, {bool needInc = true}) {
     if (year == dateTime.year) {
-      return (month - dateTime.month + 1).abs();
+      return needInc
+          ? (month - dateTime.month + 1).abs()
+          : (month - dateTime.month).abs();
     }
 
     int result = 0;
@@ -229,6 +231,6 @@ extension DateUtilsExtensions on DateTime {
     // Full years between first and last
     result += (yearDifference - 1).abs() * 12;
     result += maxDate.month; // Last year
-    return result + 1;
+    return needInc ? result + 1 : result;
   }
 }

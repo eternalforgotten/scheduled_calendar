@@ -176,6 +176,8 @@ class HorizontalScheduledCalendarState
 
   late final List<Month> months;
   late bool scrollControllerAnimated;
+  late final int firstPageKey;
+  int? monthsLeft;
 
   @override
   void didUpdateWidget(covariant HorizontalScheduledCalendar oldWidget) {
@@ -235,15 +237,20 @@ class HorizontalScheduledCalendarState
     _pagingReplyUpController.addPageRequestListener(_fetchUpPage);
     _pagingReplyUpController.addStatusListener(paginationStatusUp);
 
-    int monthDifference = widget.focusedDate
+    firstPageKey = widget.focusedDate
             ?.differenceInMonths(widget.minDate ?? widget.initialDate) ??
         0;
+    monthsLeft = widget.maxDate != null
+        ? widget.focusedDate
+                ?.differenceInMonths(widget.maxDate!, needInc: false) ??
+            0
+        : null;
     _pagingReplyDownController = PagingController<int, Month>(
-      firstPageKey: monthDifference,
+      firstPageKey: firstPageKey,
       invisibleItemsThreshold: widget.invisibleMonthsThreshold,
     );
     months = [];
-    for (int i = 0; i < monthDifference; i++) {
+    for (int i = 0; i < firstPageKey; i++) {
       _fetchDownPage(i, addToList: true);
     }
 
@@ -322,11 +329,11 @@ class HorizontalScheduledCalendarState
       if (addToList) {
         months.add(month);
       } else {
-        final nextPageKey = pageKey + newItems.length;
-        _pagingReplyDownController.appendPage(newItems, nextPageKey);
-
         if (isLastPage) {
           return _pagingReplyDownController.appendLastPage(newItems);
+        } else {
+          final nextPageKey = pageKey + newItems.length;
+          _pagingReplyDownController.appendPage(newItems, nextPageKey);
         }
       }
     } catch (_) {
@@ -349,9 +356,7 @@ class HorizontalScheduledCalendarState
     return EdgeInsets.fromLTRB(
       widget.listPadding.left,
       paddingTop,
-      _pagingReplyDownController.nextPageKey != null
-          ? 0
-          : widget.listPadding.right,
+      monthsLeft == null || monthsLeft! > 0 ? 0 : widget.listPadding.right,
       widget.listPadding.bottom,
     );
   }
@@ -475,7 +480,7 @@ class HorizontalScheduledCalendarState
                           ),
                         ),
                       ),
-                    if (_pagingReplyDownController.nextPageKey != null)
+                    if (monthsLeft == null || monthsLeft! > 0)
                       SliverPadding(
                         key: downListKey,
                         padding: _getPagedDownListPadding(),

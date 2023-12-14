@@ -41,9 +41,9 @@ class _HorizontalCalendarPageState extends State<HorizontalCalendarPage> {
       body: Center(
         child: HorizontalScheduledCalendar(
           interaction: CalendarInteraction.dateCard,
-          minDate: DateTime(2023, 9, 7),
-          maxDate: DateTime(2023, 9, 16),
-          initialDate: DateTime(2023, 9, 9),
+          minDate: DateTime(2023, 11, 14),
+          maxDate: DateTime(2024, 1, 25),
+          initialDate: DateTime(2023, 12, 14),
           monthNameStyle: const ScheduleCalendarMonthNameStyle(
             centerMonthName: true,
             monthCustomNames: {
