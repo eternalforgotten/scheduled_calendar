@@ -370,7 +370,7 @@ class HorizontalScheduledCalendarState
     return dayWidth;
   }
 
-  double _getControllerShift() {
+  double _getControllerPosition() {
     int dayDiff = widget.focusedDate!
         .difference(widget.minDate ?? widget.initialDate)
         .inDays;
@@ -398,11 +398,13 @@ class HorizontalScheduledCalendarState
               physics: widget.physics,
               axisDirection: AxisDirection.right,
               viewportBuilder: (context, position) {
+                double newPosition = _getControllerPosition();
                 if (mounted &&
                     !scrollControllerAnimated &&
-                    widget.focusedDate != null) {
+                    widget.focusedDate != null &&
+                    newPosition != 0) {
                   widget.scrollController?.animateTo(
-                    _getControllerShift(),
+                    newPosition,
                     duration: const Duration(milliseconds: 1),
                     curve: Curves.linear,
                   );
