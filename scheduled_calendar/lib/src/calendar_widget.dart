@@ -221,6 +221,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
     }
 
     if (!oldSelected && newSelected) {
+      state.setDate(null);
       state.clearDates();
     }
 

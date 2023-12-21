@@ -82,7 +82,7 @@ class _WeekViewState extends State<WeekView>
   @override
   void didUpdateWidget(covariant WeekView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.interaction == CalendarInteraction.dateCard) {
+    if (widget.interaction != CalendarInteraction.action) {
       final focusedDate = state.focusedDate;
       if (focusedDate != null) {
         final dateInWeek = focusedDate.isSameDayOrAfter(widget.week.first) &&
