@@ -192,6 +192,11 @@ class ScheduledCalendar extends StatefulWidget {
 
   final ScrollBehavior? scrollBehavior;
 
+  static ScrollController? controllerOf(BuildContext context) {
+    final state = context.findAncestorStateOfType<ScheduledCalendarState>();
+    return state?.innerScrollController;
+  }
+
   @override
   ScheduledCalendarState createState() => ScheduledCalendarState();
 }
@@ -199,6 +204,7 @@ class ScheduledCalendar extends StatefulWidget {
 class ScheduledCalendarState extends State<ScheduledCalendar> {
   late PagingController<int, Month> _pagingReplyUpController;
   late PagingController<int, Month> _pagingReplyDownController;
+  late ScrollController innerScrollController;
 
   final Key downListKey = UniqueKey();
   late bool hideUp;
@@ -268,6 +274,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
   @override
   void initState() {
     super.initState();
+    innerScrollController = widget.scrollController ?? ScrollController();
 
     if (widget.minDate != null &&
         widget.initialDate.isBefore(widget.minDate!)) {
@@ -406,7 +413,7 @@ class ScheduledCalendarState extends State<ScheduledCalendar> {
           context.watch<CalendarState>().focusedDate;
           return Scrollable(
             scrollBehavior: widget.scrollBehavior,
-            controller: widget.scrollController,
+            controller: innerScrollController,
             physics: widget.physics,
             viewportBuilder: (context, position) {
               return Viewport(

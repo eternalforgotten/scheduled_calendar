@@ -11,7 +11,7 @@ import '../utils/typedefs.dart';
 
 class DayView extends StatefulWidget {
   final DateTime day;
-  final void Function(DateTime day)? onPressed;
+  final void Function(DateTime, Offset)? onPressed;
   final bool isCalendarMode;
   final DateBuilder? dayFooterBuilder;
 
@@ -53,6 +53,8 @@ class _DayViewState extends State<DayView> {
     super.initState();
     initializeDateFormatting();
   }
+
+  TapUpDetails? tapUpDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +102,10 @@ class _DayViewState extends State<DayView> {
     var weekdayName = widget.style.weekdayCustomNames[widget.day.weekday] ??
         DateFormat('E', locale).format(widget.day);
     return GestureDetector(
-      onTap: () => widget.onPressed?.call(widget.day),
+      onTapUp: (details) {
+        tapUpDetails = details;
+      },
+      onTap: () => widget.onPressed?.call(widget.day, tapUpDetails!.globalPosition),
       child: Container(
         padding: widget.isHorizontalCalendar
             ? EdgeInsets.only(top: widget.weekdayPadding)

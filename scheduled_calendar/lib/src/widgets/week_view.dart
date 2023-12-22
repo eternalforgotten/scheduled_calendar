@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scheduled_calendar/scheduled_calendar.dart';
 import 'package:scheduled_calendar/src/calendar_state/calendar_state.dart';
 import 'package:scheduled_calendar/src/utils/date_utils.dart';
-import 'package:scheduled_calendar/src/utils/enums.dart';
-import 'package:scheduled_calendar/src/utils/styles.dart';
-import 'package:scheduled_calendar/src/utils/typedefs.dart';
 import 'package:scheduled_calendar/src/widgets/day_view.dart';
 import 'package:scheduled_calendar/src/widgets/weeks_separator.dart';
 
@@ -153,7 +151,10 @@ class _WeekViewState extends State<WeekView>
               Spacer(
                 flex: 7 - week.length,
               ),
-            if (!widget.isHorizontalCalendar && isFirstWeek && isLastWeek && week.length < 7)
+            if (!widget.isHorizontalCalendar &&
+                isFirstWeek &&
+                isLastWeek &&
+                week.length < 7)
               Spacer(
                 flex: week.first.weekday - 1,
               ),
@@ -163,7 +164,7 @@ class _WeekViewState extends State<WeekView>
                     child: DayView(
                       date,
                       interaction: widget.interaction,
-                      onPressed: (date) {
+                      onPressed: (date, offset) {
                         if (widget.interaction ==
                             CalendarInteraction.dateCard) {
                           final newSelectedDate = state.focusedDate;
@@ -171,7 +172,37 @@ class _WeekViewState extends State<WeekView>
                               date.isSameDay(newSelectedDate)) {
                             widget.onDayPressed?.call(null);
                           } else {
+                            final controller =
+                                ScheduledCalendar.controllerOf(context);
                             widget.onDayPressed?.call(date);
+                            final box = (cardKey.currentContext
+                                ?.findRenderObject()) as RenderBox?;
+                            if (box != null && controller != null) {
+                              final boxHeight = box.size.height;
+                              final diff = offset.dy +
+                                  boxHeight -
+                                  MediaQuery.of(context).size.height;
+                              if (diff > 0) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((timeStamp) {
+                                  final targetPosition =
+                                      controller.position.pixels + diff + 50;
+                                  final maxExtent =
+                                      controller.position.maxScrollExtent;
+                                  if (targetPosition > maxExtent) {
+                                    controller.position
+                                        .correctPixels(targetPosition + 100);
+                                  } else {
+                                    controller.animateTo(
+                                      targetPosition,
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      curve: Curves.fastOutSlowIn,
+                                    );
+                                  }
+                                });
+                              }
+                            }
                           }
                         } else {
                           widget.onDayPressed?.call(date);
@@ -192,7 +223,10 @@ class _WeekViewState extends State<WeekView>
                   ),
                 )
                 .toList(),
-            if (!widget.isHorizontalCalendar && isFirstWeek && isLastWeek && week.length < 7)
+            if (!widget.isHorizontalCalendar &&
+                isFirstWeek &&
+                isLastWeek &&
+                week.length < 7)
               Spacer(
                 flex: 7 - week.last.weekday,
               ),
@@ -210,9 +244,12 @@ class _WeekViewState extends State<WeekView>
                 curve: widget.focusedDateCardAnimationCurve,
                 parent: animationController,
               ),
-              child: widget.focusedDateCardBuilder!(
-                context,
-                dateToDisplay ?? DateTime.now(),
+              child: FocusedCardContent(
+                key: cardKey,
+                child: widget.focusedDateCardBuilder!(
+                  context,
+                  dateToDisplay ?? DateTime.now(),
+                ),
               ),
             ),
           ),
@@ -224,5 +261,20 @@ class _WeekViewState extends State<WeekView>
   void dispose() {
     animationController.dispose();
     super.dispose();
+  }
+
+  GlobalKey cardKey = GlobalKey();
+}
+
+class FocusedCardContent extends StatelessWidget {
+  final Widget child;
+  const FocusedCardContent({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
   }
 }
