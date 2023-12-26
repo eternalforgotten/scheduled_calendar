@@ -125,7 +125,10 @@ class _WeekViewState extends State<WeekView>
                 Spacer(
                   flex: 7 - week.length,
                 ),
-              if (isFirstWeek && isLastWeek && week.length < 7)
+              if (isFirstWeek &&
+                  isLastWeek &&
+                  week.length < 7 &&
+                  week.first.weekday != 1)
                 Spacer(
                   flex: week.first.weekday - 1,
                 ),
@@ -135,7 +138,10 @@ class _WeekViewState extends State<WeekView>
                     ? widget.firstWeekSeparator
                     : widget.weeksSeparator,
               ),
-              if (isFirstWeek && isLastWeek && week.length < 7)
+              if (isFirstWeek &&
+                  isLastWeek &&
+                  week.length < 7 &&
+                  week.last.weekday != 7)
                 Spacer(
                   flex: 7 - week.last.weekday,
                 ),
@@ -154,7 +160,8 @@ class _WeekViewState extends State<WeekView>
             if (!widget.isHorizontalCalendar &&
                 isFirstWeek &&
                 isLastWeek &&
-                week.length < 7)
+                week.length < 7 &&
+                week.first.weekday != 1)
               Spacer(
                 flex: week.first.weekday - 1,
               ),
@@ -226,7 +233,8 @@ class _WeekViewState extends State<WeekView>
             if (!widget.isHorizontalCalendar &&
                 isFirstWeek &&
                 isLastWeek &&
-                week.length < 7)
+                week.length < 7 &&
+                week.last.weekday != 7)
               Spacer(
                 flex: 7 - week.last.weekday,
               ),
