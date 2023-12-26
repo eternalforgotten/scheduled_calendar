@@ -381,9 +381,6 @@ class HorizontalScheduledCalendarState
       create: (_) => CalendarState(),
       builder: (context, child) {
         realContext = context;
-        if (context.watch<CalendarState>().focusedDate != widget.focusedDate) {
-          scrollControllerAnimated = false;
-        }
         context.watch<CalendarState>().setDate(widget.focusedDate);
         return child!;
       },
