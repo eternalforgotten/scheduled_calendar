@@ -13,6 +13,14 @@ class HorizontalCalendarPage extends StatefulWidget {
 }
 
 class _HorizontalCalendarPageState extends State<HorizontalCalendarPage> {
+  late DateTime? focusedDate;
+
+  @override
+  void initState() {
+    focusedDate = widget.focusedDate;
+    super.initState();
+  }
+
   void _changeCalendarMode() {
     Navigator.of(context).pop();
   }
@@ -35,6 +43,14 @@ class _HorizontalCalendarPageState extends State<HorizontalCalendarPage> {
             heroTag: 'mode',
             onPressed: _changeCalendarMode,
             backgroundColor: Colors.amber,
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                focusedDate = DateTime(2023, 11, 14);
+              });
+            },
+            child: const Text('Сегодня'),
           ),
         ],
       ),
@@ -89,7 +105,7 @@ class _HorizontalCalendarPageState extends State<HorizontalCalendarPage> {
           ),
           dayFooterPadding: 5,
           firstWeekSeparator: null,
-          focusedDate: widget.focusedDate,
+          focusedDate: focusedDate,
         ),
       ),
     );

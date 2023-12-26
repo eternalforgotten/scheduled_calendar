@@ -384,8 +384,7 @@ class HorizontalScheduledCalendarState
       create: (_) => CalendarState(),
       builder: (context, child) {
         realContext = context;
-        context.watch<CalendarState>().setDate(
-            context.watch<CalendarState>().focusedDate ?? widget.focusedDate);
+        context.watch<CalendarState>().setDate(widget.focusedDate);
         return child!;
       },
       child: Observer(
